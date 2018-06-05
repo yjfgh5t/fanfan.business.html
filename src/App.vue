@@ -27,7 +27,7 @@ html,body,div, h1, h2, h3, h4, h5, h6, hr, p, blockquote,dl, dt, dd, ul, ol, li,
 
 /** 加载条 **/
 .mint-indicator-wrapper{
-  background:none;
+  background:none !important;
 }
 .mint-spinner-double-bounce-bounce1{
   background-color: rgb(7, 6, 243) !important;

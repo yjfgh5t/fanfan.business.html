@@ -1,7 +1,7 @@
-import { Indicator } from 'mint-ui'
+import { Indicator, Toast  } from 'mint-ui'
 
 let Tools = {
-  app: ((window.fanfan && window.fanfan.android)||{ ajax: function (method, url, paramsMap, callKey) { window.setTimeout(()=>{window.callback({}, callKey) },500) }}),
+  app: ((window.android)||{ ajaxPost: function (method, url, paramsMap, callKey) { window.setTimeout(()=>{window.callback("{'code':-1,'success':false}", callKey) },500) }}),
   callMap:{},
   callKeyIndex:1,
   // 调用Ajax
@@ -18,18 +18,31 @@ let Tools = {
       paramsMap = params
     }
     // 回调放入临时callMap
-    let callKey = "call_back_"+ (Tools.callKeyIndex++);
-    Tools.callMap[callKey]=callback;
+    let callKey = "call_back_" + (Tools.callKeyIndex++)
+    Tools.callMap[callKey] = callback
     // 调用后台方法
-    Tools.app.ajax(method, url, paramsMap, callKey)
+    if (method == "get") {
+      Tools.app.ajaxGet(url, paramsMap, callKey)
+    } else {
+      Tools.app.ajaxPost(url, paramsMap, callKey)
+    }
   },
   // App回调
-  ajaxCallback: function (data, callKey) {
+  ajaxCallback: function (jsonString, callKey) {
     // 关闭加载条
     Indicator.close()
-    if (Tools.callMap[callKey] != undefined) {
-      // 执行回调
-      Tools.callMap[callKey](data)
+
+    console.log(jsonString)
+    let jsonData = JSON.parse(jsonString)
+
+    if (jsonData.success) {
+      if (jsonData.code==0) {
+        // 执行回调
+        Tools.callMap[callKey](jsonData)
+      }
+    } else {
+      // 错误提示
+      Toast({message: jsonData.message, duration: 2500})
     }
   }
 }

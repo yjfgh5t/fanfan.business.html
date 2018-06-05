@@ -21,7 +21,7 @@
         <!-- msg 内容 -->
         <mt-tab-container-item id="container-msg">
           <div>
-            <router-link to="/orderDetail/:1232"> Detail </router-link>
+            <router-link to="/orderDetail/:62"> Detail </router-link>
           </div>
         </mt-tab-container-item>
         <!-- 订单 内容 -->
@@ -44,13 +44,29 @@ export default {
   name: 'page-tab-container',
   data () {
     return {
-      active: 'tab-container1'
+      active: 'container-msg',
+      // 消息列表
+      msgArray: [],
     }
   },
   methods: {
     itemClick: function (containerId) {
       this.active = containerId
-      Tools.ajax('post', 'url/', 'dd')
+    },
+    // 刷新消息
+    refreshMsg: () => {
+      Tools.ajax('get', 'info/msg', {}, (res) => {
+        if (res.code==0) {
+          for (let item in res.data.length) {
+            this.msgArray.push(item)
+          }
+        }
+      })
+    }
+  },
+  created () {
+    if (this.msgArray.length== 0) {
+      this.refreshMsg()
     }
   }
 }
