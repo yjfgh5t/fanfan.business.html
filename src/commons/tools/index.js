@@ -8,7 +8,6 @@ let Tools = {
   ajax: function (method, url, params, callback) {
     // 加载条
     Indicator.open({spinnerType: 'double-bounce'})
-
     // 构建参数
     let paramsMap = {}
     if (method == "json") {
@@ -18,8 +17,7 @@ let Tools = {
       paramsMap = params
     }
     // 回调放入临时callMap
-    let callKey = "call_back_" + (Tools.callKeyIndex++)
-    Tools.callMap[callKey] = callback
+    let callKey = Tools.getCallBackKey(callback)
     // 调用后台方法
     if (method == "get") {
       Tools.app.ajaxGet(url, paramsMap, callKey)
@@ -27,27 +25,37 @@ let Tools = {
       Tools.app.ajaxPost(url, paramsMap, callKey)
     }
   },
+  // 获取参数
+  getKeyVal: function (key, callback) {
+    Tools.app.getKeyVal(key, Tools.getCallBackKey(callback))
+    // Toast("dddd")
+  },
+  getCallBackKey:function (callback) {
+    // 回调放入临时callMap
+    let callKey = "call_back_" + (Tools.callKeyIndex++)
+    Tools.callMap[callKey] = callback
+    return callKey
+  },
   // App回调
-  ajaxCallback: function (jsonString, callKey) {
+  callback: function (jsonString, callKey) {
     // 关闭加载条
     Indicator.close()
-
-    console.log(jsonString)
-    let jsonData = JSON.parse(jsonString)
-
-    if (jsonData.success) {
-      if (jsonData.code==0) {
-        // 执行回调
-        Tools.callMap[callKey](jsonData)
-      }
+    if (typeof jsonString == 'string') {
+      // 执行回调
+      Tools.callMap[callKey](jsonString)
     } else {
-      // 错误提示
-      Toast({message: jsonData.message, duration: 2500})
+      if (jsonString.success && jsonString.code == 0) {
+        // 执行回调
+        Tools.callMap[callKey](jsonString)
+      } else {
+        // 错误提示
+        Toast(jsonString.msg)
+      }
     }
   }
 }
 
 // 注册回调
-window.callback = Tools.ajaxCallback
+window.callback = Tools.callback
 
 export default Tools

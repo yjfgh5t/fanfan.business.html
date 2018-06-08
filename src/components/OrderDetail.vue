@@ -1,6 +1,6 @@
 <template>
   <div>
-     详情-{{ orderId }} {{ orderId }}
+     详情-{{ orderId }} {{ orderModel.orderNum }}
   </div>
 </template>
 
@@ -13,14 +13,15 @@ export default {
   data () {
     return {
       orderId: this.$route.params.orderId,
-      orderModel: {}
+      orderModel: {orderNum:0}
     }
   },
   created () {
-    Tools.ajax('post', 'order/' + this.orderId, {}, (res) => {
-      Toast({message:JSON.stringify(res), duration: 5000})
+    let _this = this;
+    Tools.ajax('get', 'order/' + this.orderId, {}, (res) => {
+      Toast({message:res.data.orderNum, duration: 5000})
       if (res.code==0) {
-        $this.orderModel.orderNum = res.data.orderNum
+        _this.orderModel.orderNum = res.data.orderNum
       }
     })
   }

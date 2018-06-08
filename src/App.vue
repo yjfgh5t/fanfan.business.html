@@ -15,14 +15,18 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  height: 100%;
 }
 /** 清除内外边距 **/
 html,body,div, h1, h2, h3, h4, h5, h6, hr, p, blockquote,dl, dt, dd, ul, ol, li,pre,form, fieldset, legend, button, input, textarea,th, td{
   margin: 0;
   padding: 0;
+}
+
+html, body{ margin:0; height:100%; }
+
+.mint-tab-container-wrap{
+  height: 100%;
 }
 
 /** 加载条 **/
