@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Default from '@/components/Default'
-import Test from '@/components/Test'
-import OrderDetail from '@/components/OrderDetail'
+import Default from '@/components/default/default'
+import Test from '@/components/test'
+import OrderDetail from '@/components/order-detail'
 Vue.use(Router)
 export default new Router({
   routes: [
