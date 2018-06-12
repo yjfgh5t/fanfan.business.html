@@ -32,6 +32,7 @@ let Tools = {
   },
   // 蓝牙操作
   blueTooth: function (start, callback) {
+    Toast("消息"+start)
     Tools.app.blueTooth(start, Tools.getCallBackKey(callback))
   },
   getCallBackKey: function (callback) {
