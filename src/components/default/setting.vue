@@ -1,15 +1,24 @@
 <template>
   <div class="body">
     <mt-header title="设置"></mt-header>
-    <p>{{ hello }}</p>
+    <p v-on:click="checkBlueTooth">{{ hello }}</p>
   </div>
 </template>
 
 <script>
+import Tools from '../../commons/tools/index'
+import { Toast } from 'mint-ui'
 export default {
   data () {
     return {
-      hello: 123
+      hello: '检查蓝牙'
+    }
+  },
+  methods: {
+    checkBlueTooth: function () {
+      Tools.blueTooth(true, function (data) {
+        Toast(JSON.stringify(data))
+      })
     }
   }
 }

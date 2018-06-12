@@ -4,6 +4,7 @@ import Default from '@/components/default/default'
 import Test from '@/components/test'
 import OrderDetail from '@/components/order-detail'
 Vue.use(Router)
+Vue.use(require('vue-moment'))
 export default new Router({
   routes: [
     {

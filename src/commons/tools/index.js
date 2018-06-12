@@ -30,7 +30,11 @@ let Tools = {
     Tools.app.getKeyVal(key, Tools.getCallBackKey(callback))
     // Toast("dddd")
   },
-  getCallBackKey:function (callback) {
+  // 蓝牙操作
+  blueTooth: function (start, callback) {
+    Tools.app.blueTooth(start, Tools.getCallBackKey(callback))
+  },
+  getCallBackKey: function (callback) {
     // 回调放入临时callMap
     let callKey = "call_back_" + (Tools.callKeyIndex++)
     Tools.callMap[callKey] = callback

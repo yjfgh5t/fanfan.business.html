@@ -15,9 +15,11 @@
   },
   "dependencies": {
     "mint-ui": "^2.2.13",
+    "moment": "^2.22.2",
     "raf.js": "0.0.4",
     "vue": "^2.5.2",
     "vue-lazyload": "^1.2.4",
+    "vue-moment": "^4.0.0-0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

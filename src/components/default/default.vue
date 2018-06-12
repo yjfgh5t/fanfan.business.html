@@ -19,7 +19,6 @@
 
       </mt-tab-container>
     </div>
-    <div class="nav-empty"></div>
     <div class="nav">
       <div  v-on:click="itemClick('container-msg')" class="menu-item" v-bind:class="{ active: active=='container-msg' }">
         <i class="icon iconfont icon-order"></i>
@@ -39,11 +38,10 @@
 <script>
 import Tools from '../../commons/tools/index'
 import { Toast, Loadmore } from 'mint-ui'
-import '../../assets/font/iconfont.css'
+//import '../../assets/font/iconfont.css'
 import NewOrder from '@/components/default/new-order'
 import SearchOrder from '@/components/default/search-order'
 import Setting from '@/components/default/setting'
-
 
 export default {
   name: 'page-tab-container',
@@ -54,7 +52,7 @@ export default {
   },
   data () {
     return {
-      active: 'container-msg',
+      active: 'container-order',
       // 消息列表
       msgArray: [{orderNum: '001'}, {orderNum: '002'}, {orderNum: '003'}]
     }
@@ -82,18 +80,14 @@ export default {
     font-size: 0.52rem;
     color: #333333;
   }
-
-  .mint-loadmore{
-    overflow: scroll;
-  }
   .nav{
     position: fixed;
     z-index: 8;
     bottom:0rem;
     width:100%;
-    border-top:0.1rem solid #cccccc ;
-    padding:0.3rem 0;
+    border-top:1px solid #eee;
     background-color: white;
+    height: 48px;
   }
   .menu-item{
     padding:0px;
@@ -101,6 +95,7 @@ export default {
     width:33.3333%;
     float: left;
     text-align: center;
+    margin-top: 4px;
   }
   .menu-item .icon{
     font-size: 1.6rem;
