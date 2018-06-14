@@ -63,9 +63,16 @@ export default {
     }
   },
   created () {
+    if (Tools.globalParams("active-menu") != undefined) {
+      this.active = Tools.globalParams("active-menu")
+    }
     if (this.msgArray.length== 0) {
       this.refreshMsg()
     }
+  },
+  destroyed () {
+    // 设置当前菜单
+    Tools.globalParams("active-menu", this.active)
   }
 }
 </script>

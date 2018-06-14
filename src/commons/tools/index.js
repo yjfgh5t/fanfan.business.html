@@ -3,6 +3,7 @@ import { Indicator, Toast  } from 'mint-ui'
 let Tools = {
   app: ((window.android)||{ ajaxPost: function (method, url, paramsMap, callKey) { window.setTimeout(()=>{window.callback("{'code':-1,'success':false}", callKey) },500) }}),
   callMap:{},
+  global:{},
   callKeyIndex:1,
   // 调用Ajax
   ajax: function (method, url, params, callback) {
@@ -32,9 +33,9 @@ let Tools = {
   },
   // 蓝牙操作
   blueTooth: function (start, callback) {
-    Toast("消息"+start)
     Tools.app.blueTooth(start, Tools.getCallBackKey(callback))
   },
+  // 获取回调方法key
   getCallBackKey: function (callback) {
     // 回调放入临时callMap
     let callKey = "call_back_" + (Tools.callKeyIndex++)
@@ -57,6 +58,14 @@ let Tools = {
         Toast(jsonString.msg)
       }
     }
+  },
+  // 全局变量
+  globalParams: function (key, val) {
+
+    if (val == undefined) {
+      return Tools.global[key]
+    }
+    Tools.global[key] = val
   }
 }
 
