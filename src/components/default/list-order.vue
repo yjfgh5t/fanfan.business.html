@@ -92,8 +92,8 @@ export default {
   }
 
   .ul-order{
-    width:90%;
-    margin-left:5%;
+    width:92%;
+    margin-left:4%;
     list-style: none;
   }
   .ul-order .li-item{
@@ -105,10 +105,18 @@ export default {
   }
 
   .item-title, .item-body, .item-foot{
-    padding: 1rem 0rem;
+    padding: 0.6rem 0rem;
     width:100%;
     overflow: hidden;
     border-top: 0.05rem solid #99CCFF;
+  }
+
+  .item-title{
+    padding-top: 0rem;
+  }
+
+  .item-foot{
+    padding-bottom: 0rem;
   }
 
   .item-title{
@@ -124,8 +132,11 @@ export default {
   }
 
   .body-commodity-size{
-    font-size: 0.9rem;
-    padding-bottom: 1rem;
+    font-size:0.625rem;
+    padding-bottom: 0.4rem;
+  }
+  .body-commodity{
+    overflow: hidden;
   }
   .item-body .commodity{
     line-height: 1.6rem;

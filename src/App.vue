@@ -6,7 +6,16 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  mounted () {
+    window.onresize = () => {
+      return (() => {
+        var width = document.documentElement.clientWidth
+        document.getElementsByTagName('html')[0].style["font-size"] = (width / 640 * 32) + 'px'
+      })()
+    }
+    window.onresize()
+  }
 }
 </script>
 
@@ -21,7 +30,7 @@ export default {
 html,body,div, h1, h2, h3, h4, h5, h6, hr, p, blockquote,dl, dt, dd, ul, ol, li,pre,form, fieldset, legend, button, input, textarea,th, td{
   margin: 0;
   padding: 0;
-  font-size: 0.9rem;
+  font-size: 0.625rem;
 }
 
 html, body{ margin:0; height:100%; }

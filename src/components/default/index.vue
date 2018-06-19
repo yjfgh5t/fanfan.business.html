@@ -84,7 +84,7 @@ export default {
 
   .main{
     background-color:#eeeeee;
-    font-size: 0.52rem;
+    font-size: 0.5rem;
     color: #333333;
   }
   .nav{
@@ -105,7 +105,7 @@ export default {
     margin-top: 4px;
   }
   .menu-item .icon{
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     color: #5e5e5e;
   }
   .menu-item p{
