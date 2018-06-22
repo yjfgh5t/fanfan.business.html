@@ -46,10 +46,10 @@ html, body{ margin:0; height:100%; }
   background-color: rgb(6, 50, 247) !important;
 }
 
-.mint-button--little{
+.mint-button--small{
   display: inline-block;
-  font-size: 0.6rem;
-  padding: 0 0.6rem;
-  height: 1.8rem;
+  font-size: 0.5625rem;
+  padding: 0 0.4rem;
+  height: 1.4rem;
 }
 </style>

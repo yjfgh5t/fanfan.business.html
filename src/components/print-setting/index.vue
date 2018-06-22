@@ -18,8 +18,8 @@
         :options="redioOptions">
       </mt-radio>
       <div class="foot-bluetooth">
-          <mt-button size="little" type="danger" v-on:click="cancelBlueToth">取消</mt-button> &nbsp;
-          <mt-button size="little" type="primary" v-on:click="addBlueTooth">确定</mt-button>
+          <mt-button size="small" type="danger" v-on:click="cancelBlueToth">取消</mt-button> &nbsp;
+          <mt-button size="small" type="primary" v-on:click="addBlueTooth">确定</mt-button>
       </div>
     </div>
 

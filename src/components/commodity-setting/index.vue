@@ -6,7 +6,6 @@
       </router-link>
     </mt-header>
 
-
     <div class="div-content" v-bind:style="divBodyStyle">
       <!--类别栏 -->
       <ul class="ul-type">
@@ -47,7 +46,17 @@ export default {
         {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 1, commodityTypeId: 0},
         {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 2, commodityTypeId: 2},
         {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 4, commodityTypeId: 1}
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 4, commodityTypeId: 1},
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0}
       ]
     }
   },
@@ -66,26 +75,26 @@ export default {
 
 <style type="text/css" scoped>
   .ul-type{
-    width:6rem;
-    background-color: #eee;
+    width:5rem;
+    background-color: #ddd;
     height: 100%;
     overflow: scroll;
     float: left;
   }
 
   .ul-type li{
-    border: 1px solid #ccc;
+    border: 1px solid #eee;
     border-bottom: none;
-    padding: 1.2rem 0.6rem;
+    padding: 1.2rem 0.4rem;
   }
   .ul-type li:last-child{
-    border-bottom:1px solid #ccc;
+    border-bottom:1px solid #eee;
   }
 
   .ul-type li.active{
     background-color: white;
-    border-left: 2px solid #99CCFF;
-    border-right: none;
+    border: none;
+    border-left: 3px solid #99CCFF;
   }
 
   .div-commonditys{
@@ -93,13 +102,13 @@ export default {
     overflow-y: scroll;
     overflow-x: hidden;
     float: left;
-    width: 17.5rem;
-    padding: 0rem 0.75rem;
+    width: 14rem;
+    padding: 0rem 0.4rem;
   }
 
   .div-item{
     padding: 1rem 0rem;
-    border-bottom: 1px  solid #ccc;
+    border-bottom: 1px  solid #eee;
     overflow: hidden;
   }
 
@@ -112,12 +121,13 @@ export default {
     height: 5rem;
     display: block;
     float: left;
+    border-radius: 0.4rem;
   }
 
   .div-item-right{
     float: left;
-    padding-left:1rem;
-    width: 12rem;
+    padding-left: 0.75rem;
+    width: 8.25rem;
   }
 
   .div-item-right .item-title{
@@ -126,7 +136,7 @@ export default {
   }
 
   .div-tag,.div-btn{
-    margin-top: 0.6rem;
+    margin-top: 0.4rem;
     text-align: right;
   }
 
@@ -136,6 +146,7 @@ export default {
   }
   .div-tag span.price{
     color:orangered;
+    margin-right: 0rem;
   }
 
 </style>

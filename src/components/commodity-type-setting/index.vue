@@ -16,8 +16,8 @@
       <mt-field label="分类名称" placeholder="请输入分类名称" v-model="modelType.name"></mt-field>
       <mt-field label="排序号" placeholder="请输入排序号" type="number" v-model="modelType.orderNum"></mt-field>
       <div class="lay-foot">
-        <mt-button size="little" type="danger" v-on:click="cancel()">取消</mt-button> &nbsp;
-        <mt-button size="little" type="primary" v-on:click="save()">确定</mt-button>
+        <mt-button size="small" type="danger" v-on:click="cancel()">取消</mt-button> &nbsp;
+        <mt-button size="small" type="primary" v-on:click="save()">确定</mt-button>
       </div>
     </div>
 

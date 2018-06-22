@@ -24,8 +24,8 @@
               <label class="foot-line"><label class="lab-title">桌号：</label>A12</label>
             </div>
             <div class="foot-option">
-              <mt-button size="little" type="danger">取消订单</mt-button>
-              <mt-button size="little" type="primary">打印</mt-button>
+              <mt-button size="small" type="danger">取消订单</mt-button>
+              <mt-button size="small" type="primary">打印</mt-button>
             </div>
           </div>
 
