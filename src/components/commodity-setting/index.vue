@@ -9,13 +9,13 @@
     <div class="div-content" v-bind:style="divBodyStyle">
       <!--类别栏 -->
       <ul class="ul-type">
-        <li v-for="items in commodityTypes"  v-bind:class="{active: items.id==activeTypeId}" v-on:click="commodityTypeClick(items.id)">海鲜虾仁饭</li>
+        <li v-for="items in commodityTypes"  v-bind:class="{active: items.id==activeTypeId}" v-on:click="commodityTypeClick(items.id)" v-text=" items.name "></li>
       </ul>
 
       <!--商品栏 -->
       <div class="div-commonditys">
         <div v-for="items in commoditiesTypeFilter(commodities,activeTypeId)" class="div-item">
-          <img src="https://fuss10.elemecdn.com/4/7d/412c58ad49fed41f849989dc66270jpeg.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/" />
+          <img :src="items.icon" />
           <div class="div-item-right">
             <p class="item-title" v-text="items.title"></p>
             <div class="div-tag">
@@ -41,24 +41,14 @@ export default {
     return {
       divBodyStyle: {height: (window.document.body.clientHeight-40) + 'px'},
       activeTypeId: 1,
-      commodityTypes: [{id: 0, name: '海鲜虾仁饭1'}, {id: 1, name: '海鲜虾仁饭2'}, {id: 2, name: '海鲜虾仁饭3'}],
+      commodityTypes: [],
       commodities: [
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 1, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 2, commodityTypeId: 2},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 4, commodityTypeId: 1},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0},
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 3, commodityTypeId: 0}
+        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 1, commodityTypeId: 0, icon: 'https://fuss10.elemecdn.com/4/7d/412c58ad49fed41f849989dc66270jpeg.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/'},
       ]
     }
+  },
+  mounted () {
+    this.loadItems()
   },
   methods: {
     commodityTypeClick: function (id) {
@@ -67,6 +57,30 @@ export default {
     commoditiesTypeFilter: function (items, commodityTypeId) {
       return items.filter(function (item) {
         return item.commodityTypeId === commodityTypeId
+      })
+    },
+    loadItems : function () {
+      let _this =  this;
+      // 加载商品分类
+      Tools.ajax("get", "commodityCategory/", null, function (res) {
+        if (res.code === 0 && res.data.length > 0) {
+          let _commodityTypeData = []
+          res.data.forEach((item) => {
+            _commodityTypeData.push({name: item.name, id: item.id})
+          })
+          _this.commodityTypes = _commodityTypeData
+        }
+      })
+
+      // 加载商品
+      Tools.ajax("get", "commodity/", null, function (res) {
+        if (res.code === 0 && res.data.length > 0) {
+          let _commodityData = []
+          res.data.forEach((item) => {
+            _commodityData.push({title: item.title, sales: 0, inventory: item.inventory, price: item.price, id: item.id, commodityTypeId: item.categoryId, icon:item.icon})
+          })
+          _this.commodities = _commodityData
+        }
       })
     }
   }

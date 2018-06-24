@@ -15,21 +15,25 @@ let Tools = {
       paramsMap["content-type"] = "json"
       paramsMap["content"] = JSON.stringify(params)
     } else {
-      paramsMap = params
+      paramsMap = params === null ? {} : params
     }
     // 回调放入临时callMap
     let callKey = Tools.getCallBackKey(callback)
     // 调用后台方法
     if (method == "get") {
-      Tools.app.ajaxGet(url, paramsMap, callKey)
+      Tools.app.ajaxGet(url, JSON.stringify(paramsMap), callKey)
     } else {
-      Tools.app.ajaxPost(url, paramsMap, callKey)
+      Tools.app.ajaxPost(url, JSON.stringify(paramsMap), callKey)
     }
   },
   // 获取参数
   getKeyVal: function (key, callback) {
     Tools.app.getKeyVal(key, Tools.getCallBackKey(callback))
     // Toast("dddd")
+  },
+  // 设置参数
+  setKeyVal: function (key, val, callback) {
+    Tools.app.setKeyVal(key, val, Tools.getCallBackKey(callback))
   },
   // 蓝牙操作
   blueTooth: function (start, callback) {

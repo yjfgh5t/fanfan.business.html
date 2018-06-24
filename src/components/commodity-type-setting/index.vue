@@ -21,10 +21,10 @@
       </div>
     </div>
 
-    <div v-for="item in commodityTypes"  class="type-item">
+    <div v-for="(item,index) in commodityTypes"  class="type-item">
       <mt-cell :title="item.name">
         <span  style="margin-right:0.4rem;" v-on:click="deleteItems(item.id)" ><mt-badge size="small" type="error"><span class="badge">删除</span></mt-badge></span>
-        <span  style="margin-right:0.4rem;" v-on:click="editItems(item.id)" ><mt-badge size="small"><span class="badge">编辑</span></mt-badge></span>
+        <span  style="margin-right:0.4rem;" v-on:click="editItems(index)" ><mt-badge size="small"><span class="badge">编辑</span></mt-badge></span>
       </mt-cell>
     </div>
 
@@ -37,19 +37,30 @@
 
 <script>
 import Tools from '../../commons/tools/index'
-import { Toast } from 'mint-ui'
+import { Toast,MessageBox } from 'mint-ui'
 export default {
   data () {
     return {
-      commodityTypes: [{name: '分类1', id: 1, orderNum: 1}, {name: '分类2', id: 2, orderNum: 2}, {name: '分类3', id: 3, orderNum: 5}, {name: '分类4', id: 4, orderNum: 4}, {name: '分类5', id: 4, orderNum: 4}],
+      commodityTypes: [],
       // 0:未编辑 1:添加 2:修改
       isEdit: 0,
       modelType: {name: '', orderNum: 0, id: -1}
     }
   },
+  mounted () {
+    this.loadItems()
+  },
   methods: {
-    deleteItems: function () {
-      Toast("删除")
+    deleteItems: function (id) {
+      let _this = this
+      MessageBox.confirm('确认删除改商品分类吗?').then(action => {
+        Tools.ajax("post", "commodityCategory/delete/"+id, null, function (res) {
+          if(res.code==0){
+            Toast("删除成功！")
+            _this.loadItems()
+          }
+        })
+      })
     },
     editItems: function (index) {
       let _this = this
@@ -65,16 +76,41 @@ export default {
       this.isEdit = 0
     },
     save: function () {
+      let _this = this
 
-      if (this.modelType.name === '') {
+      if (_this.modelType.name === '') {
         Toast('请输入类别名称')
         return null
       }
 
-      if (this.modelType.name.length > 20) {
+      if (_this.modelType.name.length > 20) {
         Toast('类别名称长度需小于20字符')
         return null
       }
+
+      let subModel = {id: _this.modelType.id, name: _this.modelType.name, order: _this.modelType.orderNum}
+
+      // 执行保存
+      Tools.ajax("json","commodityCategory/", subModel, function (res) {
+        // 刷新数据
+        if (res.code === 0) {
+          _this.cancel()
+          _this.loadItems()
+        }
+      })
+    },
+    // 加载列表
+    loadItems: function () {
+      let _this = this
+      Tools.ajax("get", "commodityCategory/", null, function (res) {
+        if (res.code === 0 && res.data.length > 0) {
+          let _commodityData = []
+          res.data.forEach((item) => {
+            _commodityData.push({name: item.name, id: item.id, orderNum: item.order})
+          })
+          _this.commodityTypes = _commodityData
+        }
+      })
     }
   }
 }
