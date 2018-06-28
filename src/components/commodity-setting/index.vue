@@ -4,6 +4,9 @@
       <router-link to="/" slot="left">
         <mt-button icon="back">返回</mt-button>
       </router-link>
+      <mt-button  slot="right" v-on:click="$router.push({path: '/commodityEdit/0'})">
+        <i class="icon iconfont icon-tianjia"></i>
+      </mt-button>
     </mt-header>
 
     <div class="div-content" v-bind:style="divBodyStyle">
@@ -22,14 +25,13 @@
               <span v-text="'月售'+items.sales"></span> <span v-text="'库存'+items.inventory"></span> <span class="price" v-text="'￥'+items.price"></span>
             </div>
             <div class="div-btn">
-              <mt-button size="small" type="danger">下架</mt-button>
-              <mt-button size="small" type="primary">编辑</mt-button>
+              <mt-button size="small" :type="items.isPullOff?'primary':'danger'" v-text="items.isPullOff?'上架':'下架'" v-on:click="pullOffShelves(items)"></mt-button>
+              <mt-button size="small" type="primary" v-on:click="$router.push({path: '/commodityEdit/'+items.id })">编辑</mt-button>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -59,6 +61,14 @@ export default {
         return item.commodityTypeId === commodityTypeId
       })
     },
+    // 下架
+    pullOffShelves: function (items) {
+      Tools.ajax("post", "commodity/pullOffShelves/" + items.id, {pullOffShelves: !items.isPullOff}, function (res) {
+        if (res.code === 0) {
+          items.isPullOff = !items.isPullOff
+        }
+      })
+    },
     loadItems : function () {
       let _this =  this;
       // 加载商品分类
@@ -77,7 +87,7 @@ export default {
         if (res.code === 0 && res.data.length > 0) {
           let _commodityData = []
           res.data.forEach((item) => {
-            _commodityData.push({title: item.title, sales: 0, inventory: item.inventory, price: item.price, id: item.id, commodityTypeId: item.categoryId, icon:item.icon})
+            _commodityData.push({title: item.title, sales: 0, inventory: item.inventory, price: item.price, id: item.id, commodityTypeId: item.categoryId, icon:item.icon, isPullOff: item.status === 2})
           })
           _this.commodities = _commodityData
         }

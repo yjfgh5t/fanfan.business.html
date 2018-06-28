@@ -4,6 +4,7 @@ import Default from '@/components/default'
 import PrintSetting from '@/components/print-setting'
 import CommoditySetting from '@/components/commodity-setting'
 import CommodityTypeSetting from '@/components/commodity-type-setting'
+import CommodityEdit from '@/components/commodity-edit'
 
 Vue.use(Router)
 Vue.use(require('vue-moment'))
@@ -13,7 +14,10 @@ export default new Router({
     {
       path: '/',
       name: 'default',
-      component: Default
+      component: Default,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/printSetting',
@@ -29,6 +33,11 @@ export default new Router({
       path: '/commodityTypeSetting',
       name: 'commodityTypeSetting',
       component: CommodityTypeSetting
+    },
+    {
+      path: '/commodityEdit/:id',
+      name: 'commodityEdit',
+      component: CommodityEdit
     }
   ]
 })

@@ -1,7 +1,7 @@
 import { Indicator, Toast  } from 'mint-ui'
 
 let Tools = {
-  app: ((window.android)||{ ajaxPost: function (method, url, paramsMap, callKey) { window.setTimeout(()=>{window.callback("{'code':-1,'success':false}", callKey) },500) }}),
+  app: ((window.android)||{ ajaxPost: function (method, url, paramsMap, callKey) { window.setTimeout(()=>{window.callback("{'code':-1,'success':false}", callKey) },500) }, ajaxGet: function (method, url, paramsMap, callKey) { window.setTimeout(()=>{window.callback("{'code':-1,'success':false}", callKey) }, 500) }}),
   callMap:{},
   global:{},
   callKeyIndex:1,
@@ -39,6 +39,10 @@ let Tools = {
   blueTooth: function (start, callback) {
     Tools.app.blueTooth(start, Tools.getCallBackKey(callback))
   },
+  // 选择图片
+  choiceImg: function (type, callback) {
+    Tools.app.choiceImg(type, Tools.getCallBackKey(callback))
+  },
   // 获取回调方法key
   getCallBackKey: function (callback) {
     // 回调放入临时callMap
@@ -48,6 +52,12 @@ let Tools = {
   },
   // App回调
   callback: function (jsonString, callKey) {
+    if (callKey === "loading") {
+      // 加载条
+      Indicator.open({spinnerType: 'double-bounce'})
+      return
+    }
+
     // 关闭加载条
     Indicator.close()
     if (typeof jsonString == 'string') {
