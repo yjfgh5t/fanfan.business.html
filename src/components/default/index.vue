@@ -63,6 +63,7 @@ export default {
     }
   },
   created () {
+
     if (this.msgArray.length== 0) {
       this.refreshMsg()
     }

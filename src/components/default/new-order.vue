@@ -32,6 +32,7 @@ export default {
     },
     // 刷新消息
     refreshMsg: () => {
+      console.log(12321)
       Tools.ajax('post', 'info/msg', {}, (res) => {
         if (res.code == 0) {
           for (let item in res.data.length) {

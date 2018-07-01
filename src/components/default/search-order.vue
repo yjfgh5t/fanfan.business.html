@@ -27,7 +27,7 @@
     </mt-datetime-picker>
     <div style="clear: both;"></div>
     <!-- 订单列表-->
-    <order-list height="136" style="z-index: 0"></order-list>
+    <order-list height="136" :date="dateModel" style="z-index: 0"></order-list>
   </div>
 </template>
 

@@ -39,12 +39,13 @@
 <script>
 import Tools from '../../commons/tools/index'
 import { Toast, Loadmore } from 'mint-ui'
+import moment from 'moment'
 export default {
   name: 'new-order',
   data () {
     return {
       // 消息列表
-      orderArray: [{orderNum: '001'}, {orderNum: '002'}, {orderNum: '003'}],
+      orderArray: [],
       bodyHeight: window.document.body.clientHeight - this.height
     }
   },
@@ -54,27 +55,32 @@ export default {
     },
     loadTop: function () {
       let _this = this
-      setTimeout(function () {
+      // 加载数据
+      this.loadItems(true, function () {
         _this.$refs.loadmore.onTopLoaded()
-      }, 2000)
+      })
     },
-    // 刷新消息
-    refreshOrder: () => {
-      Tools.ajax('post', 'info/msg', {}, (res) => {
-        if (res.code == 0) {
+    loadItems: function (isMax, callback) {
+      Tools.ajax('post', 'order/query/' + this.queryDate, {lastId: this.lastId, isMax: isMax}, (res) => {
+        if (res.code === 0) {
           for (let item in res.data.length) {
             this.orderArray.push(item)
           }
+        }
+        if (callback) {
+          callback()
         }
       })
     }
   },
   props: {
-    'height': {default: 0}
+    'height': {default: 0},
+    'queryDate': {default: moment().format("YYYY-MM-DD")},
+    'lastId': {default: 0}
   },
   created () {
     if (this.orderArray.length == 0) {
-      this.refreshOrder()
+      this.loadItems(true)
     }
   }
 }
