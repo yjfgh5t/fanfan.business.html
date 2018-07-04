@@ -17,6 +17,11 @@
       <i slot="icon" class="icon iconfont icon-commodity-type" />
     </mt-cell>
 
+    <br />
+    <mt-cell title="客桌设置" is-link :to="{ path: '/deskSetting'}">
+      <i slot="icon" class="icon iconfont icon-commodity-type" />
+    </mt-cell>
+
   </div>
 </template>
 

@@ -5,6 +5,7 @@ import PrintSetting from '@/components/print-setting'
 import CommoditySetting from '@/components/commodity-setting'
 import CommodityTypeSetting from '@/components/commodity-type-setting'
 import CommodityEdit from '@/components/commodity-edit'
+import DeskSetting from '@/components/desk-setting'
 
 Vue.use(Router)
 Vue.use(require('vue-moment'))
@@ -38,6 +39,11 @@ export default new Router({
       path: '/commodityEdit/:id',
       name: 'commodityEdit',
       component: CommodityEdit
+    },
+    {
+      path: '/deskSetting',
+      name: 'deskSetting',
+      component: DeskSetting
     }
   ]
 })

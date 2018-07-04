@@ -1,6 +1,6 @@
 <template>
   <div class="list-order-body" :style="{height:bodyHeight+'px'}">
-    <mt-loadmore :top-method="loadTop" ref="loadmore">
+    <mt-loadmore :top-method="loadTop" ref="loadmore" :bottom-method="loadBottom" :bottom-all-loaded="isLoadBottom" bottom-distance="-70">
       <ul class="ul-order">
         <li v-for="item in orderArray" class="li-item">
           <div class="item-title" style="color: #aaa;">
@@ -46,7 +46,10 @@ export default {
     return {
       // 消息列表
       orderArray: [],
-      bodyHeight: window.document.body.clientHeight - this.height
+      bodyHeight: window.document.body.clientHeight - this.height,
+      isLoadBottom: false,
+      minLoadId: -1,
+      maxLoadId: -1
     }
   },
   methods: {
@@ -55,22 +58,85 @@ export default {
     },
     loadTop: function () {
       let _this = this
-      // 加载数据
-      this.loadItems(true, function () {
+      // 加载数据 向上拉取数据
+      this.loadItems({isMax: true, lastId: this.maxLoadId}, function () {
         _this.$refs.loadmore.onTopLoaded()
       })
     },
-    loadItems: function (isMax, callback) {
-      Tools.ajax('post', 'order/query/' + this.queryDate, {lastId: this.lastId, isMax: isMax}, (res) => {
-        if (res.code === 0) {
-          for (let item in res.data.length) {
-            this.orderArray.push(item)
-          }
-        }
+    loadBottom: function () {
+      let _this = this
+      // 设置正在加载数据 防止重复向下拉起数据
+      _this.isLoadBottom = true
+      // 加载数据 向下拉取数据
+      this.loadItems({isMax: false, lastId: _this.minLoadId}, function () {
+        _this.isLoadBottom = false
+        _this.$refs.loadmore.onBottomLoaded()
+      })
+    },
+    loadItems: function (option, callback) {
+      let _this = this
+      // 清空订单列表
+      if (option.clear) {
+        _this.orderArray = []
+      }
+      // 最后一个订单id
+      if (option.lastId === undefined) {
+        option.lastId = -1
+      }
+
+      // 拉取订单列表
+      Tools.ajax('post', 'order/query/' + _this.queryDate, {lastId: option.lastId, isMax: option.isMax}, (res) => {
         if (callback) {
           callback()
         }
+        if (res.code === 0 || res.data.length > 0) {
+          let resData = res.data
+          // 初始加载时 同时设置两个记录id值
+          if (_this.orderArray.length === 0) {
+            _this.minLoadId = resData[resData.length - 1].id
+            _this.maxLoadId = resData[0].id
+          }
+          // 数组顶部反向添加数据
+          if (option.isMax) {
+            _this.maxLoadId = resData[0].id
+            for (let i = resData.length - 1; i >= 0; i--) {
+              _this.orderArray.unshift(_this.convertItem(resData[i]))
+            }
+          } else {
+            _this.minLoadId = resData[resData.length - 1].id
+            // 顺序添加数据
+            for (let item in resData) {
+              _this.orderArray.push(_this.convertItem(item))
+            }
+          }
+        }
       })
+    },
+    // 转换对象
+    convertItem: function (item) {
+      let details = []
+      if (item.details !== null && item.details !== undefined) {
+        details = item.details.map(function (detail) {
+          return {
+            id: detail.id,
+            outId: detail.outId,
+            outTitle: detail.outTitle,
+            outPrice: detail.outPrice,
+            outSize: detail.outSize,
+            outType: detail.outType
+          }
+        })
+      }
+      return {
+        id: item.id,
+        orderNum: item.orderNum,
+        stateText: item.orderStateText,
+        orderPay: item.orderPay,
+        orderTime: item.orderTime,
+        userNick: item.userNick,
+        userIcon: item.userIcon,
+        details: details
+      }
     }
   },
   props: {
@@ -78,10 +144,18 @@ export default {
     'queryDate': {default: moment().format("YYYY-MM-DD")},
     'lastId': {default: 0}
   },
-  created () {
-    if (this.orderArray.length == 0) {
-      this.loadItems(true)
+  watch: {
+    queryDate (val, oldVal) {
+      if (val !== oldVal) {
+        // 向下拉取数据
+        this.minLoadId = -1
+        this.maxLoadId = -1
+        this.loadItems({isMax: false, clear: true, lastId: this.minLoadId})
+      }
     }
+  },
+  created () {
+    this.loadItems({isMax: false, clear: true, lastId: this.minLoadId})
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="body" style="height: 100%;">
-    <mt-header title="商品分类设置">
+    <mt-header title="客桌设置">
       <router-link to="" slot="left">
         <mt-button icon="back" v-on:click="$router.go(-1)" >返回</mt-button>
       </router-link>
@@ -12,24 +12,23 @@
     <!--添加修改弹出层 -->
     <div class="shard" v-if="isEdit>0"></div>
     <div class="lay-body"  v-if="isEdit>0">
-      <header class="mint-header"><h1 class="mint-header-title">{{ isEdit ==1 ? '添加分类':'修改分类'}}</h1></header>
-      <mt-field label="分类名称" placeholder="请输入分类名称" v-model="modelType.name"></mt-field>
-      <mt-field label="排序号" placeholder="请输入排序号" type="number" v-model="modelType.orderNum"></mt-field>
+      <header class="mint-header"><h1 class="mint-header-title">{{ isEdit ==1 ? '添加客桌':'修改客桌'}}</h1></header>
+      <mt-field label="客桌名称" placeholder="请输入客桌名称（如：A1）" v-model="model.title"></mt-field>
       <div class="lay-foot">
         <mt-button size="small" type="danger" v-on:click="cancel()">取消</mt-button> &nbsp;
         <mt-button size="small" type="primary" v-on:click="save()">确定</mt-button>
       </div>
     </div>
 
-    <div v-for="(item,index) in commodityTypes"  class="type-item">
-      <mt-cell :title="item.name">
+    <div v-for="(item,index) in deskArray"  class="type-item">
+      <mt-cell :title="item.title">
         <span  style="margin-right:0.4rem;" v-on:click="deleteItems(item.id)" ><mt-badge size="small" type="error"><span class="badge">删除</span></mt-badge></span>
         <span  style="margin-right:0.4rem;" v-on:click="editItems(index)" ><mt-badge size="small"><span class="badge">编辑</span></mt-badge></span>
       </mt-cell>
     </div>
 
-    <div class="no-items" v-if="commodityTypes.length===0">
-      <p>还未添加商品分类</p>
+    <div class="no-items" v-if="deskArray.length===0">
+      <p>还未添加客桌</p>
     </div>
 
   </div>
@@ -41,10 +40,10 @@ import { Toast,MessageBox } from 'mint-ui'
 export default {
   data () {
     return {
-      commodityTypes: [],
+      deskArray: [],
       // 0:未编辑 1:添加 2:修改
       isEdit: 0,
-      modelType: {name: '', orderNum: 0, id: -1}
+      model: {title: '', id: -1}
     }
   },
   mounted () {
@@ -53,8 +52,8 @@ export default {
   methods: {
     deleteItems: function (id) {
       let _this = this
-      MessageBox.confirm('确认删除该商品分类吗?').then(action => {
-        Tools.ajax("post", "commodityCategory/delete/"+id, null, function (res) {
+      MessageBox.confirm('确认删除该客桌吗?').then(action => {
+        Tools.ajax("post", "desk/delete/"+id, null, function (res) {
           if(res.code==0){
             Toast("删除成功！")
             _this.loadItems()
@@ -66,10 +65,10 @@ export default {
       let _this = this
       if (index === -1) {
         _this.isEdit = 1
-        _this.modelType = {name: '', orderNum: 0, id: -1}
+        _this.model = {title: '', id: -1}
       } else {
         _this.isEdit = 2
-        _this.modelType =  _this.commodityTypes[index]
+        _this.model =  _this.deskArray[index]
       }
     },
     cancel: function () {
@@ -78,20 +77,15 @@ export default {
     save: function () {
       let _this = this
 
-      if (_this.modelType.name === '') {
-        Toast('请输入类别名称')
+      if (_this.model.title === '') {
+        Toast('请输入客桌名称')
         return null
       }
 
-      if (_this.modelType.name.length > 20) {
-        Toast('类别名称长度需小于20字符')
-        return null
-      }
-
-      let subModel = {id: _this.modelType.id, name: _this.modelType.name, order: _this.modelType.orderNum}
+      let subModel = {id: _this.model.id, title: _this.model.title}
 
       // 执行保存
-      Tools.ajax("json","commodityCategory/", subModel, function (res) {
+      Tools.ajax("json","desk/", subModel, function (res) {
         // 刷新数据
         if (res.code === 0) {
           _this.cancel()
@@ -102,13 +96,13 @@ export default {
     // 加载列表
     loadItems: function () {
       let _this = this
-      Tools.ajax("get", "commodityCategory/", null, function (res) {
+      Tools.ajax("get", "desk/", null, function (res) {
         if (res.code === 0 && res.data.length > 0) {
-          let _commodityData = []
+          let _deskData = []
           res.data.forEach((item) => {
-            _commodityData.push({name: item.name, id: item.id, orderNum: item.order})
+            _deskData.push({title: item.title, id: item.id})
           })
-          _this.commodityTypes = _commodityData
+          _this.deskArray = _deskData
         }
       })
     }
