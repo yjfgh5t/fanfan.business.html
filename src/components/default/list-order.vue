@@ -1,34 +1,37 @@
 <template>
   <div class="list-order-body" :style="{height:bodyHeight+'px'}">
-    <mt-loadmore :top-method="loadTop" ref="loadmore" :bottom-method="loadBottom" :bottom-all-loaded="isLoadBottom" bottom-distance="-70">
+    <mt-loadmore :top-method="loadTop" ref="loadmore" >
       <ul class="ul-order">
         <li v-for="item in orderArray" class="li-item">
           <div class="item-title" style="color: #aaa;">
-            <label> 编号：<label class="item-no">003</label></label>
-            <label style="float: right;">订单已支付</label>
+            <label> 编号：<label class="item-no" v-text="item.orderDateNum">003</label></label>
+            <label style="float: right;" v-text="item.stateText">订单已支付</label>
           </div>
           <div class="item-body">
-            <div class="body-commodity-size"><label>2件商品</label> <label style="float: right">展开</label> </div>
+            <div class="body-commodity-size"><label v-text="item.commoditySize+'件商品'"></label> <label style="float: right">展开</label> </div>
             <div class="body-commodity">
-              <div class="commodity">
-                <label class="name">酸辣牛肉粉</label> <label class="size">x 1</label> <label class="price">22.00</label>
-              </div>
-              <div class="commodity">
-                <label class="name">酸辣牛肉粉</label> <label class="size">x 1</label> <label class="price">22.00</label>
+              <div class="commodity" v-for="commodity in item.details">
+                <label class="name" v-text="commodity.outTitle"></label> <label class="size" v-text="'x '+commodity.outSize"></label> <label class="price" v-text="commodity.outPrice"></label>
               </div>
             </div>
           </div>
           <div class="item-foot">
             <div class="foot-price">
-              <label class="foot-line"><label class="lab-title">订单总额：</label>44:00</label>
-              <label class="foot-line"><label class="lab-title">桌号：</label>A12</label>
+              <label class="foot-line"><label class="lab-title">订单总额：</label>{{item.orderPay}}</label>
+              <label class="foot-line"><label class="lab-title">桌号：</label>{{item.orderDeskNum}}</label>
             </div>
             <div class="foot-option">
               <mt-button size="small" type="danger">取消订单</mt-button>
               <mt-button size="small" type="primary">打印</mt-button>
             </div>
           </div>
-
+        </li>
+        <!--加载更多-->
+        <li class="li-loadmore">
+          <mt-button plain="plain" v-if="loadState===0" v-on:click="loadMore" class="btn-loadmore" type="primary" size="large">加载更多</mt-button>
+          <p class="txt-loadmore" v-if="loadState==1">加载中...</p>
+          <p class="txt-loadmore" v-if="loadState==2">全部加载完毕</p>
+          <p class="txt-loadmore" v-if="loadState==3">没有订单</p>
         </li>
       </ul>
       <div class="div-empty"></div>
@@ -47,7 +50,8 @@ export default {
       // 消息列表
       orderArray: [],
       bodyHeight: window.document.body.clientHeight - this.height,
-      isLoadBottom: false,
+      // 加载状态 0:加载更多  1:加载中  2: 为没有更多
+      loadState: 0,
       minLoadId: -1,
       maxLoadId: -1
     }
@@ -63,15 +67,23 @@ export default {
         _this.$refs.loadmore.onTopLoaded()
       })
     },
-    loadBottom: function () {
+    // 加载更多
+    loadMore: function () {
+      this.loadItems({isMax: false, lastId: this.minLoadId})
+    },
+    // 设置加载文本
+    setLoadText: function (data) {
       let _this = this
-      // 设置正在加载数据 防止重复向下拉起数据
-      _this.isLoadBottom = true
       // 加载数据 向下拉取数据
-      this.loadItems({isMax: false, lastId: _this.minLoadId}, function () {
-        _this.isLoadBottom = false
-        _this.$refs.loadmore.onBottomLoaded()
-      })
+      _this.loadState = 1
+      if (data !== null && data.length === 10) {
+        _this.loadState = 0
+      } else {
+        _this.loadState = 2
+      }
+      if (_this.orderArray.length === 0) {
+        _this.loadState = 3
+      }
     },
     loadItems: function (option, callback) {
       let _this = this
@@ -87,8 +99,9 @@ export default {
       // 拉取订单列表
       Tools.ajax('post', 'order/query/' + _this.queryDate, {lastId: option.lastId, isMax: option.isMax}, (res) => {
         if (callback) {
-          callback()
+          callback(res.data)
         }
+        _this.setLoadText(res.data)
         if (res.code === 0 || res.data.length > 0) {
           let resData = res.data
           // 初始加载时 同时设置两个记录id值
@@ -100,13 +113,14 @@ export default {
           if (option.isMax) {
             _this.maxLoadId = resData[0].id
             for (let i = resData.length - 1; i >= 0; i--) {
+              Toast(JSON.stringify(resData[i]))
               _this.orderArray.unshift(_this.convertItem(resData[i]))
             }
           } else {
             _this.minLoadId = resData[resData.length - 1].id
             // 顺序添加数据
             for (let item in resData) {
-              _this.orderArray.push(_this.convertItem(item))
+              _this.orderArray.push(_this.convertItem(resData[item]))
             }
           }
         }
@@ -117,6 +131,7 @@ export default {
       let details = []
       if (item.details !== null && item.details !== undefined) {
         details = item.details.map(function (detail) {
+          // if(detail.outType==2)
           return {
             id: detail.id,
             outId: detail.outId,
@@ -135,7 +150,10 @@ export default {
         orderTime: item.orderTime,
         userNick: item.userNick,
         userIcon: item.userIcon,
-        details: details
+        orderDeskNum: item.orderDeskNum,
+        details: details,
+        commoditySize: 0 || item.commoditySize,
+        orderDateNum: item.orderDateNum
       }
     }
   },
@@ -175,6 +193,7 @@ export default {
     width:92%;
     margin-left:4%;
     list-style: none;
+    min-height: 12rem;
   }
   .ul-order .li-item{
     box-shadow:#ccc 0rem 0rem 0.2rem 0.05rem;
@@ -262,4 +281,25 @@ export default {
     width: 100%;
     height: 0.8rem;
   }
+
+  .li-loadmore{
+    margin-top: 10px;
+  }
+
+  .btn-loadmore{
+    margin-left: auto;
+    margin-right: auto;
+    width:60%;
+    font-size: 0.5666rem;
+    line-height: 1.8rem;
+    color: #99CCFF;
+    height: 1.8rem;
+    border: 0.1rem solid #99CCFF;
+  }
+
+  .txt-loadmore{
+    color: #aaa;
+    text-align: center;
+  }
+
 </style>

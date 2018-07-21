@@ -1,6 +1,6 @@
 <template>
   <div class="body">
-    <mt-header title="设置"></mt-header>
+    <mt-header slot="left" title="设置"></mt-header>
 
     <br />
     <mt-cell title="打印设置"  is-link :to="{ path: '/printSetting' }">

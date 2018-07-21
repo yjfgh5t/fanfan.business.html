@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import Tools from '@/commons/tools/index'
 export default {
   name: 'App',
   mounted () {
@@ -18,6 +19,17 @@ export default {
       })()
     }
     window.onresize()
+  },
+  created () {
+    let _this = this
+    Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
+      if (data == "") {
+        _this.$router.push({name: 'login'})
+      } else {
+        // 绑定信鸽推送
+        Tools.bindUser(data.userId, function (bind) {})
+      }
+    })
   }
 }
 </script>

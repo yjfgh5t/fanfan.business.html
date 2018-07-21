@@ -6,6 +6,7 @@ import CommoditySetting from '@/components/commodity-setting'
 import CommodityTypeSetting from '@/components/commodity-type-setting'
 import CommodityEdit from '@/components/commodity-edit'
 import DeskSetting from '@/components/desk-setting'
+import Login from '@/components/login'
 
 Vue.use(Router)
 Vue.use(require('vue-moment'))
@@ -44,6 +45,11 @@ export default new Router({
       path: '/deskSetting',
       name: 'deskSetting',
       component: DeskSetting
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
     }
   ]
 })

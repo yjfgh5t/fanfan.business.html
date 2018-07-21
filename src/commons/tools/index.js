@@ -1,10 +1,15 @@
-import { Indicator, Toast  } from 'mint-ui'
+import { Indicator, Toast } from 'mint-ui'
 
 let Tools = {
-  app: ((window.android)||{ ajaxPost: function (method, url, paramsMap, callKey) { window.setTimeout(()=>{window.callback("{'code':-1,'success':false}", callKey) },500) }, ajaxGet: function (method, url, paramsMap, callKey) { window.setTimeout(()=>{window.callback("{'code':-1,'success':false}", callKey) }, 500) }}),
-  callMap:{},
-  global:{},
-  callKeyIndex:1,
+  app: ((window.android) || {
+    ajaxPost: function (method, url, paramsMap, callKey) { window.setTimeout(() => {window.callback("{'code':-1,'success':false}", callKey) }, 500) },
+    ajaxGet: function (method, url, paramsMap, callKey) { window.setTimeout(() => {window.callback("{'code':-1,'success':false}", callKey) }, 500) }
+  }),
+  callMap: {},
+  global: {},
+  callKeyIndex: 1,
+  method: {post: 'post', get: 'get'},
+  globalKey: {userInfo: 'userInfo'},
   // 调用Ajax
   ajax: function (method, url, params, callback) {
     // 加载条
@@ -35,6 +40,10 @@ let Tools = {
   setKeyVal: function (key, val, callback) {
     Tools.app.setKeyVal(key, val, Tools.getCallBackKey(callback))
   },
+  // 绑定用户至信鸽推送
+  bindUser: function (userId, callback) {
+    Tools.app.bindUser(userId, Tools.getCallBackKey(callback))
+  },
   // 蓝牙操作
   blueTooth: function (start, callback) {
     Tools.app.blueTooth(start, Tools.getCallBackKey(callback))
@@ -57,13 +66,9 @@ let Tools = {
       Indicator.open({spinnerType: 'double-bounce'})
       return
     }
-
     // 关闭加载条
     Indicator.close()
-    if (typeof jsonString == 'string') {
-      // 执行回调
-      Tools.callMap[callKey](jsonString)
-    } else {
+    if (jsonString.code) {
       if (jsonString.success && jsonString.code == 0) {
         // 执行回调
         Tools.callMap[callKey](jsonString)
@@ -71,12 +76,13 @@ let Tools = {
         // 错误提示
         Toast(jsonString.msg)
       }
+    } else {
+      Tools.callMap[callKey](jsonString)
     }
   },
   // 全局变量
   globalParams: function (key, val) {
-
-    if (val == undefined) {
+    if (val === undefined) {
       return Tools.global[key]
     }
     Tools.global[key] = val
