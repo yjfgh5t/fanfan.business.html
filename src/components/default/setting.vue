@@ -1,13 +1,13 @@
 <template>
   <div class="body">
     <mt-header slot="left" title="设置"></mt-header>
-
-    <br />
-    <mt-cell title="打印设置"  is-link :to="{ path: '/printSetting' }">
-      <i slot="icon" class="icon iconfont icon-print" />
-    </mt-cell>
-
-    <br />
+    <div class="div-user">
+      <img :src="userInfo.icon" class="img-user" />
+      <div class="p-user">
+        <p v-text="userInfo.mobile"></p>
+        <p v-text="userInfo.username"></p>
+      </div>
+    </div>
     <mt-cell title="商品设置" is-link :to="{ path: '/commoditySetting'}" >
       <i slot="icon" class="icon iconfont icon-commodity" />
     </mt-cell>
@@ -18,33 +18,89 @@
     </mt-cell>
 
     <br />
+    <mt-cell title="打印设置"  is-link :to="{ path: '/printSetting' }">
+      <i slot="icon" class="icon iconfont icon-print" />
+    </mt-cell>
+
+    <br />
     <mt-cell title="客桌设置" is-link :to="{ path: '/deskSetting'}">
       <i slot="icon" class="icon iconfont icon-commodity-type" />
     </mt-cell>
 
+    <div class="login-out">
+      <mt-button size="large" style="height: 1.8rem;line-height: 1.8rem;font-size: 0.8rem;" type="danger" v-on:click="loginOut">退 出</mt-button>
+    </div>
   </div>
 </template>
 
 <script>
 import Tools from '../../commons/tools/index'
 import { Toast } from 'mint-ui'
+import userIcon from  '../../assets/imgs/icon_user.png'
 export default {
   data () {
     return {
-      hello: '检查蓝牙1',
-      close: '关闭蓝牙',
-      blueTooths:[]
+      userInfo: {}
     }
   },
   methods: {
-    checkBlueTooth: function () {
-
-    },
-    closeBlueTooth: function () {
-      Tools.blueTooth(false, function (res) {
-        Toast("蓝牙关闭")
+    // 退出登录
+    loginOut: function () {
+      let _this = this
+      Tools.getKeyVal(Tools.globalKey.userInfo, function (userInfo) {
+        // 删除用户信息
+        Tools.setKeyVal(Tools.globalKey.userInfo, '', function () {
+          // 退出登录
+          Tools.loginOut(userInfo.userId, function () {
+            _this.$router.push({name: 'login'})
+          })
+        })
       })
     }
+  },
+  activated () {
+    let _this = this
+    Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
+      _this.userInfo = {
+        username: data.username,
+        mobile: data.mobile,
+        icon: (data.picPath === '' || data.picPath === undefined) ? userIcon : data.picPath
+      }
+    })
   }
 }
 </script>
+<style lang="css" scoped="scoped">
+  .login-out{
+    width: 90%;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 3rem;
+  }
+  .div-user{
+    background-color: #26a2ff;
+    padding: 0 0.5rem 0.5rem 1rem;
+    overflow: hidden;
+  }
+  .img-user{
+    border-radius: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+    float: left;
+  }
+  .p-user{
+    float:left;
+    height: 3rem;
+    padding: 0.6rem 0rem 0rem 0.6rem;
+    color: white;
+  }
+  .p-user p{
+    display: block;
+    line-height: 1.0rem;
+  }
+
+  .mint-cell-title .icon{
+    position: relative;
+    top: 0.1rem;
+  }
+</style>

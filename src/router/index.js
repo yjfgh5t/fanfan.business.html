@@ -20,6 +20,7 @@ export default new Router({
       meta: {
         keepAlive: true
       }
+
     },
     {
       path: '/printSetting',

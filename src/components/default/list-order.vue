@@ -8,8 +8,8 @@
             <label style="float: right;" v-text="item.stateText">订单已支付</label>
           </div>
           <div class="item-body">
-            <div class="body-commodity-size"><label v-text="item.commoditySize+'件商品'"></label> <label style="float: right">展开</label> </div>
-            <div class="body-commodity">
+            <div class="body-commodity-size"><label v-text="item.commoditySize+'件商品'"></label> <label style="float: right" v-text="item.open?'关闭':'展开'"></label> </div>
+            <div class="body-commodity" v-show="item.open">
               <div class="commodity" v-for="commodity in item.details">
                 <label class="name" v-text="commodity.outTitle"></label> <label class="size" v-text="'x '+commodity.outSize"></label> <label class="price" v-text="commodity.outPrice"></label>
               </div>
@@ -51,15 +51,12 @@ export default {
       orderArray: [],
       bodyHeight: window.document.body.clientHeight - this.height,
       // 加载状态 0:加载更多  1:加载中  2: 为没有更多
-      loadState: 0,
+      loadState: 1,
       minLoadId: -1,
       maxLoadId: -1
     }
   },
   methods: {
-    itemClick: function (containerId) {
-      this.active = containerId
-    },
     loadTop: function () {
       let _this = this
       // 加载数据 向上拉取数据
@@ -153,14 +150,16 @@ export default {
         orderDeskNum: item.orderDeskNum,
         details: details,
         commoditySize: 0 || item.commoditySize,
-        orderDateNum: item.orderDateNum
+        orderDateNum: item.orderDateNum,
+        open: false
       }
     }
   },
   props: {
     'height': {default: 0},
     'queryDate': {default: moment().format("YYYY-MM-DD")},
-    'lastId': {default: 0}
+    'lastId': {default: 0},
+    'refsh': {}
   },
   watch: {
     queryDate (val, oldVal) {

@@ -1,7 +1,7 @@
 <template>
   <div class="body">
     <mt-header title="新订单"></mt-header>
-    <order-list height="89"></order-list>
+    <order-list height="89" ref="order"></order-list>
   </div>
 </template>
 
@@ -46,6 +46,13 @@ export default {
     if (this.msgArray.length == 0) {
       this.refreshMsg()
     }
+  },
+  activated () {
+    // 刷新订单
+    if (this.$route.query.refreshOrder) {
+      this.$refs.order.loadTop()
+    }
+    Tools.global.newOrder = this
   }
 }
 </script>

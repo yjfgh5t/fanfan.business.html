@@ -28,9 +28,8 @@
       <i slot="icon" class="icon iconfont icon-print" />
     </mt-cell>
     </div>
-
     <div>
-    <mt-cell title="外卖管家打印机" is-link>
+    <mt-cell :to="{path:'/',query: {active: 'container-msg', refreshOrder:true }}"  title="外卖管家打印机" is-link>
       <i slot="icon" class="icon iconfont icon-order" />
     </mt-cell>
     </div>
@@ -61,18 +60,18 @@ export default {
       // 开始搜索
       Tools.blueTooth(true, function (res) {
         if (res.data.event) {
-          _this.isSearch = (res.data.event === "start");
+          _this.isSearch = (res.data.event === 'start')
         } else {
-          let blueToothModel = {address: res.data.address, name: (res.data.name ? res.data.name: "未知设备")}
+          let blueToothModel = {address: res.data.address, name: (res.data.name ? res.data.name : '未知设备')}
           _this.blueTooths.push(blueToothModel)
-          _this.redioOptions.push({label: blueToothModel.name + "[" +blueToothModel.address+"]", value: _this.blueTooths.length-1 })
+          _this.redioOptions.push({ label: blueToothModel.name + '[' + blueToothModel.address + ']', value: _this.blueTooths.length - 1 })
         }
       })
     },
     // 添加蓝牙
     addBlueTooth: function () {
-      if (this.redioVal==null) {
-        return Toast("请选择蓝牙打印机")
+      if (this.redioVal === null) {
+        return Toast('请选择蓝牙打印机')
       }
       let blueToothModel = this.blueTooths[this.redioVal]
     },

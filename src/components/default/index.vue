@@ -38,7 +38,6 @@
 <script>
 import Tools from '../../commons/tools/index'
 import { Toast, Loadmore } from 'mint-ui'
-//import '../../assets/font/iconfont.css'
 import NewOrder from '@/components/default/new-order'
 import SearchOrder from '@/components/default/search-order'
 import Setting from '@/components/default/setting'
@@ -52,9 +51,7 @@ export default {
   },
   data () {
     return {
-      active: 'container-msg',
-      // 消息列表
-      msgArray: [{orderNum: '001'}, {orderNum: '002'}, {orderNum: '003'}]
+      active: 'container-msg'
     }
   },
   methods: {
@@ -62,10 +59,9 @@ export default {
       this.active = containerId
     }
   },
-  created () {
-
-    if (this.msgArray.length== 0) {
-      this.refreshMsg()
+  activated () {
+    if (this.$route.query.active) {
+      this.active = this.$route.query.active
     }
   }
 }

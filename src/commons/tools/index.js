@@ -16,16 +16,16 @@ let Tools = {
     Indicator.open({spinnerType: 'double-bounce'})
     // 构建参数
     let paramsMap = {}
-    if (method == "json") {
-      paramsMap["content-type"] = "json"
-      paramsMap["content"] = JSON.stringify(params)
+    if (method === 'json') {
+      paramsMap['content-type'] = 'json'
+      paramsMap['content'] = JSON.stringify(params)
     } else {
       paramsMap = params === null ? {} : params
     }
     // 回调放入临时callMap
     let callKey = Tools.getCallBackKey(callback)
     // 调用后台方法
-    if (method == "get") {
+    if (method === 'get') {
       Tools.app.ajaxGet(url, JSON.stringify(paramsMap), callKey)
     } else {
       Tools.app.ajaxPost(url, JSON.stringify(paramsMap), callKey)
@@ -42,6 +42,10 @@ let Tools = {
   },
   // 绑定用户至信鸽推送
   bindUser: function (userId, callback) {
+    Tools.app.bindUser(userId, Tools.getCallBackKey(callback))
+  },
+  // 退出登录
+  loginOut: function (userId, callback) {
     Tools.app.bindUser(userId, Tools.getCallBackKey(callback))
   },
   // 蓝牙操作
@@ -61,14 +65,18 @@ let Tools = {
   },
   // App回调
   callback: function (jsonString, callKey) {
-    if (callKey === "loading") {
+    if (callKey === 'loading') {
       // 加载条
       Indicator.open({spinnerType: 'double-bounce'})
       return
     }
+    if (callKey === 'xg_msg') {
+      Option.msgOption(jsonString)
+      return
+    }
     // 关闭加载条
     Indicator.close()
-    if (jsonString.code) {
+    if (jsonString.code !== undefined) {
       if (jsonString.success && jsonString.code == 0) {
         // 执行回调
         Tools.callMap[callKey](jsonString)
@@ -79,13 +87,25 @@ let Tools = {
     } else {
       Tools.callMap[callKey](jsonString)
     }
-  },
-  // 全局变量
-  globalParams: function (key, val) {
-    if (val === undefined) {
-      return Tools.global[key]
+  }
+}
+
+let Option = {
+  // 消息处理
+  msgOption: function (msgType) {
+    if (window.vueApp.$route.path === '/') {
+      // 临时解决方法 后期改进
+      Tools.global.newOrder.$refs.order.loadTop()
+      return
     }
-    Tools.global[key] = val
+    switch (msgType) {
+      // 展示
+      case 'show': window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}}); break
+      // 点击
+      case 'click': window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}}); break
+      // 消息
+      case 'msg': window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}}); break
+    }
   }
 }
 

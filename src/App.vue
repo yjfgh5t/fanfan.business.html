@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <keep-alive>
-      <router-view v-if="$route.meta.keepAlive"></router-view>
+      <router-view v-if="$route.meta.keepAlive" ref="dom"></router-view>
     </keep-alive>
-    <router-view v-if="!$route.meta.keepAlive"></router-view>
+    <router-view v-if="!$route.meta.keepAlive"  ref="dom"></router-view>
   </div>
 </template>
 
@@ -23,7 +23,7 @@ export default {
   created () {
     let _this = this
     Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
-      if (data == "") {
+      if (data === '') {
         _this.$router.push({name: 'login'})
       } else {
         // 绑定信鸽推送

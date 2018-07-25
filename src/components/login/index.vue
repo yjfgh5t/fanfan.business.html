@@ -22,7 +22,7 @@ export default {
     return {
       backImg: backImg,
       logo: logo,
-      model: { mobile: '', pwd: '' }
+      model: { mobile: '19946213531', pwd: '123456' }
     }
   },
   methods: {
@@ -43,18 +43,18 @@ export default {
 
       // 执行登陆
       Tools.ajax(Tools.method.post, 'user/customer/login', {mobile: _this.model.mobile, userPwd: _this.model.pwd}, function (res) {
-        if (res.code === 0 && res.data !== undefined) {
+        if (res.code === 0 && res.data !== '') {
           let userInfo = {
             userId: res.data.userId,
-            userName: res.data.userId,
+            username: res.data.username,
             mobile: res.data.mobile,
             picPath: res.data.picPath
           }
           // 保存至本地
           Tools.setKeyVal(Tools.globalKey.userInfo, JSON.stringify(userInfo), function (success) {
-            Tools.globalParams(Tools.globalKey.userInfo, userInfo)
             // 绑定用户至信鸽推送
-            Tools.bindUser(Tools.globalKey.userInfo.userId, function (bandState) {
+            Tools.bindUser(userInfo.userId, function (bandState) {
+              Toast(bandState)
               // 跳转
               _this.$router.push({name: 'default'})
             })
