@@ -10,10 +10,10 @@
 
     <!-- tab -->
     <mt-navbar v-model="orderState" style="top:40px;z-index: 1">
-      <mt-tab-item id="1">全部</mt-tab-item>
-      <mt-tab-item id="2">进行中</mt-tab-item>
-      <mt-tab-item id="3">已完成</mt-tab-item>
-      <mt-tab-item id="4">已取消</mt-tab-item>
+      <mt-tab-item id="0">全部</mt-tab-item>
+      <mt-tab-item id="1" >进行中</mt-tab-item>
+      <mt-tab-item id="2">已完成</mt-tab-item>
+      <mt-tab-item id="3">已取消</mt-tab-item>
     </mt-navbar>
 
     <!-- 日期控件-->
@@ -28,7 +28,7 @@
     </mt-datetime-picker>
     <div style="clear: both;"></div>
     <!-- 订单列表-->
-    <order-list height="136" :queryDate="dateVal | moment('YYYY-MM-DD')" style="z-index: 0"></order-list>
+    <order-list height="136" :queryDate="dateVal | moment('YYYY-MM-DD')" :orderState="orderState" style="z-index: 0"></order-list>
   </div>
 </template>
 
@@ -42,9 +42,9 @@ export default {
   },
   data () {
     return {
-      defDateVal: moment().format("YYYY-MM-DD"),
-      dateVal: moment().format("YYYY-MM-DD"),
-      orderState: '1'
+      defDateVal: moment().format('YYYY-MM-DD'),
+      dateVal: moment().format('YYYY-MM-DD'),
+      orderState: '0'
     }
   },
   methods: {
@@ -53,6 +53,9 @@ export default {
     },
     choicePicker: function (val) {
       this.dateVal = val
+    },
+    choiceState: function (state) {
+      this.orderState = state
     }
   }
 }

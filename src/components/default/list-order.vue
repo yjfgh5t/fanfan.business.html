@@ -5,24 +5,24 @@
         <li v-for="item in orderArray" class="li-item">
           <div class="item-title" style="color: #aaa;">
             <label> 编号：<label class="item-no" v-text="item.orderDateNum">003</label></label>
-            <label style="float: right;" v-text="item.stateText">订单已支付</label>
+            <label style="float: right;color:orangered;" v-text="item.stateText">订单已支付</label>
           </div>
           <div class="item-body">
-            <div class="body-commodity-size"><label v-text="item.commoditySize+'件商品'"></label> <label style="float: right" v-text="item.open?'关闭':'展开'"></label> </div>
+            <div class="body-commodity-size"><label v-text="item.commoditySize+'件商品'"></label> <label style="float: right" v-on:click="item.open=(!item.open)" v-text="item.open?'收起':'展开'"></label> </div>
             <div class="body-commodity" v-show="item.open">
               <div class="commodity" v-for="commodity in item.details">
-                <label class="name" v-text="commodity.outTitle"></label> <label class="size" v-text="'x '+commodity.outSize"></label> <label class="price" v-text="commodity.outPrice"></label>
+                <label class="name" v-text="commodity.outTitle"></label> <label class="size" v-text="'x '+commodity.outSize"></label> <label class="price" v-text="'￥'+commodity.outPrice"></label>
               </div>
             </div>
           </div>
           <div class="item-foot">
             <div class="foot-price">
-              <label class="foot-line"><label class="lab-title">订单总额：</label>{{item.orderPay}}</label>
+              <label class="foot-line"><label class="lab-title">订单总额：</label>{{'￥'+item.orderPay}}</label>
               <label class="foot-line"><label class="lab-title">桌号：</label>{{item.orderDeskNum}}</label>
             </div>
             <div class="foot-option">
-              <mt-button size="small" type="danger">取消订单</mt-button>
-              <mt-button size="small" type="primary">打印</mt-button>
+              <mt-button size="small" type="danger" v-on:click="moreOption.actionsVisible=true;moreOption.item=item;" style="background-color: #1afa29;">更多</mt-button>
+              <mt-button size="small" type="primary">打 印</mt-button>
             </div>
           </div>
         </li>
@@ -36,12 +36,14 @@
       </ul>
       <div class="div-empty"></div>
     </mt-loadmore>
+    <!-- 更多操作 -->
+    <mt-actionsheet :actions="moreOption.actions" v-model="moreOption.actionsVisible"></mt-actionsheet>
   </div>
 </template>
 
 <script>
 import Tools from '../../commons/tools/index'
-import { Toast, Loadmore } from 'mint-ui'
+import { Toast, Loadmore, MessageBox } from 'mint-ui'
 import moment from 'moment'
 export default {
   name: 'new-order',
@@ -53,7 +55,12 @@ export default {
       // 加载状态 0:加载更多  1:加载中  2: 为没有更多
       loadState: 1,
       minLoadId: -1,
-      maxLoadId: -1
+      maxLoadId: -1,
+      moreOption: {
+        actions: [{name: '退回订单', method: this.backOrder}],
+        actionsVisible: false,
+        item: null
+      }
     }
   },
   methods: {
@@ -82,6 +89,7 @@ export default {
         _this.loadState = 3
       }
     },
+    // 加载数据
     loadItems: function (option, callback) {
       let _this = this
       // 清空订单列表
@@ -94,7 +102,7 @@ export default {
       }
 
       // 拉取订单列表
-      Tools.ajax('post', 'order/query/' + _this.queryDate, {lastId: option.lastId, isMax: option.isMax}, (res) => {
+      Tools.ajax('post', 'order/query/' + _this.queryDate, {lastId: option.lastId, isMax: option.isMax, orderState: _this.orderState}, (res) => {
         if (callback) {
           callback(res.data)
         }
@@ -153,16 +161,32 @@ export default {
         orderDateNum: item.orderDateNum,
         open: false
       }
+    },
+    // 退回订单
+    backOrder: function () {
+      let _this = this
+      MessageBox.prompt(null, '订单退回', {inputPlaceholder: '您点的商品已下架'}).then(({ value, action }) => {
+        Toast((value === null ? ('您点的商品已下架' + _this.moreOption.item.orderNum) : value))
+      })
     }
   },
   props: {
     'height': {default: 0},
-    'queryDate': {default: moment().format("YYYY-MM-DD")},
-    'lastId': {default: 0},
-    'refsh': {}
+    'queryDate': {default: moment().format('YYYY-MM-DD')},
+    // 订单状态 0:全部 1:进行中 2:已完成 3:已退回
+    'orderState': { default: 0 },
+    'lastId': {default: 0}
   },
   watch: {
     queryDate (val, oldVal) {
+      if (val !== oldVal) {
+        // 向下拉取数据
+        this.minLoadId = -1
+        this.maxLoadId = -1
+        this.loadItems({isMax: false, clear: true, lastId: this.minLoadId})
+      }
+    },
+    orderState (val, oldVal) {
       if (val !== oldVal) {
         // 向下拉取数据
         this.minLoadId = -1
