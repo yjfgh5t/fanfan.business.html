@@ -53,9 +53,6 @@ export default {
     },
     choicePicker: function (val) {
       this.dateVal = val
-    },
-    choiceState: function (state) {
-      this.orderState = state
     }
   }
 }

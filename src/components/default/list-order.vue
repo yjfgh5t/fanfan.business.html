@@ -8,8 +8,9 @@
             <label style="float: right;color:orangered;" v-text="item.stateText">订单已支付</label>
           </div>
           <div class="item-body">
-            <div class="body-commodity-size"><label v-text="item.commoditySize+'件商品'"></label> <label style="float: right" v-on:click="item.open=(!item.open)" v-text="item.open?'收起':'展开'"></label> </div>
-            <div class="body-commodity" v-show="item.open">
+            <div class="body-commodity-size"><label>桌号：<label v-text="item.orderDeskNum"></label></label></div>
+            <div class="body-commodity-size"><label>订单号：<label v-text="item.orderNum"></label></label></div>
+            <div class="body-commodity">
               <div class="commodity" v-for="commodity in item.details">
                 <label class="name" v-text="commodity.outTitle"></label> <label class="size" v-text="'x '+commodity.outSize"></label> <label class="price" v-text="'￥'+commodity.outPrice"></label>
               </div>
@@ -17,8 +18,8 @@
           </div>
           <div class="item-foot">
             <div class="foot-price">
-              <label class="foot-line"><label class="lab-title">订单总额：</label>{{'￥'+item.orderPay}}</label>
-              <label class="foot-line"><label class="lab-title">桌号：</label>{{item.orderDeskNum}}</label>
+              <label class="foot-line">订单总额：<label class="lab-price" v-text="'￥'+item.orderPay"></label></label>
+              <label class="foot-line">时间：<label v-text="item.orderTime"></label></label>
             </div>
             <div class="foot-option">
               <mt-button size="small" type="danger" v-on:click="moreOption.actionsVisible=true;moreOption.item=item;" style="background-color: #1afa29;">更多</mt-button>
@@ -57,7 +58,7 @@ export default {
       minLoadId: -1,
       maxLoadId: -1,
       moreOption: {
-        actions: [{name: '退回订单', method: this.backOrder}],
+        actions: [{name: '退单', method: this.backOrder}, {name: '结单', method: this.completedOrder}],
         actionsVisible: false,
         item: null
       }
@@ -100,7 +101,6 @@ export default {
       if (option.lastId === undefined) {
         option.lastId = -1
       }
-
       // 拉取订单列表
       Tools.ajax('post', 'order/query/' + _this.queryDate, {lastId: option.lastId, isMax: option.isMax, orderState: _this.orderState}, (res) => {
         if (callback) {
@@ -150,6 +150,7 @@ export default {
       return {
         id: item.id,
         orderNum: item.orderNum,
+        state: item.state,
         stateText: item.orderStateText,
         orderPay: item.orderPay,
         orderTime: item.orderTime,
@@ -165,8 +166,36 @@ export default {
     // 退回订单
     backOrder: function () {
       let _this = this
-      MessageBox.prompt(null, '订单退回', {inputPlaceholder: '您点的商品已下架'}).then(({ value, action }) => {
-        Toast((value === null ? ('您点的商品已下架' + _this.moreOption.item.orderNum) : value))
+      let model = _this.moreOption.item
+      MessageBox.confirm('确定退回订单并退款吗？', '操作提示').then(() => {
+        Tools.ajax('post', 'order/state/' + model.id, {state: 'business-cancel'}, function (res) {
+          if (res.code === 0) {
+            Toast('退单成功')
+            model.stateText = res.data.orderStateText
+            _this.updateLocalItemState(_this, model)
+          }
+        })
+      })
+    },
+    // 交易完成
+    completedOrder: function () {
+      let _this = this
+      let model = _this.moreOption.item
+      Tools.ajax('post', 'order/state/' + model.id, {state: 'order-completed'}, function (res) {
+        if (res.code === 0) {
+          Toast('结单成功')
+          model.stateText = res.data.orderStateText
+          _this.updateLocalItemState(_this, model)
+        }
+      })
+    },
+    // 更新订单状态
+    updateLocalItemState: function (_this, model) {
+      _this.orderArray.forEach((item, i) => {
+        if (item.id === model.id) {
+          _this.orderArray[i] = model
+          return false
+        }
       })
     }
   },
@@ -261,7 +290,7 @@ export default {
     overflow: hidden;
   }
   .item-body .commodity{
-    line-height: 1.6rem;
+    line-height: 1.4rem;
     width: 100%;
   }
   .commodity .name, .commodity .size, .commodity .price{
@@ -293,11 +322,13 @@ export default {
 
   .foot-line{
     display: block;
+    line-height: 1.2rem;
   }
-  .foot-line .lab-title{
-    width:4.8rem;
-    line-height: 1.4rem;
+  .foot-line lable{
     display: inline-block;
+  }
+  .foot-line .lab-price{
+    color:orangered;
   }
 
   .div-empty{
