@@ -56,6 +56,10 @@ let Tools = {
   choiceImg: function (type, callback) {
     Tools.app.choiceImg(type, Tools.getCallBackKey(callback))
   },
+  // 退出系统
+  exitApp: function () {
+    Tools.app.exitApp()
+  },
   // 获取回调方法key
   getCallBackKey: function (callback) {
     // 回调放入临时callMap
@@ -70,8 +74,9 @@ let Tools = {
       Indicator.open({spinnerType: 'double-bounce'})
       return
     }
-    if (callKey === 'xg_msg') {
-      Option.msgOption(jsonString)
+    if (callKey.indexOf('notify_msg.') === 0) {
+      // 将notify_msg.option替换成option
+      Option.msgOption(callKey.replace('notify_msg.', ''), jsonString)
       return
     }
     // 关闭加载条
@@ -92,20 +97,52 @@ let Tools = {
 
 let Option = {
   // 消息处理
-  msgOption: function (msgType) {
-    if (window.vueApp.$route.path === '/') {
-      // 临时解决方法 后期改进
-      Tools.global.newOrder.$refs.order.loadTop()
-      return
-    }
+  msgOption: function (msgType, data) {
+    Toast(msgType)
     switch (msgType) {
       // 展示
-      case 'show': window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}}); break
+      case 'xg-show': Option.reloadMsg(); break
       // 点击
-      case 'click': window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}}); break
+      case 'xg-click': window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}}); break
       // 消息
-      case 'msg': window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}}); break
+      case 'xg-msg': window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}}); break
+      // 点击通知
+      case 'notify-click': Option.reloadMsg(); break
+      // 回退点击
+      case 'back-key': Option.backKey(); break
+      // 打印
+      case 'print': Option.print(data); break
     }
+  },
+  // 刷新消息
+  reloadMsg: function () {
+    let isMsgView = window.vueApp.$route.path === '/'
+    if (isMsgView) {
+      Tools.global.newOrder.$refs.order.loadTop()
+    } else {
+      window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}})
+    }
+  },
+  backCount: 0,
+  // 回退
+  backKey: function () {
+    if (window.vueApp.$route.path === '/') {
+      if (Option.backCount > 0) {
+        Tools.exitApp()
+        return
+      }
+      Toast('再按一次退出')
+      Option.backCount++
+      // 两秒后重置
+      window.setTimeout(function () {
+        Option.backCount = 0
+      }, 2000)
+    } else {
+      window.vueApp.$router.back(-1)
+    }
+  },
+  print: function (data) {
+    Toast(data)
   }
 }
 

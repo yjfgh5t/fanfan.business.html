@@ -14,7 +14,6 @@
       <ul class="ul-type">
         <li v-for="items in commodityTypes"  v-bind:class="{active: items.id==activeTypeId}" v-on:click="commodityTypeClick(items.id)" v-text=" items.name "></li>
       </ul>
-
       <!--商品栏 -->
       <div class="div-commonditys">
         <div v-for="items in commoditiesTypeFilter(commodities,activeTypeId)" class="div-item">
@@ -63,27 +62,31 @@ export default {
     },
     // 下架
     pullOffShelves: function (items) {
-      Tools.ajax("post", "commodity/pullOffShelves/" + items.id, {pullOffShelves: !items.isPullOff}, function (res) {
+      Tools.ajax('post', 'commodity/pullOffShelves/' + items.id, {pullOffShelves: !items.isPullOff}, function (res) {
         if (res.code === 0) {
           items.isPullOff = !items.isPullOff
         }
       })
     },
-    loadItems : function () {
-      let _this =  this;
+    loadItems: function () {
+      let _this = this
       // 加载商品分类
-      Tools.ajax("get", "commodityCategory/", null, function (res) {
+      Tools.ajax('get', 'commodityCategory/', null, function (res) {
         if (res.code === 0 && res.data.length > 0) {
           let _commodityTypeData = []
           res.data.forEach((item) => {
             _commodityTypeData.push({name: item.name, id: item.id})
           })
           _this.commodityTypes = _commodityTypeData
+          // 默认第一个
+          if (_this.commodityTypes.length > 0) {
+            _this.activeTypeId = _this.commodityTypes[0].id
+          }
         }
       })
 
       // 加载商品
-      Tools.ajax("get", "commodity/", null, function (res) {
+      Tools.ajax('get', 'commodity/', null, function (res) {
         if (res.code === 0 && res.data.length > 0) {
           let _commodityData = []
           res.data.forEach((item) => {

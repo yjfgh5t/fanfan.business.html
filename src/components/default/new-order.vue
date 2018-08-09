@@ -18,12 +18,6 @@ export default {
     return {}
   },
   methods: {
-    loadTop: function () {
-      let _this = this
-      setTimeout(function () {
-        _this.$refs.loadmore.onTopLoaded()
-      }, 2000)
-    }
   },
   created () {
   },
