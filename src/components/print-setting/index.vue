@@ -10,7 +10,7 @@
     <div class="shard" v-if="showBlueTooths"></div>
     <div class="temp-bluetooth"  v-if="showBlueTooths">
       <header class="mint-header" style="height: 10%"><h1 class="mint-header-title">
-        {{ isSearch ? '正在搜索蓝牙':'蓝牙列表'}}
+        {{ titleText }}
         <mt-spinner style="display:inline-block;" v-if="isSearch" type="triple-bounce" color="#ffffff"></mt-spinner></h1></header>
       <mt-radio
         align="right"
@@ -25,6 +25,7 @@
 
     <div v-on:click="searchBlueTooth">
     <mt-cell title="添加蓝牙打印机" is-link >
+      <span style="color: green">{{connectBlue.name}}</span>
       <i slot="icon" class="icon iconfont icon-print" />
     </mt-cell>
     </div>
@@ -47,7 +48,10 @@ export default {
       redioOptions: [],
       redioVal: null,
       isSearch: true,
-      showBlueTooths: false
+      titleText: '蓝牙列表',
+      showBlueTooths: false,
+      // 链接的蓝牙
+      connectBlue: {name: '', address: ''}
     }
   },
   methods: {
@@ -56,24 +60,52 @@ export default {
       let _this = this
       // 显示蓝牙列表
       _this.showBlueTooths = true
-
+      _this.setBluthState(1)
       // 开始搜索
       Tools.blueTooth(true, function (res) {
-        if (res.data.event) {
-          _this.isSearch = (res.data.event === 'start')
-        } else {
-          let blueToothModel = {address: res.data.address, name: (res.data.name ? res.data.name : '未知设备')}
+        if (res.data.event === 'stop') {
+          _this.setBluthState(0)
+        }
+        // 搜索到数据
+        if (res.data.event === 'device') {
+          let blueToothModel = {
+            address: res.data.model.address,
+            name: (res.data.model.name === null ? '未知设备' : res.data.model.name),
+            index: res.data.model.index
+          }
           _this.blueTooths.push(blueToothModel)
-          _this.redioOptions.push({ label: blueToothModel.name + '[' + blueToothModel.address + ']', value: _this.blueTooths.length - 1 })
+          _this.redioOptions.push({index: blueToothModel.index, address: blueToothModel.address, name: blueToothModel.name, label: blueToothModel.name + '[' + blueToothModel.address + ']', value: _this.blueTooths.length - 1 })
         }
       })
     },
     // 添加蓝牙
     addBlueTooth: function () {
-      if (this.redioVal === null) {
+      let _this = this
+      if (_this.redioVal === null) {
         return Toast('请选择蓝牙打印机')
       }
-      let blueToothModel = this.blueTooths[this.redioVal]
+      _this.setBluthState(2)
+      Tools.blueConnect(_this.redioVal.index, function (res) {
+        let state = res.data.event
+        switch (state) {
+          // 链接中
+          case 'connecting': break
+          // 链接成功
+          case 'connected':
+            _this.showBlueTooths = false
+            Toast('蓝牙链接成功')
+            let spData = _this.redioVal.name + ';' + _this.redioVal.address
+            Tools.setKeyVal(Tools.globalKey.blueToothConnect, spData, function () {
+              _this.initBlueTooth()
+            })
+            break
+          // 设备断开链接
+          case 'disConnected': _this.setBluthState(3); break
+          // 链接失败
+          case 'disConnecting': _this.setBluthState(3); break
+          default :
+        }
+      })
     },
     // 取消
     cancelBlueToth: function () {
@@ -86,7 +118,45 @@ export default {
       // 清空搜索的值
       this.blueTooths = []
       this.redioOptions = []
+    },
+    // 设置蓝牙状态
+    setBluthState (state) {
+      switch (state) {
+        case 0:
+          this.titleText = '蓝牙列表'
+          this.isSearch = false
+          break
+        // 搜索蓝牙
+        case 1:
+          this.isSearch = true
+          this.titleText = '正在搜索蓝牙'
+          break
+        // 链接蓝牙中
+        case 2:
+          this.titleText = '正在连接蓝牙'
+          this.isSearch = true
+          break
+        // 蓝牙链接失败
+        case 3:
+          this.titleText = '蓝牙连接失败'
+          this.isSearch = false
+          break
+      }
+    },
+    // 设置链接的蓝牙
+    initBlueTooth () {
+      let _this = this
+      // 获取已经链接的蓝牙
+      Tools.getKeyVal(Tools.globalKey.blueToothConnect, function (data) {
+        if (data.indexOf(';') > 0) {
+          let blueStr = data.split(';')
+          _this.connectBlue = { name: blueStr[0], address: blueStr[1] }
+        }
+      })
     }
+  },
+  mounted () {
+    this.initBlueTooth()
   }
 }
 </script>

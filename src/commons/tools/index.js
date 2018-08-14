@@ -9,7 +9,7 @@ let Tools = {
   global: {},
   callKeyIndex: 1,
   method: {post: 'post', get: 'get'},
-  globalKey: {userInfo: 'userInfo'},
+  globalKey: {userInfo: 'userInfo', blueToothConnect: 'sp_blue_tooth_connect'},
   // 调用Ajax
   ajax: function (method, url, params, callback) {
     // 加载条
@@ -52,6 +52,10 @@ let Tools = {
   blueTooth: function (start, callback) {
     Tools.app.blueTooth(start, Tools.getCallBackKey(callback))
   },
+  // 链接蓝牙
+  blueConnect: function (index, callback) {
+    Tools.app.blueToothConnect(index, Tools.getCallBackKey(callback))
+  },
   // 选择图片
   choiceImg: function (type, callback) {
     Tools.app.choiceImg(type, Tools.getCallBackKey(callback))
@@ -63,7 +67,7 @@ let Tools = {
   // 获取回调方法key
   getCallBackKey: function (callback) {
     // 回调放入临时callMap
-    let callKey = "call_back_" + (Tools.callKeyIndex++)
+    let callKey = 'call_back_' + (Tools.callKeyIndex++)
     Tools.callMap[callKey] = callback
     return callKey
   },
@@ -82,7 +86,7 @@ let Tools = {
     // 关闭加载条
     Indicator.close()
     if (jsonString.code !== undefined) {
-      if (jsonString.success && jsonString.code == 0) {
+      if (jsonString.success && jsonString.code === 0) {
         // 执行回调
         Tools.callMap[callKey](jsonString)
       } else {
