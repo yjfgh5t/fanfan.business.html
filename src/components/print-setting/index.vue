@@ -85,7 +85,7 @@ export default {
         return Toast('请选择蓝牙打印机')
       }
       _this.setBluthState(2)
-      Tools.blueConnect(_this.redioVal.index, function (res) {
+      Tools.blueConnect(_this.redioVal.address, function (res) {
         let state = res.data.event
         switch (state) {
           // 链接中
