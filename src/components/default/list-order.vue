@@ -23,7 +23,7 @@
             </div>
             <div class="foot-option">
               <mt-button size="small" type="danger" v-on:click="moreOption.actionsVisible=true;moreOption.item=item;" style="background-color: #1afa29;">更多</mt-button>
-              <mt-button size="small" type="primary">打 印</mt-button>
+              <mt-button size="small" type="primary" v-on:click="print(item)" >打 印</mt-button>
             </div>
           </div>
         </li>
@@ -196,6 +196,12 @@ export default {
           _this.orderArray[i] = model
           return false
         }
+      })
+    },
+    // 打印
+    print: function (model) {
+      Tools.print(JSON.stringify(model), function (res) {
+        Toast('打印成功')
       })
     }
   },

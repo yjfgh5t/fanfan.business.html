@@ -56,6 +56,9 @@ let Tools = {
   blueConnect: function (index, callback) {
     Tools.app.blueToothConnect(index, Tools.getCallBackKey(callback))
   },
+  print: function (orderString, callback) {
+    Tools.app.print(orderString, Tools.getCallBackKey(callback))
+  },
   // 选择图片
   choiceImg: function (type, callback) {
     Tools.app.choiceImg(type, Tools.getCallBackKey(callback))
