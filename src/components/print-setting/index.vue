@@ -11,14 +11,15 @@
     <div class="temp-bluetooth"  v-if="showBlueTooths">
       <header class="mint-header" style="height: 10%"><h1 class="mint-header-title">
         {{ titleText }}
-        <mt-spinner style="display:inline-block;" v-if="isSearch" type="triple-bounce" color="#ffffff"></mt-spinner></h1></header>
+        <mt-spinner style="display:inline-block;" v-if="isSearch" type="triple-bounce" color="#ffffff"></mt-spinner></h1>
+      </header>
       <mt-radio
         align="right"
-        v-model="redioVal"
-        :options="redioOptions">
+        v-model="radioModel"
+        :options="radioOptions">
       </mt-radio>
       <div class="foot-bluetooth">
-          <mt-button size="small" type="danger" v-on:click="cancelBlueToth">取消</mt-button> &nbsp;
+          <mt-button size="small" type="danger" v-on:click="cancelBlueTooth">取消</mt-button> &nbsp;
           <mt-button size="small" type="primary" v-on:click="addBlueTooth">确定</mt-button>
       </div>
     </div>
@@ -44,9 +45,8 @@ import { Toast } from 'mint-ui'
 export default {
   data () {
     return {
-      blueTooths: [],
-      redioOptions: [],
-      redioVal: null,
+      radioOptions: [],
+      radioModel: null,
       isSearch: true,
       titleText: '蓝牙列表',
       showBlueTooths: false,
@@ -71,33 +71,38 @@ export default {
           let blueToothModel = {
             address: res.data.model.address,
             name: (res.data.model.name === null ? '未知设备' : res.data.model.name),
-            index: res.data.model.index
+            label: ''
           }
-          _this.blueTooths.push(blueToothModel)
-          _this.redioOptions.push({index: blueToothModel.index, address: blueToothModel.address, name: blueToothModel.name, label: blueToothModel.name + '[' + blueToothModel.address + ']', value: _this.blueTooths.length - 1 })
+          blueToothModel.label = blueToothModel.name + '[' + blueToothModel.address + ']'
+          _this.radioOptions.push(blueToothModel)
+          // 设置选中的Model
+          if (_this.connectBlue.address !== '' && _this.connectBlue.address === blueToothModel.address) {
+            _this.radioModel = blueToothModel
+          }
         }
       })
     },
     // 添加蓝牙
     addBlueTooth: function () {
       let _this = this
-      if (_this.redioVal === null) {
+      if (_this.radioModel === null) {
         return Toast('请选择蓝牙打印机')
       }
+      Toast(_this.radioModel.address)
       _this.setBluthState(2)
-      Tools.blueConnect(_this.redioVal.address, function (res) {
+      Tools.blueConnect(_this.radioModel.address, function (res) {
         let state = res.data.event
         switch (state) {
           // 链接中
           case 'connecting': break
           // 链接成功
           case 'connected':
-            _this.showBlueTooths = false
             Toast('蓝牙链接成功')
-            let spData = _this.redioVal.name + ';' + _this.redioVal.address
+            let spData = _this.radioModel.name + ';' + _this.radioModel.address
             Tools.setKeyVal(Tools.globalKey.blueToothConnect, spData, function () {
               _this.initBlueTooth()
             })
+            _this.cancelBlueTooth()
             break
           // 设备断开链接
           case 'disConnected': _this.setBluthState(3); break
@@ -108,16 +113,13 @@ export default {
       })
     },
     // 取消
-    cancelBlueToth: function () {
+    cancelBlueTooth: function () {
       this.showBlueTooths = false
       // 停止搜索
-      if (this.isSearch) {
-        // 停止搜索
-        Tools.blueTooth(false, function () {})
-      }
+      Tools.blueTooth(false, function () {})
       // 清空搜索的值
-      this.blueTooths = []
-      this.redioOptions = []
+      this.radioOptions = []
+      this.isSearch = false
     },
     // 设置蓝牙状态
     setBluthState (state) {
@@ -140,6 +142,7 @@ export default {
         case 3:
           this.titleText = '蓝牙连接失败'
           this.isSearch = false
+          Toast('蓝牙链接失败')
           break
       }
     },
