@@ -62,6 +62,7 @@ export default {
   activated () {
     if (this.$route.query.active) {
       this.active = this.$route.query.active
+      this.$route.query.active = undefined
     }
   }
 }

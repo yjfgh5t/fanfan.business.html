@@ -2,7 +2,7 @@
   <div class="body" style="height: 100%;">
     <mt-header title="客桌设置">
       <router-link to="" slot="left">
-        <mt-button icon="back" v-on:click="$router.go(-1)" >返回</mt-button>
+        <mt-button icon="back" v-on:click="$router.back(-1)" >返回</mt-button>
       </router-link>
       <mt-button  slot="right" v-on:click="editItems(-1)">
         <i class="icon iconfont icon-tianjia"></i>
@@ -19,11 +19,12 @@
         <mt-button size="small" type="primary" v-on:click="save()">确定</mt-button>
       </div>
     </div>
-
     <div v-for="(item,index) in deskArray"  class="type-item">
       <mt-cell :title="item.title">
+        <i v-show="item.qrCodeId!=''" slot="icon" class="icon iconfont icon-erweima" />
         <span  style="margin-right:0.4rem;" v-on:click="deleteItems(item.id)" ><mt-badge size="small" type="error"><span class="badge">删除</span></mt-badge></span>
         <span  style="margin-right:0.4rem;" v-on:click="editItems(index)" ><mt-badge size="small"><span class="badge">编辑</span></mt-badge></span>
+        <span  style="margin-right:0.4rem;" v-on:click="qrCodeItems(index)" ><mt-badge size="small"><span class="badge">设置二维码</span></mt-badge></span>
       </mt-cell>
     </div>
 
@@ -53,9 +54,9 @@ export default {
     deleteItems: function (id) {
       let _this = this
       MessageBox.confirm('确认删除该客桌吗?').then(action => {
-        Tools.ajax("post", "desk/delete/"+id, null, function (res) {
-          if(res.code==0){
-            Toast("删除成功！")
+        Tools.ajax('post', 'desk/delete/' + id, null, function (res) {
+          if (res.code === 0) {
+            Toast('删除成功！')
             _this.loadItems()
           }
         })
@@ -71,21 +72,48 @@ export default {
         _this.model =  _this.deskArray[index]
       }
     },
+    // 扫描
+    qrCodeItems: function (index) {
+      let _this = this
+      let model = _this.deskArray[index]
+      Tools.scanQRCode(function (data) {
+        // 验证二维码是否合法
+        if (data === null || data.length === 0 || data.indexOf('qrcode=') === -1) {
+          return Toast('不正确的客桌二维码')
+        }
+        let qrcode = data.split('qrcode=')[1]
+        if (qrcode.length !== 32) {
+          return Toast('不正确的客桌二维码')
+        }
+        let subModel = {id: model.id, qrCodeId: qrcode, title: model.title}
+        if (model.qrCodeId !== '') {
+          MessageBox.confirm('确认替换原有的二维码吗?').then(action => {
+            // 执行保存
+            _this.submit(_this, subModel)
+          })
+        } else {
+          // 执行保存
+          _this.submit(_this, subModel)
+        }
+      })
+    },
     cancel: function () {
       this.isEdit = 0
     },
     save: function () {
-      let _this = this
-
-      if (_this.model.title === '') {
+      if (this.model.title === '') {
         Toast('请输入客桌名称')
         return null
       }
-
-      let subModel = {id: _this.model.id, title: _this.model.title}
+      let subModel = {id: this.model.id, title: this.model.title}
 
       // 执行保存
-      Tools.ajax("json","desk/", subModel, function (res) {
+      this.submit(this, subModel)
+    },
+    // 提交保存
+    submit: function (_this, model) {
+      // 执行保存
+      Tools.ajax('json', 'desk/', model, function (res) {
         // 刷新数据
         if (res.code === 0) {
           _this.cancel()
@@ -96,11 +124,11 @@ export default {
     // 加载列表
     loadItems: function () {
       let _this = this
-      Tools.ajax("get", "desk/", null, function (res) {
+      Tools.ajax('get', 'desk/', null, function (res) {
         if (res.code === 0 && res.data.length > 0) {
           let _deskData = []
           res.data.forEach((item) => {
-            _deskData.push({title: item.title, id: item.id})
+            _deskData.push({title: item.title, id: item.id, qrCodeId: item.qrCodeId})
           })
           _this.deskArray = _deskData
         }
@@ -142,5 +170,12 @@ export default {
   }
   .badge{
     font-size: 0.526rem;
+  }
+  .mint-cell-title .icon{
+    position: relative;
+    top: 0.2rem;
+  }
+  .icon-erweima{
+    color: #26a2ff;
   }
 </style>

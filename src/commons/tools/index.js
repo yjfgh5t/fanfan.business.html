@@ -63,6 +63,10 @@ let Tools = {
   choiceImg: function (type, callback) {
     Tools.app.choiceImg(type, Tools.getCallBackKey(callback))
   },
+  // 扫码
+  scanQRCode: function (callback) {
+    Tools.app.scanQRCode(Tools.getCallBackKey(callback))
+  },
   // 退出系统
   exitApp: function () {
     Tools.app.exitApp()
@@ -105,7 +109,6 @@ let Tools = {
 let Option = {
   // 消息处理
   msgOption: function (msgType, data) {
-    Toast(msgType)
     switch (msgType) {
       // 展示
       case 'xg-show': Option.reloadMsg(); break
