@@ -53,8 +53,8 @@ let Tools = {
     Tools.app.blueTooth(start, Tools.getCallBackKey(callback))
   },
   // 链接蓝牙
-  blueConnect: function (index, callback) {
-    Tools.app.blueToothConnect(index, Tools.getCallBackKey(callback))
+  blueConnect: function (address, callback) {
+    Tools.app.blueToothConnect(address, Tools.getCallBackKey(callback))
   },
   print: function (orderString, callback) {
     Tools.app.print(orderString, Tools.getCallBackKey(callback))

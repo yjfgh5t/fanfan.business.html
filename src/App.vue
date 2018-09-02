@@ -9,6 +9,7 @@
 
 <script>
 import Tools from '@/commons/tools/index'
+import { Toast } from 'mint-ui'
 export default {
   name: 'App',
   mounted () {
@@ -22,6 +23,27 @@ export default {
   },
   created () {
     let _this = this
+    // 链接蓝牙
+    Tools.getKeyVal(Tools.globalKey.blueToothConnect, function (data) {
+      if (data.indexOf(';') > 0) {
+        let blueStr = data.split(';')
+        _this.connectBlue = { name: blueStr[0], address: blueStr[1] }
+        // 执行链接蓝牙
+        Tools.blueConnect(blueStr[1], function (res) {
+          let state = res.data.event
+          switch (state) {
+            // 链接成功
+            case 'connected': Toast('蓝牙链接成功'); break
+            // 设备断开链接
+            case 'disConnected': Toast('蓝牙设备断开链接'); break
+            // 链接失败
+            case 'disConnecting': Toast('蓝牙链接失败'); break
+            default :
+          }
+        })
+      }
+    })
+    // 是否登录窗口
     Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
       if (data === '') {
         _this.$router.push({name: 'login'})
