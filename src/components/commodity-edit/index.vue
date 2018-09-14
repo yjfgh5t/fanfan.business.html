@@ -59,7 +59,7 @@ export default {
       }
       let _this = this
       // 提交
-      Tools.ajax("json", "commodity/", {
+      Tools.ajax('json', 'commodity/', {
         id: _this.itemModel.id,
         icon: _this.itemModel.icon,
         title: _this.itemModel.title,
@@ -75,7 +75,7 @@ export default {
       }, function (res) {
         if (res.code === 0) {
           _this.itemModel.id = res.data
-          Toast("保存成功")
+          Toast('保存成功')
         }
       })
     },
@@ -114,6 +114,7 @@ export default {
       Tools.choiceImg(2, function (res) {
         if (res.code === 0) {
           _this.itemModel.icon = res.data
+          _this.modifyImg(_this)
         }
       })
     },
@@ -123,6 +124,21 @@ export default {
       Tools.choiceImg(1, function (res) {
         if (res.code === 0) {
           _this.itemModel.icon = res.data
+          _this.modifyImg(_this)
+        }
+      })
+    },
+    // 修改图片
+    modifyImg: function (_this) {
+      if (_this.itemModel.id === 0) {
+        return
+      }
+      Tools.ajax('json', 'commodity/', {
+        id: _this.itemModel.id,
+        icon: _this.itemModel.icon
+      }, function (res) {
+        if (res.code !== 0) {
+          Toast('保存图片失败')
         }
       })
     },
@@ -131,7 +147,7 @@ export default {
       let _this = this
 
       // 加载分类
-      Tools.ajax("get", "commodityCategory/", null, function (res) {
+      Tools.ajax('get', 'commodityCategory/', null, function (res) {
         if (res.code === 0 && res.data.length > 0) {
           let _commodityData = [{id: 0, name: '请选择'}]
           res.data.forEach((item) => {
@@ -145,7 +161,7 @@ export default {
         return
       }
       // 加载商品
-      Tools.ajax("get", "commodity/"+_this.itemModel.id, null, function (res) {
+      Tools.ajax('get', 'commodity/' + _this.itemModel.id, null, function (res) {
         if (res.code === 0 && res.data) {
           _this.itemModel = {
             id: _this.itemModel.id,

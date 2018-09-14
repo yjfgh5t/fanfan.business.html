@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Default from '@/components/default'
+import ShopSetting from '@/components/shop-setting'
 import PrintSetting from '@/components/print-setting'
 import CommoditySetting from '@/components/commodity-setting'
 import CommodityTypeSetting from '@/components/commodity-type-setting'
@@ -21,6 +22,11 @@ export default new Router({
         keepAlive: true
       }
 
+    },
+    {
+      path: '/shopSetting',
+      name: 'shopSetting',
+      component: ShopSetting
     },
     {
       path: '/printSetting',

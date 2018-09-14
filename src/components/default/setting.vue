@@ -8,6 +8,11 @@
         <p v-text="userInfo.username"></p>
       </div>
     </div>
+
+    <mt-cell title="店铺设置" is-link :to="{ path: '/shopSetting'}" >
+      <i slot="icon" class="icon iconfont icon-commodity" />
+    </mt-cell>
+
     <mt-cell title="商品设置" is-link :to="{ path: '/commoditySetting'}" >
       <i slot="icon" class="icon iconfont icon-commodity" />
     </mt-cell>

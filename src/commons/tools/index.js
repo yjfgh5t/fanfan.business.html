@@ -98,7 +98,7 @@ let Tools = {
         Tools.callMap[callKey](jsonString)
       } else {
         // 错误提示
-        Toast(jsonString.msg)
+        Toast('服务异常' + jsonString.msg)
       }
     } else {
       Tools.callMap[callKey](jsonString)
