@@ -14,7 +14,7 @@
 
 <script>
 import Tools from '../../commons/tools/index'
-import backImg from '../../assets/imgs/img_back.jpg'
+import backImg from '../../assets/imgs/img_back.png'
 import logo from '../../assets/imgs/icon_logo.png'
 import { Toast,MessageBox } from 'mint-ui'
 export default {
@@ -22,7 +22,7 @@ export default {
     return {
       backImg: backImg,
       logo: logo,
-      model: { mobile: '19946213531', pwd: '123456' }
+      model: { mobile: '', pwd: '' }
     }
   },
   methods: {
@@ -75,8 +75,11 @@ export default {
     text-align: center;
   }
   .logo{
-    width:8rem;
-    height: 8rem;
+    margin: 2rem 0rem;
+    width:3.6rem;
+    height: 3.6rem;
+    border-radius: 50%;
+    border: 0.1rem solid white;
   }
   .login{
     width:80%;

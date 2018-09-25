@@ -9,7 +9,7 @@
 
     <div style="height: 40px;"></div>
     <mt-cell title="商品图片" class="mint-field" >
-      <img class="img" :src="itemModel.icon" v-on:click="imgActionsVisible=true" />
+      <img class="img" :src="itemModel.icon" v-on:click="imgActionsVisible=true" id="img_icon" />
     </mt-cell>
     <mt-field label="商品名称" placeholder="请输入商品名称" v-model="itemModel.title" length="32"></mt-field>
     <mt-cell title="商品分类" class="mint-field" >
@@ -47,7 +47,9 @@ export default {
     }
   },
   mounted () {
-    this.itemModel.id = this.$route.params.id
+    if (this.$route.params.id && this.$route.params.id > 0) {
+      this.itemModel.id = this.$route.params.id
+    }
     this.loadItem()
   },
   methods: {
@@ -114,6 +116,7 @@ export default {
       Tools.choiceImg(2, function (res) {
         if (res.code === 0) {
           _this.itemModel.icon = res.data
+          document.getElementById('img_icon').setAttribute('src', res.data)
           _this.modifyImg(_this)
         }
       })
@@ -124,6 +127,7 @@ export default {
       Tools.choiceImg(1, function (res) {
         if (res.code === 0) {
           _this.itemModel.icon = res.data
+          document.getElementById('img_icon').setAttribute('src', res.data)
           _this.modifyImg(_this)
         }
       })
