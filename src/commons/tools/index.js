@@ -102,6 +102,18 @@ let Tools = {
       }
     })
   },
+  // 检查是否登录
+  checkLogin: function () {
+    // 是否登录窗口
+    Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
+      if (data === '') {
+        window.vueApp.$router.push({name: 'login'})
+      } else {
+        // 绑定信鸽推送
+        Tools.bindUser(data.userId, function (bind) {})
+      }
+    })
+  },
   // 获取回调方法key
   getCallBackKey: function (callback) {
     // 回调放入临时callMap
@@ -169,6 +181,13 @@ let Option = {
   backCount: 0,
   // 回退
   backKey: function () {
+    // 如果是登录页面 直接退出
+    if (window.vueApp.$route.path === '/login'){
+      Tools.exitApp()
+      return
+    }
+
+    // 应用内 连续返回二次退出
     if (window.vueApp.$route.path === '/') {
       if (Option.backCount > 0) {
         Tools.exitApp()

@@ -37,7 +37,7 @@
 
 <script>
 import Tools from '../../commons/tools/index'
-import { Loadmore } from 'mint-ui'
+import { Loadmore, Toast } from 'mint-ui'
 import NewOrder from '@/components/default/new-order'
 import SearchOrder from '@/components/default/search-order'
 import Setting from '@/components/default/setting'
@@ -61,9 +61,22 @@ export default {
     }
   },
   mounted () {
+    // 检查版本更新
     Tools.checkNewAPK()
   },
   activated () {
+    // 检查登录
+    Tools.checkLogin()
+
+    // 是否登录窗口
+    Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
+      if (data === '') {
+        _this.$router.push({name: 'login'})
+      } else {
+        // 绑定信鸽推送
+        Tools.bindUser(data.userId, function (bind) {})
+      }
+    })
     if (this.$route.query.active) {
       this.active = this.$route.query.active
       this.$route.query.active = undefined

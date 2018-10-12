@@ -22,7 +22,8 @@ export default {
     window.onresize()
   },
   created () {
-    let _this = this
+    // 检查登录
+    Tools.checkLogin()
     // 链接蓝牙
     Tools.getKeyVal(Tools.globalKey.blueToothConnect, function (data) {
       if (data.indexOf(';') > 0) {
@@ -41,15 +42,6 @@ export default {
             default :
           }
         })
-      }
-    })
-    // 是否登录窗口
-    Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
-      if (data === '') {
-        _this.$router.push({name: 'login'})
-      } else {
-        // 绑定信鸽推送
-        Tools.bindUser(data.userId, function (bind) {})
       }
     })
   }
