@@ -1,11 +1,11 @@
 <template>
   <div class="body">
     <mt-header slot="left" title="设置"></mt-header>
-    <div class="div-user">
-      <img :src="userInfo.icon" class="img-user" />
+    <div class="div-user" v-on:click="$router.push({path: '/userSetting'});">
+      <img :src="userInfo.icon" class="img-user"/>
       <div class="p-user">
         <p v-text="userInfo.mobile"></p>
-        <p v-text="userInfo.username"></p>
+        <p v-text="userInfo.name"></p>
       </div>
     </div>
 
@@ -14,7 +14,7 @@
     </mt-cell>
 
     <mt-cell title="商品设置" is-link :to="{ path: '/commoditySetting'}" >
-      <i slot="icon" class="icon iconfont icon-commodity" />
+      <i slot="icon" class="icon iconfont icon-shangpin" />
     </mt-cell>
 
     <br />
@@ -67,7 +67,7 @@ export default {
     let _this = this
     Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
       _this.userInfo = {
-        username: data.username,
+        name: data.name,
         mobile: data.mobile,
         icon: (data.picPath === '' || data.picPath === undefined) ? userIcon : data.picPath
       }
@@ -89,6 +89,7 @@ export default {
   }
   .img-user{
     border-radius: 1.5rem;
+    border: 0.1rem solid #fff;
     width: 3rem;
     height: 3rem;
     float: left;

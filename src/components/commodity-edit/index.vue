@@ -37,7 +37,6 @@ import Tools from '../../commons/tools/index'
 import { Toast } from 'mint-ui'
 import MtButton from '../../../node_modules/mint-ui/packages/button/src/button.vue'
 export default {
-  components: {MtButton},
   data () {
     return {
       itemModel: {id: 0, categoryId: 0, inventory: 9999, saleType: false, order: 0, unit: '份'},

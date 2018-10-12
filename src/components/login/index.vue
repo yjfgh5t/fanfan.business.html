@@ -46,7 +46,7 @@ export default {
         if (res.code === 0 && res.data !== '') {
           let userInfo = {
             userId: res.data.userId,
-            username: res.data.username,
+            name: res.data.name,
             mobile: res.data.mobile,
             picPath: res.data.picPath
           }
@@ -54,7 +54,6 @@ export default {
           Tools.setKeyVal(Tools.globalKey.userInfo, JSON.stringify(userInfo), function (success) {
             // 绑定用户至信鸽推送
             Tools.bindUser(userInfo.userId, function (bandState) {
-              Toast(bandState)
               // 跳转
               _this.$router.push({name: 'default'})
             })

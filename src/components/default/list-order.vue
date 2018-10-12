@@ -22,7 +22,7 @@
               <label class="foot-line">时间：<label v-text="item.orderTime"></label></label>
             </div>
             <div class="foot-option">
-              <mt-button size="small" type="danger" v-on:click="moreOption.actionsVisible=true;moreOption.item=item;" style="background-color: #1afa29;">更多</mt-button>
+              <mt-button size="small" type="danger" v-show="item.state!==999" v-on:click="showMoreOption(item)" style="background-color: #1afa29;">更多</mt-button>
               <mt-button size="small" type="primary" v-on:click="print(item)" >打 印</mt-button>
             </div>
           </div>
@@ -58,7 +58,7 @@ export default {
       minLoadId: -1,
       maxLoadId: -1,
       moreOption: {
-        actions: [{name: '退单', method: this.backOrder}, {name: '结单', method: this.completedOrder}],
+        actions: [],
         actionsVisible: false,
         item: null
       }
@@ -118,7 +118,6 @@ export default {
           if (option.isMax) {
             _this.maxLoadId = resData[0].id
             for (let i = resData.length - 1; i >= 0; i--) {
-              Toast(JSON.stringify(resData[i]))
               _this.orderArray.unshift(_this.convertItem(resData[i]))
             }
           } else {
@@ -150,7 +149,7 @@ export default {
       return {
         id: item.id,
         orderNum: item.orderNum,
-        state: item.state,
+        state: item.orderState,
         stateText: item.orderStateText,
         orderPay: item.orderPay,
         orderTime: item.orderTime,
@@ -172,6 +171,7 @@ export default {
           if (res.code === 0) {
             Toast('退单成功')
             model.stateText = res.data.orderStateText
+            model.state = res.data.orderState
             _this.updateLocalItemState(_this, model)
           }
         })
@@ -198,10 +198,24 @@ export default {
         }
       })
     },
+    // 显示更多按钮
+    showMoreOption: function (item) {
+      let actions = []
+      // 不是退单状态
+      if (item.state !== 202 && item.state !== 999) {
+        actions.push({name: '退单', method: this.backOrder})
+      }
+      if (item.state !== 999) {
+        actions.push({name: '结单', method: this.completedOrder})
+      }
+      this.moreOption.actionsVisible = true
+      this.moreOption.item = item
+      this.moreOption.actions = actions
+    },
     // 打印
     print: function (model) {
       Tools.print(JSON.stringify(model), function (res) {
-        Toast('打印成功')
+        Toast(res === 'true' ? '打印成功' : '打印失败')
       })
     }
   },

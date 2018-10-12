@@ -37,7 +37,7 @@
 
 <script>
 import Tools from '../../commons/tools/index'
-import { Toast, Loadmore } from 'mint-ui'
+import { Loadmore } from 'mint-ui'
 import NewOrder from '@/components/default/new-order'
 import SearchOrder from '@/components/default/search-order'
 import Setting from '@/components/default/setting'
@@ -59,6 +59,9 @@ export default {
     itemClick: function (containerId) {
       this.active = containerId
     }
+  },
+  mounted () {
+    Tools.checkNewAPK()
   },
   activated () {
     if (this.$route.query.active) {

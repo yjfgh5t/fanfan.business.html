@@ -31,11 +31,16 @@
     </mt-cell>
     </div>
     <div>
-    <mt-cell :to="{path:'/',query: {active: 'container-msg', refreshOrder:true }}"  title="外卖管家打印机" is-link>
+    <mt-cell :to="{path:'/',query: {active: 'container-msg', refreshOrder:true }}"  title="外卖管家打印机" is-link v-show="false">
       <i slot="icon" class="icon iconfont icon-order" />
     </mt-cell>
     </div>
-
+    <div>
+    <mt-cell title="自动打印">
+      <span><mt-switch v-model="autoPrint" @change="enableAutoPrint"></mt-switch></span>
+      <i slot="icon" class="icon iconfont icon-print" />
+    </mt-cell>
+    </div>
   </div>
 </template>
 
@@ -50,6 +55,7 @@ export default {
       isSearch: true,
       titleText: '蓝牙列表',
       showBlueTooths: false,
+      autoPrint: true,
       // 链接的蓝牙
       connectBlue: {name: '', address: ''}
     }
@@ -155,6 +161,19 @@ export default {
           let blueStr = data.split(';')
           _this.connectBlue = { name: blueStr[0], address: blueStr[1] }
         }
+      })
+
+      // 是否自动打印
+      Tools.getKeyVal(Tools.globalKey.autoPrint, function (data) {
+        _this.autoPrint = (data === 'true')
+      })
+    },
+    // 是否自动打印
+    enableAutoPrint () {
+      let autoPrint = this.autoPrint
+      Tools.setKeyVal(Tools.globalKey.autoPrint, autoPrint, function (data) {
+        let message = autoPrint ? '已开启自动打印' : '已关闭自动打印'
+        Toast(message)
       })
     }
   },
