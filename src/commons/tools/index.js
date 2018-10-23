@@ -9,7 +9,7 @@ let Tools = {
   global: {},
   callKeyIndex: 1,
   method: {post: 'post', get: 'get'},
-  globalKey: {userInfo: 'userInfo', blueToothConnect: 'sp_blue_tooth_connect', autoPrint: 'sp_auto_print'},
+  globalKey: {userInfo: 'sp_user_info', blueToothConnect: 'sp_blue_tooth_connect', autoPrint: 'sp_auto_print'},
   // 调用Ajax
   ajax: function (method, url, params, callback) {
     // 加载条
