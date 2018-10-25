@@ -1,7 +1,7 @@
 <template>
   <div class="body">
     <mt-header title="新订单"></mt-header>
-    <order-list height="89" ref="order"></order-list>
+    <order-list height="89" newOrder="true" ref="order"></order-list>
   </div>
 </template>
 
@@ -18,15 +18,17 @@ export default {
     return {}
   },
   methods: {
-  },
-  created () {
-  },
-  activated () {
-    // 刷新订单
-    if (this.$route.query.refreshOrder) {
+    // 当触发展示时
+    onShow: function () {
       this.$refs.order.loadTop()
     }
-    Tools.global.newOrder = this
+  },
+  created () {
+    let _this = this
+    // 注册通知
+    Tools.localNotify('local_notify_new_order', function (model) {
+      _this.$refs.order.updateLocalItemState(model)
+    })
   }
 }
 </script>

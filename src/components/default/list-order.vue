@@ -77,17 +77,18 @@ export default {
       this.loadItems({isMax: false, lastId: this.minLoadId})
     },
     // 设置加载文本
-    setLoadText: function (data) {
+    setLoadText: function (data, fastPage) {
       let _this = this
       // 加载数据 向下拉取数据
       _this.loadState = 1
-      if (data !== null && data.length === 10) {
-        _this.loadState = 0
-      } else {
-        _this.loadState = 2
-      }
-      if (_this.orderArray.length === 0) {
+      if (data == null || (data.length === 0 && fastPage)) {
         _this.loadState = 3
+      } else {
+        if (data.length === 10) {
+          _this.loadState = 0
+        } else {
+          _this.loadState = 2
+        }
       }
     },
     // 加载数据
@@ -102,11 +103,14 @@ export default {
         option.lastId = -1
       }
       // 拉取订单列表
-      Tools.ajax('post', 'order/query/' + _this.queryDate, {lastId: option.lastId, isMax: option.isMax, orderState: _this.orderState}, (res) => {
+      Tools.ajax('post', 'order/query/' + _this.queryDate, {lastId: option.lastId, isMax: option.isMax, orderState: _this.orderState, newOrder: _this.newOrder}, (res) => {
+        let fastPage = option.lastId === -1
+        // 设置状态值
+        _this.setLoadText(res.data, fastPage)
         if (callback) {
           callback(res.data)
         }
-        _this.setLoadText(res.data)
+        // 加载数据
         if (res.code === 0 || res.data.length > 0) {
           let resData = res.data
           // 初始加载时 同时设置两个记录id值
@@ -172,7 +176,9 @@ export default {
             Toast('退单成功')
             model.stateText = res.data.orderStateText
             model.state = res.data.orderState
-            _this.updateLocalItemState(_this, model)
+            // 通知回调函数
+            Tools.callback(model, 'local_notify_search_order')
+            Tools.callback(model, 'local_notify_new_order')
           }
         })
       })
@@ -185,15 +191,18 @@ export default {
         if (res.code === 0) {
           Toast('结单成功')
           model.stateText = res.data.orderStateText
-          _this.updateLocalItemState(_this, model)
+          model.state = res.data.orderState
+          // 通知回调函数
+          Tools.callback(model, 'local_notify_search_order')
+          Tools.callback(model, 'local_notify_new_order')
         }
       })
     },
     // 更新订单状态
-    updateLocalItemState: function (_this, model) {
-      _this.orderArray.forEach((item, i) => {
+    updateLocalItemState: function (model) {
+      this.orderArray.forEach((item, i) => {
         if (item.id === model.id) {
-          _this.orderArray[i] = model
+          this.orderArray[i] = model
           return false
         }
       })
@@ -224,7 +233,8 @@ export default {
     'queryDate': {default: moment().format('YYYY-MM-DD')},
     // 订单状态 0:全部 1:进行中 2:已完成 3:已退回
     'orderState': { default: 0 },
-    'lastId': {default: 0}
+    'lastId': {default: 0},
+    'newOrder': {default: false}
   },
   watch: {
     queryDate (val, oldVal) {

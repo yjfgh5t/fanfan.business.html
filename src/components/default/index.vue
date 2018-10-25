@@ -4,17 +4,17 @@
       <mt-tab-container class="page-tabbar-tab-container" v-model="active">
         <!-- msg 内容 -->
         <mt-tab-container-item id="container-msg">
-          <new-order></new-order>
+          <new-order ref="newOrder"></new-order>
         </mt-tab-container-item>
 
         <!-- 订单 内容 -->
         <mt-tab-container-item id="container-order">
-          <search-order></search-order>
+          <search-order ref="searchOrder"></search-order>
         </mt-tab-container-item>
 
-        <!-- me 内容 -->
+        <!-- 设置内容 -->
         <mt-tab-container-item id="container-me">
-          <setting></setting>
+          <setting ref="setting"></setting>
         </mt-tab-container-item>
 
       </mt-tab-container>
@@ -56,8 +56,14 @@ export default {
     }
   },
   methods: {
+    // 有新消息通知会进入此事件
     itemClick: function (containerId) {
       this.active = containerId
+      switch (containerId) {
+        case 'container-msg': this.$refs.newOrder.onShow(); break
+        case 'container-order': this.$refs.searchOrder.onShow(); break
+        case 'container-me': this.$refs.setting.onShow(); break
+      }
     }
   },
   mounted () {
@@ -67,7 +73,7 @@ export default {
   activated () {
     // 检查登录
     Tools.checkLogin()
-
+    let _this = this
     // 是否登录窗口
     Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
       if (data === '') {
@@ -78,9 +84,10 @@ export default {
       }
     })
     if (this.$route.query.active) {
-      this.active = this.$route.query.active
+      this.itemClick(this.$route.query.active)
       this.$route.query.active = undefined
     }
+    Tools.global.defaultView = this
   }
 }
 </script>

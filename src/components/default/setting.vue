@@ -61,6 +61,9 @@ export default {
           })
         })
       })
+    },
+    // 触发展示时
+    onShow: function () {
     }
   },
   activated () {
@@ -83,7 +86,7 @@ export default {
     margin-top: 3rem;
   }
   .div-user{
-    background-color: #26a2ff;
+    background: linear-gradient(#26a2ff 0,#00c7ff 100%);
     padding: 0 0.5rem 0.5rem 1rem;
     overflow: hidden;
   }

@@ -6,7 +6,7 @@ let Tools = {
     ajaxGet: function (method, url, paramsMap, callKey) { window.setTimeout(() => {window.callback("{'code':-1,'success':false}", callKey) }, 500) }
   }),
   callMap: {},
-  global: {},
+  global: {defaultView: null},
   callKeyIndex: 1,
   method: {post: 'post', get: 'get'},
   globalKey: {userInfo: 'sp_user_info', blueToothConnect: 'sp_blue_tooth_connect', autoPrint: 'sp_auto_print'},
@@ -56,6 +56,7 @@ let Tools = {
   blueConnect: function (address, callback) {
     Tools.app.blueToothConnect(address, Tools.getCallBackKey(callback))
   },
+  // 打印
   print: function (orderString, callback) {
     Tools.app.print(orderString, Tools.getCallBackKey(callback))
   },
@@ -121,8 +122,18 @@ let Tools = {
     Tools.callMap[callKey] = callback
     return callKey
   },
+  // 本地通知注册
+  localNotify: function (callKey, callback) {
+    Tools.callMap[callKey] = callKey
+  },
   // App回调
   callback: function (jsonString, callKey) {
+    // 本地JS通知消息
+    if (callKey.indexOf('local_notify') === 0) {
+      Tools.callMap[callKey](jsonString)
+      return
+    }
+
     if (callKey === 'loading') {
       // 加载条
       Indicator.open({spinnerType: 'double-bounce'})
@@ -154,13 +165,13 @@ let Option = {
   msgOption: function (msgType, data) {
     switch (msgType) {
       // 展示
-      case 'xg-show': Option.reloadMsg(); break
+      case 'xg-show': break
       // 点击
-      case 'xg-click': window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}}); break
+      case 'xg-click': break
       // 消息
-      case 'xg-msg': window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}}); break
+      case 'xg-msg': Option.reloadMsg(); break
       // 点击通知
-      case 'notify-click': Option.reloadMsg(); break
+      case 'notify-click': break
       // 回退点击
       case 'back-key': Option.backKey(); break
       // 打印
@@ -173,9 +184,9 @@ let Option = {
   reloadMsg: function () {
     let isMsgView = window.vueApp.$route.path === '/'
     if (isMsgView) {
-      Tools.global.newOrder.$refs.order.loadTop()
+      Tools.global.defaultView.itemClick('container-msg')
     } else {
-      window.vueApp.$router.push({name: 'default', query: {active: 'container-msg', refreshOrder: true}})
+      window.vueApp.$router.push({name: 'default', query: {active: 'container-msg'}})
     }
   },
   backCount: 0,
