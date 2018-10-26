@@ -124,7 +124,7 @@ let Tools = {
   },
   // 本地通知注册
   localNotify: function (callKey, callback) {
-    Tools.callMap[callKey] = callKey
+    Tools.callMap[callKey] = callback
   },
   // App回调
   callback: function (jsonString, callKey) {

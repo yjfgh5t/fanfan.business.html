@@ -34,6 +34,7 @@
     <mt-field label="商品原价" placeholder="请输入商品原价" type="number" length="7" v-model="itemModel.price"></mt-field>
     <mt-field label="商品售价" placeholder="请输入商品售价" type="number" length="7" v-model="itemModel.salePrice"></mt-field>
     <mt-field label="商品库存" placeholder="请输入商品库存" type="number" length="5" v-model="itemModel.inventory"></mt-field>
+    <mt-field label="打包费" placeholder="请输入商品打包费用" type="number" length="5" v-model="itemModel.packagePrice"></mt-field>
 
     <div class="cell-title">规格设置</div>
     <div class="div-guige">
@@ -109,7 +110,8 @@ export default {
         order: _this.itemModel.order,
         unit: _this.itemModel.unit,
         extendList: _this.itemModel.norms,
-        mustOrder: _this.itemModel.mustOrder
+        mustOrder: _this.itemModel.mustOrder,
+        packagePrice: _this.itemModel.packagePrice
       }, function (res) {
         if (res.code === 0) {
           _this.itemModel.id = res.data
@@ -134,7 +136,10 @@ export default {
       if (this.itemModel.salePrice === '' || isNaN(this.itemModel.salePrice)) {
         return '请输入商品售价'
       }
-      if (this.itemModel.inventory === '') {
+      if (this.itemModel.packagePrice === '' || isNaN(this.itemModel.packagePrice)) {
+        return '请输入商品打包费'
+      }
+      if (this.itemModel.inventory === '' || isNaN(this.itemModel.inventory)) {
         return '请输入商品库存'
       }
       if (this.itemModel.order === '') {
@@ -251,6 +256,7 @@ export default {
             selling: res.data.status === 1,
             order: res.data.order,
             unit: res.data.unit,
+            packagePrice: res.data.packagePrice,
             norms: items
           }
         }
