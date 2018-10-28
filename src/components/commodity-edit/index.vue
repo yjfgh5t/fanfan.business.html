@@ -24,11 +24,11 @@
     <mt-cell title="商品图片" class="mint-field" >
       <img class="img" :src="itemModel.icon" v-on:click="imgActionsVisible=true" id="img_icon" />
     </mt-cell>
-    <mt-field label="商品名称" placeholder="请输入商品名称" v-model="itemModel.title" length="32"></mt-field>
+    <mt-field label="商品名称" placeholder="请输入商品名称"  :attr="{ maxLength: 16 }" v-model="itemModel.title" length="32"></mt-field>
     <mt-cell title="商品分类" class="mint-field" >
       <select class="cell-select mint-field-core mint-cell-allow-right" v-model="itemModel.categoryId"><option v-for="item in commodityTypes" :value="item.id" v-text="item.name"></option></select>
     </mt-cell>
-    <mt-field label="商品描述" placeholder="请输入商品描述"  type="textarea" rows="2" length="128" v-model="itemModel.desc"></mt-field>
+    <mt-field label="商品描述" placeholder="请输入商品描述" :attr="{ maxLength: 128 }" type="textarea" rows="2" length="128" v-model="itemModel.desc"></mt-field>
 
     <div class="cell-title">售价设置</div>
     <mt-field label="商品原价" placeholder="请输入商品原价" type="number" length="7" v-model="itemModel.price"></mt-field>

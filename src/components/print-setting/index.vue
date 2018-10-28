@@ -26,11 +26,10 @@
 
     <div v-on:click="searchBlueTooth">
     <mt-cell title="添加蓝牙打印机" is-link >
-      <span style="color: green">{{connectBlue.name}}</span>
+      <span style="color: green">[{{connectBlue.stateText}}]{{connectBlue.name}}</span>
       <i slot="icon" class="icon iconfont icon-print" />
     </mt-cell>
-    </div>
-    <div>
+    </div><div>
     <mt-cell :to="{path:'/',query: {active: 'container-msg', refreshOrder:true }}"  title="外卖管家打印机" is-link v-show="false">
       <i slot="icon" class="icon iconfont icon-order" />
     </mt-cell>
@@ -57,7 +56,7 @@ export default {
       showBlueTooths: false,
       autoPrint: true,
       // 链接的蓝牙
-      connectBlue: {name: '', address: ''}
+      connectBlue: {name: '', address: '', stateText: '未连接'}
     }
   },
   methods: {
@@ -68,25 +67,7 @@ export default {
       _this.showBlueTooths = true
       _this.setBluthState(1)
       // 开始搜索
-      Tools.blueTooth(true, function (res) {
-        if (res.data.event === 'stop') {
-          _this.setBluthState(0)
-        }
-        // 搜索到数据
-        if (res.data.event === 'device') {
-          let blueToothModel = {
-            address: res.data.model.address,
-            name: (res.data.model.name === null ? '未知设备' : res.data.model.name),
-            label: ''
-          }
-          blueToothModel.label = blueToothModel.name + '[' + blueToothModel.address + ']'
-          _this.radioOptions.push(blueToothModel)
-          // 设置选中的Model
-          if (_this.connectBlue.address !== '' && _this.connectBlue.address === blueToothModel.address) {
-            _this.radioModel = blueToothModel
-          }
-        }
-      })
+      Tools.blueTooth('start', function (res) {})
     },
     // 添加蓝牙
     addBlueTooth: function () {
@@ -94,35 +75,14 @@ export default {
       if (_this.radioModel === null) {
         return Toast('请选择蓝牙打印机')
       }
-      Toast(_this.radioModel.address)
       _this.setBluthState(2)
-      Tools.blueConnect(_this.radioModel.address, function (res) {
-        let state = res.data.event
-        switch (state) {
-          // 链接中
-          case 'connecting': break
-          // 链接成功
-          case 'connected':
-            Toast('蓝牙链接成功')
-            let spData = _this.radioModel.name + ';' + _this.radioModel.address
-            Tools.setKeyVal(Tools.globalKey.blueToothConnect, spData, function () {
-              _this.initBlueTooth()
-            })
-            _this.cancelBlueTooth()
-            break
-          // 设备断开链接
-          case 'disConnected': _this.setBluthState(3); break
-          // 链接失败
-          case 'disConnecting': _this.setBluthState(3); break
-          default :
-        }
-      })
+      Tools.blueConnect(_this.radioModel.address, function (res) {})
     },
     // 取消
     cancelBlueTooth: function () {
       this.showBlueTooths = false
       // 停止搜索
-      Tools.blueTooth(false, function () {})
+      Tools.blueTooth('stop', function () {})
       // 清空搜索的值
       this.radioOptions = []
       this.isSearch = false
@@ -155,11 +115,49 @@ export default {
     // 设置链接的蓝牙
     initBlueTooth () {
       let _this = this
+      // 注册蓝牙通知事件
+      Tools.localNotify(Tools.globalKey.blueNotifyKey, function (res) {
+        switch (res.data.event) {
+          // 停止搜索
+          case 'stop': _this.setBluthState(0); break
+          // 搜索到设备
+          case 'device':
+            let blueToothModel = {
+              address: res.data.model.address,
+              name: (res.data.model.name === null ? '未知设备' : res.data.model.name),
+              label: ''
+            }
+            blueToothModel.label = blueToothModel.name + '[' + blueToothModel.address + ']'
+            _this.radioOptions.push(blueToothModel)
+            // 设置选中的Model
+            if (_this.connectBlue.address !== '' && _this.connectBlue.address === blueToothModel.address) {
+              _this.radioModel = blueToothModel
+            }
+            break
+          // 链接中
+          case 'connecting': break
+          // 链接成功
+          case 'connected':
+            _this.connectBlue.stateText = '已连接'
+            let spData = _this.radioModel.name + ';' + _this.radioModel.address
+            Tools.setKeyVal(Tools.globalKey.blueToothConnect, spData, function () {
+              _this.initBlueTooth()
+            })
+            _this.cancelBlueTooth()
+            break
+          // 设备断开链接
+          case 'disConnected': _this.connectBlue.stateText = '未连接'; _this.setBluthState(3); break
+          // 链接失败
+          case 'disConnecting': _this.connectBlue.stateText = '未连接'; _this.setBluthState(3); break
+        }
+      })
+
       // 获取已经链接的蓝牙
       Tools.getKeyVal(Tools.globalKey.blueToothConnect, function (data) {
         if (data.indexOf(';') > 0) {
           let blueStr = data.split(';')
-          _this.connectBlue = { name: blueStr[0], address: blueStr[1] }
+          _this.connectBlue.name = blueStr[0]
+          _this.connectBlue.address = blueStr[1]
         }
       })
 
@@ -167,6 +165,9 @@ export default {
       Tools.getKeyVal(Tools.globalKey.autoPrint, function (data) {
         _this.autoPrint = (data === 'true')
       })
+
+      // 检查蓝牙状态
+      Tools.blueTooth('state', function (res) {})
     },
     // 是否自动打印
     enableAutoPrint () {
@@ -214,5 +215,4 @@ export default {
     text-align: right;
     padding-right: 1rem;
   }
-
 </style>

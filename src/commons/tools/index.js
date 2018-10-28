@@ -9,7 +9,7 @@ let Tools = {
   global: {defaultView: null},
   callKeyIndex: 1,
   method: {post: 'post', get: 'get'},
-  globalKey: {userInfo: 'sp_user_info', blueToothConnect: 'sp_blue_tooth_connect', autoPrint: 'sp_auto_print'},
+  globalKey: {userInfo: 'sp_user_info', blueToothConnect: 'sp_blue_tooth_connect', autoPrint: 'sp_auto_print', blueNotifyKey: 'local_notify_blue_booth_event'},
   // 调用Ajax
   ajax: function (method, url, params, callback) {
     // 加载条
@@ -152,7 +152,8 @@ let Tools = {
         Tools.callMap[callKey](jsonString)
       } else {
         // 错误提示
-        Toast('服务异常' + jsonString.msg)
+        console.log(jsonString.msg)
+        Toast('链接失败,请检查您的网络！')
       }
     } else {
       Tools.callMap[callKey](jsonString)

@@ -40,7 +40,7 @@ import { Toast } from 'mint-ui'
 export default {
   data () {
     return {
-      divBodyStyle: {height: (window.document.body.clientHeight-40) + 'px'},
+      divBodyStyle: { },
       activeTypeId: 1,
       commodityTypes: [],
       commodities: [
@@ -49,6 +49,7 @@ export default {
     }
   },
   mounted () {
+    this.divBodyStyle = {height: ((window.document.body.clientHeight - 40) + 'px')}
     this.loadItems()
   },
   methods: {
