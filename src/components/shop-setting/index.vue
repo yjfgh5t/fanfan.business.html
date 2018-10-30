@@ -75,6 +75,8 @@ export default {
       }, function (res) {
         if (res.code === 0) {
           _this.itemModel.id = res.data
+          // 店铺名称保存至本地
+          Tools.setKeyVal(Tools.globalKey.shopName, _this.itemModel.name)
           Toast('保存成功')
         }
       })

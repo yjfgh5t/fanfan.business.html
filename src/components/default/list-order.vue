@@ -4,7 +4,7 @@
       <ul class="ul-order">
         <li v-for="item in orderArray" class="li-item">
           <div class="item-title" style="color: #aaa;">
-            <label> 编号：<label class="item-no" v-text="item.orderDateNum">003</label></label>
+            <label> 排队号：<label class="item-no" v-text="'#'+item.orderDateNum">003</label></label>
             <label style="float: right;color:orangered;" v-text="item.stateText">订单已支付</label>
           </div>
           <div class="item-body">
@@ -12,13 +12,16 @@
             <div class="body-commodity-size"><label>订单号：<label v-text="item.orderNum"></label></label></div>
             <div class="body-commodity">
               <div class="commodity" v-for="commodity in item.details">
-                <label class="name" v-text="commodity.outTitle"></label> <label class="size" v-text="'x '+commodity.outSize"></label> <label class="price" v-text="'￥'+commodity.outPrice"></label>
+                <label class="name" v-text="commodity.outTitle"></label> <label class="size" v-show="commodity.outType !==6" v-text="'x '+commodity.outSize"></label> <label class="price" v-text="'￥'+commodity.outPrice"></label>
+              </div>
+              <div class="commodity">
+                <label class="name">合计</label> <label class="size"></label> <label class="price" v-text="'￥'+item.orderTotal"></label>
               </div>
             </div>
           </div>
           <div class="item-foot">
             <div class="foot-price">
-              <label class="foot-line">订单总额：<label class="lab-price" v-text="'￥'+item.orderPay"></label></label>
+              <label class="foot-line">支付：<label class="lab-price" v-text="'￥'+item.orderPay"></label></label>
               <label class="foot-line">时间：<label v-text="item.orderTime"></label></label>
             </div>
             <div class="foot-option">
@@ -155,7 +158,9 @@ export default {
         orderNum: item.orderNum,
         state: item.orderState,
         stateText: item.orderStateText,
+        orderTypeText: item.orderTypeText,
         orderPay: item.orderPay,
+        orderTotal: item.orderTotal,
         orderTime: item.orderTime,
         userNick: item.userNick,
         userIcon: item.userIcon,
@@ -163,6 +168,7 @@ export default {
         details: details,
         commoditySize: 0 || item.commoditySize,
         orderDateNum: item.orderDateNum,
+        orderRemark: item.orderRemark,
         open: false
       }
     },

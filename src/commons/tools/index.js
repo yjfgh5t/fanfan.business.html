@@ -6,10 +6,10 @@ let Tools = {
     ajaxGet: function (method, url, paramsMap, callKey) { window.setTimeout(() => {window.callback("{'code':-1,'success':false}", callKey) }, 500) }
   }),
   callMap: {},
-  global: {defaultView: null},
+  global: {defaultView: null, defaultCall: function () {}},
   callKeyIndex: 1,
   method: {post: 'post', get: 'get'},
-  globalKey: {userInfo: 'sp_user_info', blueToothConnect: 'sp_blue_tooth_connect', autoPrint: 'sp_auto_print', blueNotifyKey: 'local_notify_blue_booth_event'},
+  globalKey: {userInfo: 'sp_user_info', blueToothConnect: 'sp_blue_tooth_connect', autoPrint: 'sp_auto_print', blueNotifyKey: 'local_notify_blue_booth_event', shopName: 'sp_shop_name'},
   // 调用Ajax
   ajax: function (method, url, params, callback) {
     // 加载条
@@ -119,7 +119,11 @@ let Tools = {
   getCallBackKey: function (callback) {
     // 回调放入临时callMap
     let callKey = 'call_back_' + (Tools.callKeyIndex++)
-    Tools.callMap[callKey] = callback
+    if (callback === undefined) {
+      Tools.callMap[callKey] = Tools.global.defaultCall
+    } else {
+      Tools.callMap[callKey] = callback
+    }
     return callKey
   },
   // 本地通知注册
