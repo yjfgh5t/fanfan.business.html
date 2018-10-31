@@ -54,7 +54,7 @@ export default {
       orderArray: [],
       bodyHeight: window.document.body.clientHeight - this.height,
       // 加载状态 0:加载更多  1:加载中  2: 为没有更多
-      loadState: 1,
+      loadState: 3,
       minLoadId: -1,
       maxLoadId: -1,
       moreOption: {
@@ -275,7 +275,7 @@ export default {
     width:92%;
     margin-left:4%;
     list-style: none;
-    min-height: 12rem;
+    min-height: 28rem;
   }
   .ul-order .li-item{
     box-shadow:#ccc 0rem 0rem 0.2rem 0.05rem;

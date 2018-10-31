@@ -26,7 +26,7 @@
 
     <div v-on:click="searchBlueTooth">
     <mt-cell title="添加蓝牙打印机" is-link >
-      <span style="color: green">[{{connectBlue.stateText}}]{{connectBlue.name}}</span>
+      <span style="color: green" v-show="connectBlue.name!=''">[{{connectBlue.stateText}}]{{connectBlue.name}}</span>
       <i slot="icon" class="icon iconfont icon-print" />
     </mt-cell>
     </div><div>
