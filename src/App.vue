@@ -22,6 +22,7 @@ export default {
     window.onresize()
   },
   created () {
+    let _this = this
     // 检查登录
     Tools.checkLogin()
     // 链接蓝牙
@@ -30,18 +31,7 @@ export default {
         let blueStr = data.split(';')
         _this.connectBlue = { name: blueStr[0], address: blueStr[1] }
         // 执行链接蓝牙
-        Tools.blueConnect(blueStr[1], function (res) {
-          let state = res.data.event
-          switch (state) {
-            // 链接成功
-            case 'connected': Toast('蓝牙链接成功'); break
-            // 设备断开链接
-            case 'disConnected': Toast('蓝牙设备断开链接'); break
-            // 链接失败
-            case 'disConnecting': Toast('蓝牙链接失败'); break
-            default :
-          }
-        })
+        Tools.blueConnect(blueStr[1])
       }
     })
   }
