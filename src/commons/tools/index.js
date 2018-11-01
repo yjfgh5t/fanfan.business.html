@@ -6,10 +6,10 @@ let Tools = {
     ajaxGet: function (method, url, paramsMap, callKey) { window.setTimeout(() => {window.callback("{'code':-1,'success':false}", callKey) }, 500) }
   }),
   callMap: {},
-  global: {defaultView: null, defaultCall: function () {}},
+  global: {defaultView: null, defaultCall: function () {}, httpPath: ''},
   callKeyIndex: 1,
-  method: {post: 'post', get: 'get'},
-  globalKey: {userInfo: 'sp_user_info', blueToothConnect: 'sp_blue_tooth_connect', autoPrint: 'sp_auto_print', blueNotifyKey: 'local_notify_blue_booth_event', shopName: 'sp_shop_name'},
+  method: {post: 'post', get: 'get', json: 'json'},
+  globalKey: {userInfo: 'sp_user_info', blueToothConnect: 'sp_blue_tooth_connect', autoPrint: 'sp_auto_print', blueNotifyKey: 'local_notify_blue_booth_event', shopName: 'sp_shop_name', httpPath: 'sp_http_path'},
   // 调用Ajax
   ajax: function (method, url, params, callback) {
     // 加载条
@@ -156,8 +156,7 @@ let Tools = {
         Tools.callMap[callKey](jsonString)
       } else {
         // 错误提示
-        console.log(jsonString.msg)
-        Toast('链接失败,请检查您的网络！')
+        Toast(jsonString.msg)
       }
     } else {
       Tools.callMap[callKey](jsonString)

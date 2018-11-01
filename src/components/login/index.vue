@@ -1,4 +1,5 @@
 <template>
+  <div class="body" style="height: 100%">
   <div class="back" v-bind:style="{background:'url('+backImg+')'}">
     <img :src="logo" class="logo" />
     <div class="login">
@@ -7,10 +8,15 @@
       <br/>
       <br/>
       <mt-field label="密码" placeholder="请输入密码" type="password" v-model="model.pwd"></mt-field>
+      <div class="div-register">
+        <span class="span-reg" v-on:click="$router.push({path: '/register/register'});">商户注册</span>
+        <span class="span-pwd" v-on:click="$router.push({path: '/register/code'});">验证码登录></span>
+      </div>
       <br/>
       <br/>
       <mt-button type="primary" plain="true" size="large" style="color:white;border-color: white;" v-on:click="login">登 录</mt-button>
     </div>
+  </div>
   </div>
 </template>
 
@@ -100,5 +106,17 @@ export default {
   }
   .login .mint-cell-wrapper{
     background: none;
+  }
+  .div-register{
+    color: white;
+    overflow: hidden;
+    margin-top: 0.4rem;
+    padding:0 0.6rem;
+  }
+  .div-register .span-reg{
+    float: left;
+  }
+  .div-register .span-pwd{
+    float:right;
   }
 </style>

@@ -34,6 +34,10 @@ export default {
         Tools.blueConnect(blueStr[1])
       }
     })
+    // 设置API地址
+    Tools.getKeyVal(Tools.globalKey.httpPath, function (data) {
+      Tools.global.httpPath = data
+    })
   }
 }
 </script>

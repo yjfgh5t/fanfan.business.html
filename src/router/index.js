@@ -9,6 +9,7 @@ import CommodityEdit from '@/components/commodity-edit'
 import DeskSetting from '@/components/desk-setting'
 import UserSetting from '@/components/user-setting'
 import Login from '@/components/login'
+import Register from '@/components/register'
 
 Vue.use(Router)
 Vue.use(require('vue-moment'))
@@ -63,6 +64,11 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/register/:type',
+      name: 'register',
+      component: Register
     }
   ]
 })
