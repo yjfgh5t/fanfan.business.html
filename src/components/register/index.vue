@@ -97,10 +97,10 @@ export default {
         mobile: this.model.mobile,
         imgCode: this.codeModel.code
       }
+      _that.codeModel.disabled = true
       Tools.ajax(Tools.method.post, 'user/sendCode', params, function (res) {
         if (res.code === 0) {
           Toast('验证码已发送请注意查收')
-          _that.codeModel.disabled = true
           _that.showImgCodeLayer = false
           // 设置计数器
           let start = 60
@@ -114,6 +114,9 @@ export default {
               _that.codeModel.text = start + 's'
             }
           }, 1000)
+        } else {
+          _that.codeModel.disabled = true
+          _that.refreshCodeImg()
         }
       })
     },
