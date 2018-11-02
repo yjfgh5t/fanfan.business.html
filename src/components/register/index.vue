@@ -1,5 +1,5 @@
 <template>
-  <div  class="back" v-bind:style="{background:'url('+backImg+')'}">
+  <div class="back" v-bind:style="{background:'url('+backImg+')'}">
     <mt-header :title="title">
       <router-link to="/login" slot="left">
         <mt-button icon="back">返回登录</mt-button>

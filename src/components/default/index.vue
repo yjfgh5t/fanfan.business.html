@@ -41,7 +41,7 @@ import { Loadmore, Toast } from 'mint-ui'
 import NewOrder from '@/components/default/new-order'
 import SearchOrder from '@/components/default/search-order'
 import Setting from '@/components/default/setting'
-import '../../assets/font/iconfont.css'
+import '@/assets/font/iconfont.css'
 
 export default {
   name: 'page-tab-container',
