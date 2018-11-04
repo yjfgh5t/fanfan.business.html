@@ -76,7 +76,7 @@ export default {
         return Toast('请选择蓝牙打印机')
       }
       _this.setBluthState(2)
-      Tools.blueConnect(_this.radioModel.address, function (res) {})
+      Tools.blueConnect(_this.radioModel.address)
     },
     // 取消
     cancelBlueTooth: function () {
@@ -168,6 +168,15 @@ export default {
 
       // 检查蓝牙状态
       Tools.blueTooth('state', function (res) {})
+
+      // 1.5s后检查是否链接
+      window.setTimeout(function () {
+        // 尝试重新链接
+        if (_this.connectBlue.name !== '' && _this.connectBlue.stateText === '未连接') {
+          // 执行链接蓝牙
+          Tools.blueConnect(_this.connectBlue.address)
+        }
+      }, 1500)
     },
     // 是否自动打印
     enableAutoPrint () {

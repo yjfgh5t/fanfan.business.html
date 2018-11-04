@@ -9,6 +9,7 @@
           </div>
           <div class="item-body">
             <div class="body-commodity-size"><label>桌号：<label v-text="item.orderDeskNum"></label></label></div>
+            <div class="body-commodity-size"><label>用餐方式：<label v-text="item.orderTypeText"></label></label></div>
             <div class="body-commodity-size"><label>订单号：<label v-text="item.orderNum"></label></label></div>
             <div class="body-commodity">
               <div class="commodity" v-for="commodity in item.details">

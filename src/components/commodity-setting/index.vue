@@ -57,9 +57,10 @@ export default {
       this.activeTypeId = id
     },
     commoditiesTypeFilter: function (items, commodityTypeId) {
-      return items.filter(function (item) {
-        return item.commodityTypeId === commodityTypeId
+      let result = items.filter(function (item) {
+        return item.commodityTypeId == commodityTypeId
       })
+      return result
     },
     // 下架
     pullOffShelves: function (items) {

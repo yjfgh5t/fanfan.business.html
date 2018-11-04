@@ -29,7 +29,6 @@ export default {
     Tools.getKeyVal(Tools.globalKey.blueToothConnect, function (data) {
       if (data.indexOf(';') > 0) {
         let blueStr = data.split(';')
-        _this.connectBlue = { name: blueStr[0], address: blueStr[1] }
         // 执行链接蓝牙
         Tools.blueConnect(blueStr[1])
       }
