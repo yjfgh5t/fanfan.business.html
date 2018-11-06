@@ -6,7 +6,11 @@ let Tools = {
     ajaxGet: function (method, url, paramsMap, callKey) { window.setTimeout(() => {window.callback("{'code':-1,'success':false}", callKey) }, 500) }
   }),
   callMap: {},
-  global: {defaultView: null, defaultCall: function () {}, httpPath: ''},
+  global: {
+    defaultView: null,
+    defaultCall: function () {},
+    httpPath: '',
+  },
   callKeyIndex: 1,
   method: {post: 'post', get: 'get', json: 'json'},
   globalKey: {userInfo: 'sp_user_info', blueToothConnect: 'sp_blue_tooth_connect', autoPrint: 'sp_auto_print', blueNotifyKey: 'local_notify_blue_booth_event', shopName: 'sp_shop_name', httpPath: 'sp_http_path'},
@@ -71,6 +75,10 @@ let Tools = {
   // 退出系统
   exitApp: function () {
     Tools.app.exitApp()
+  },
+  // 打开第三方app
+  openApp: function (url, callback) {
+    Tools.app.openApp(url, Tools.getCallBackKey(callback))
   },
   // 1检查新版本, 2执行安装
   checkOrInstallAPK: function (type, callback) {

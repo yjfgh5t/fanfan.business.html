@@ -32,6 +32,11 @@
       <i slot="icon" class="icon iconfont icon-commodity-type" />
     </mt-cell>
 
+    <br />
+    <mt-cell title="支付宝认证" is-link :to="{ path: '/authorization'}">
+      <i slot="icon" class="icon iconfont icon-shouquan" />
+    </mt-cell>
+
     <div class="login-out">
       <mt-button size="large" style="height: 1.8rem;line-height: 1.8rem;font-size: 0.8rem;" type="danger" v-on:click="loginOut">退 出</mt-button>
     </div>

@@ -10,6 +10,7 @@ import DeskSetting from '@/components/desk-setting'
 import UserSetting from '@/components/user-setting'
 import Login from '@/components/login'
 import Register from '@/components/register'
+import Authorization from '@/components/authorization'
 
 Vue.use(Router)
 Vue.use(require('vue-moment'))
@@ -69,6 +70,11 @@ export default new Router({
       path: '/register/:type',
       name: 'register',
       component: Register
+    },
+    {
+      path: '/authorization',
+      name: 'authorization',
+      component: Authorization
     }
   ]
 })
