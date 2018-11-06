@@ -83,19 +83,16 @@ export default {
     },
     // 打开相册
     openAlbum: function () {
-      let _this = this
-      Tools.choiceImg(2, function (res) {
-        if (res.code === 0) {
-          _this.itemModel.logo = res.data
-          document.getElementById('img_logo').setAttribute('src', res.data)
-          _this.modifyImg(_this)
-        }
-      })
+      this.choiceImg(2)
     },
     // 拍照
     takePhoto: function () {
+      this.choiceImg(1)
+    },
+    // 图片操作
+    choiceImg: function (type) {
       let _this = this
-      Tools.choiceImg(1, function (res) {
+      Tools.choiceImg({openType: type, hasCutImage: 1, hasWatermark: 2}, function (res) {
         if (res.code === 0) {
           _this.itemModel.logo = res.data
           document.getElementById('img_logo').setAttribute('src', res.data)

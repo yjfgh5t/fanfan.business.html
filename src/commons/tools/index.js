@@ -60,9 +60,9 @@ let Tools = {
   print: function (orderString, callback) {
     Tools.app.print(orderString, Tools.getCallBackKey(callback))
   },
-  // 选择图片
-  choiceImg: function (type, callback) {
-    Tools.app.choiceImg(type, Tools.getCallBackKey(callback))
+  // 选择图片 {openType:1/2, hasWatermark: 1/2, hasCutImage: 1/2, watermark: '水印文字' }
+  choiceImg: function (pictureOption, callback) {
+    Tools.app.choiceImg(JSON.stringify(pictureOption), Tools.getCallBackKey(callback))
   },
   // 扫码
   scanQRCode: function (callback) {
