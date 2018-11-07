@@ -11,7 +11,9 @@ let Tools = {
     defaultCall: function () {},
     httpPath: '',
     // 打开支付宝指定的地址
-    openApliPayLink: 'alipays://platformapi/startapp?appId=20000067&url='
+    openAliPayLink: 'alipays://platformapi/startapp?appId=20000067&url=',
+    // 打开小程序
+    openAliPayProgram: 'alipays://platformapi/startapp?appId=2018033102482725'
   },
   callKeyIndex: 1,
   method: {post: 'post', get: 'get', json: 'json'},

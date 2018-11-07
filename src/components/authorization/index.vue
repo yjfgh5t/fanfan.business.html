@@ -141,7 +141,6 @@ export default {
   },
   mounted () {
     let _that = this
-
     // 注册授权成功事件
     Tools.localNotify(Tools.globalKey.authorizeKey, function (data) {
       _that.showAuthorizeLayer = false
@@ -212,7 +211,8 @@ export default {
       // 提交
       Tools.ajax('json', 'authorize/', model, function (res) {
         if (res.code === 0) {
-          _that.identificationState = 1
+          // 重置状态
+          _that.model.identificationState = model.identificationState
           Toast('已提交认证，请等待审核')
         }
       })
@@ -280,7 +280,7 @@ export default {
             // 营业执照
             businessLicensePhoto: res.data.businessLicensePhoto,
             // 营业执照有效期
-            businessLicenseDate: res.data.businessLicenseDate,
+            businessLicenseDate: res.data.businessLicenseDate === null ? '' : moment(res.data.businessLicenseDate).format('YYYY-MM-DD'),
             // 身份证照
             idCardPhoto: res.data.idCardPhoto,
             // 店铺照
@@ -330,7 +330,7 @@ export default {
     bindAuthorizeLayer: function (confirm) {
       if (confirm) {
         let url = this.authorizeLayerType === 1 ? this.model.authorizeUrl : this.model.identificationUrl
-        Tools.openApp(Tools.global.openApliPayLink + encodeURIComponent(url))
+        Tools.openApp(Tools.global.openAliPayLink + encodeURIComponent(url))
       } else {
         this.showAuthorizeLayer = false
       }

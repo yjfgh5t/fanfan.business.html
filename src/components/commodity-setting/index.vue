@@ -21,7 +21,7 @@
           <div class="div-item-right">
             <p class="item-title" v-text="items.title"></p>
             <div class="div-tag">
-              <span hidden="hidden" v-text="'原价'+items.price"></span> <span v-text="'库存'+items.inventory"></span> <span class="price" v-text="'￥'+items.price"></span>
+              <span v-text="'排序 '+items.order"></span> <span v-text="'库存'+items.inventory"></span> <span class="price" v-text="'￥'+items.price"></span>
             </div>
             <div class="div-btn">
               <mt-button size="small" :type="items.isPullOff?'primary':'danger'" v-text="items.isPullOff?'上架':'下架'" v-on:click="pullOffShelves(items)"></mt-button>
@@ -92,7 +92,7 @@ export default {
         if (res.code === 0 && res.data.length > 0) {
           let _commodityData = []
           res.data.forEach((item) => {
-            _commodityData.push({title: item.title, sales: 0, inventory: item.inventory, price: item.salePrice, id: item.id, commodityTypeId: item.categoryId, icon: item.icon, isPullOff: item.status === 2})
+            _commodityData.push({title: item.title, sales: 0, inventory: item.inventory, price: item.salePrice, id: item.id, commodityTypeId: item.categoryId, icon: item.icon, order: item.order, isPullOff: item.status === 2})
           })
           _this.commodities = _commodityData
         }

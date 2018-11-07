@@ -1,11 +1,16 @@
 <template>
   <div class="body">
     <mt-header slot="left" title="设置"></mt-header>
-    <div class="div-user" v-on:click="$router.push({path: '/userSetting'});">
-      <img :src="userInfo.icon" class="img-user"/>
-      <div class="p-user">
-        <p v-text="userInfo.mobile"></p>
-        <p v-text="userInfo.name"></p>
+    <div class="div-user" >
+      <div style="overflow: hidden;float:left;" v-on:click="$router.push({path: '/userSetting'});">
+        <img :src="userInfo.icon" class="img-user"/>
+        <div class="p-user">
+          <p v-text="userInfo.mobile"></p>
+          <p v-text="userInfo.name"></p>
+        </div>
+      </div>
+      <div class="div-program" v-on:click="openProgram">
+        <i class="icon iconfont icon-commodity"></i> 我的店铺
       </div>
     </div>
 
@@ -29,7 +34,7 @@
 
     <br />
     <mt-cell title="客桌设置" is-link :to="{ path: '/deskSetting'}">
-      <i slot="icon" class="icon iconfont icon-commodity-type" />
+      <i slot="icon" class="icon iconfont icon-zhuozi" />
     </mt-cell>
 
     <br />
@@ -54,6 +59,9 @@ export default {
     }
   },
   methods: {
+    // 触发展示时
+    onShow: function () {
+    },
     // 退出登录
     loginOut: function () {
       let _this = this
@@ -67,19 +75,28 @@ export default {
         })
       })
     },
-    // 触发展示时
-    onShow: function () {
+    // 打开小程序
+    openProgram: function () {
+      Tools.getKeyVal(Tools.globalKey.userInfo, function (userInfo) {
+        Tools.openApp(Tools.global.openAliPayProgram + '&page=pages/home/home&query=' + encodeURIComponent('customerId=' + userInfo.userId))
+      })
+    },
+    loadUser: function () {
+      let _this = this
+      Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
+        _this.userInfo = {
+          name: data.name,
+          mobile: data.mobile,
+          icon: (data.picPath === '' || data.picPath === undefined) ? userIcon : data.picPath
+        }
+      })
     }
   },
+  mounted () {
+    this.loadUser()
+  },
   activated () {
-    let _this = this
-    Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
-      _this.userInfo = {
-        name: data.name,
-        mobile: data.mobile,
-        icon: (data.picPath === '' || data.picPath === undefined) ? userIcon : data.picPath
-      }
-    })
+    this.loadUser()
   }
 }
 </script>
@@ -111,6 +128,16 @@ export default {
   .p-user p{
     display: block;
     line-height: 1.0rem;
+  }
+
+  .div-program{
+    float: right;
+    margin-right: 1rem;
+    color: white;
+    border: 1px solid white;
+    padding: 0.3rem;
+    border-radius: 0.3rem;
+    margin-top: 0.78rem;
   }
 
   .mint-cell-title .icon{
