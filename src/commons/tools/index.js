@@ -2,18 +2,28 @@ import { Indicator, Toast, MessageBox } from 'mint-ui'
 
 let Tools = {
   app: ((window.android) || {
-    ajaxPost: function (method, url, paramsMap, callKey) { window.setTimeout(() => {window.callback("{'code':-1,'success':false}", callKey) }, 500) },
-    ajaxGet: function (method, url, paramsMap, callKey) { window.setTimeout(() => {window.callback("{'code':-1,'success':false}", callKey) }, 500) }
+    ajaxPost: function (url, paramsMap, callKey) { window.setTimeout(() => { window.callback("{'code':-1,'success':false}", callKey) }, 500) },
+    ajaxGet: function (url, paramsMap, callKey) { window.setTimeout(() => { window.callback("{'code':-1,'success':false}", callKey) }, 500) }
   }),
   callMap: {},
   global: {
     defaultView: null,
     defaultCall: function () {},
     httpPath: '',
+    // 打开支付宝指定的地址
+    openApliPayLink: 'alipays://platformapi/startapp?appId=20000067&url='
   },
   callKeyIndex: 1,
   method: {post: 'post', get: 'get', json: 'json'},
-  globalKey: {userInfo: 'sp_user_info', blueToothConnect: 'sp_blue_tooth_connect', autoPrint: 'sp_auto_print', blueNotifyKey: 'local_notify_blue_booth_event', shopName: 'sp_shop_name', httpPath: 'sp_http_path'},
+  globalKey: {
+    userInfo: 'sp_user_info',
+    blueToothConnect: 'sp_blue_tooth_connect',
+    autoPrint: 'sp_auto_print',
+    blueNotifyKey: 'local_notify_blue_booth_event',
+    shopName: 'sp_shop_name',
+    httpPath: 'sp_http_path',
+    authorizeKey: 'local_notify_authorize_event'
+  },
   // 调用Ajax
   ajax: function (method, url, params, callback) {
     // 加载条
@@ -91,7 +101,7 @@ let Tools = {
         MessageBox({
           title: '新版提示',
           message: '有新版本更新',
-          showCancelButton: true,
+          showCancelButton: false,
           showConfirmButton: true,
           cancelButtonText: '取消',
           confirmButtonText: '立即更新',
@@ -177,9 +187,22 @@ let Option = {
   msgOption: function (msgType, data) {
     switch (msgType) {
       // 展示
-      case 'xg-show': break
+      case 'xg-show':
+        if (data.msgType) {
+          switch (data.msgType) {
+            // 授权通知
+            case 'authorizeNotify': Tools.callback(data, Tools.globalKey.authorizeKey); break
+          }
+        }
+        break
       // 点击
-      case 'xg-click': break
+      case 'xg-click':
+        if (data.msgType) {
+          switch (data.msgType) {
+          // 授权通知
+            case 'authorizeNotify': window.vueApp.$router.push({name: 'authorization'}); break
+          }
+        } break
       // 消息
       case 'xg-msg': Option.reloadMsg(); break
       // 点击通知
