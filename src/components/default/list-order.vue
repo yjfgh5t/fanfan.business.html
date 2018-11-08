@@ -26,7 +26,7 @@
               <label class="foot-line">时间：<label v-text="item.orderTime"></label></label>
             </div>
             <div class="foot-option">
-              <mt-button size="small" type="danger" v-show="item.state!==999" v-on:click="showMoreOption(item)" style="background-color: #1afa29;">更多</mt-button>
+              <mt-button size="small" type="danger" v-show="!(item.state==999 || item.state===202)" v-on:click="showMoreOption(item)" style="background-color: #1afa29;">更多</mt-button>
               <mt-button size="small" type="primary" v-on:click="print(item)" >打 印</mt-button>
             </div>
           </div>
