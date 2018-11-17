@@ -6,27 +6,32 @@
       </router-link>
       <mt-button  slot="right" v-on:click="save()">保存</mt-button>
     </mt-header>
+    <!--分类弹出层-->
+    <layer title="新增分类" :show="category.showLayer" :complete="bindCategoryComplete" tempStyle="width:16rem;margin-left:-8rem;">
+      <div slot="content">
+        <mt-field label="分类名称" placeholder="请输入分类名称" length="16" v-model="category.name"></mt-field>
+        <mt-field label="排序号" placeholder="请输入排序号" type="number" v-model="category.orderNum"></mt-field>
+      </div>
+    </layer>
 
     <!--添加规格弹出层 -->
-    <div class="commodity-shard" v-if="showNorms"></div>
-    <div class="temp-bluetooth"  v-if="showNorms">
-      <header class="mint-header" style="height: 1.8rem;"><h1 class="mint-header-title">添加规格</h1></header>
-      <mt-field label="规格名称" placeholder="大份" v-model="normsModel.title" length="16"></mt-field>
-      <mt-field label="商品价格" placeholder="0" v-model="normsModel.price" length="16"></mt-field>
-      <div class="foot-bluetooth">
-        <mt-button size="small" type="danger" v-on:click="showNorms=false">取消</mt-button> &nbsp;
-        <mt-button size="small" type="primary" v-on:click="sureAddNorms()">确定</mt-button>
+    <layer title="添加规格" :show="showNorms" :complete="sureAddNorms" tempStyle="width:16rem;margin-left:-8rem;">
+      <div slot="content">
+        <mt-field label="规格名称" placeholder="大份" v-model="normsModel.title" length="16"></mt-field>
+        <mt-field label="商品价格" placeholder="0" v-model="normsModel.price" length="16"></mt-field>
       </div>
-    </div>
+    </layer>
 
     <div style="height: 40px;"></div>
     <div class="cell-title">商品设置</div>
     <mt-cell title="商品图片" class="mint-field" >
-      <img class="img" :src="itemModel.icon" v-on:click="imgActionsVisible=true" id="img_icon" />
+      <img class="img" :src="itemModel.icon" id="img_icon" />
+      <span class="span-add add-img"  v-on:click="imgActionsVisible=true"> <i class="icon iconfont icon-upload"></i></span>
     </mt-cell>
     <mt-field label="商品名称" placeholder="请输入商品名称"  :attr="{ maxLength: 16 }" v-model="itemModel.title" length="32"></mt-field>
     <mt-cell title="商品分类" class="mint-field" >
       <select class="cell-select mint-field-core mint-cell-allow-right" v-model="itemModel.categoryId"><option v-for="item in commodityTypes" :value="item.id" v-text="item.name"></option></select>
+      <span class="span-add" v-on:click="addCategory"> <i class="icon iconfont icon-tianjia"></i></span>
     </mt-cell>
     <mt-field label="商品描述" placeholder="请输入商品描述" :attr="{ maxLength: 128 }" type="textarea" rows="2" length="128" v-model="itemModel.desc"></mt-field>
 
@@ -70,7 +75,11 @@
 import Tools from '../../commons/tools/index'
 import { Toast } from 'mint-ui'
 import MtButton from '../../../node_modules/mint-ui/packages/button/src/button.vue'
+import Layer from '@/tools/layer'
 export default {
+  components: {
+    "layer": Layer
+  },
   data () {
     return {
       itemModel: {id: 0, categoryId: 0, inventory: 9999, saleType: 1, selling: true, order: 0, unit: '份', norms: []},
@@ -78,7 +87,8 @@ export default {
       imgActions: [{name: '打开相册', method: this.openAlbum}, {name: '拍照', method: this.takePhoto}],
       normsModel: {title: '', price: ''},
       imgActionsVisible: false,
-      showNorms: false
+      showNorms: false,
+      category: {showLayer: false, name: '', orderNum: 0}
     }
   },
   mounted () {
@@ -166,17 +176,19 @@ export default {
       this.showNorms = true
     },
     // 确认添加规格
-    sureAddNorms: function () {
-      let model = this.normsModel
-      if (model.title === '') {
-        return Toast('请输入规格名称')
-      }
+    sureAddNorms: function (confirm) {
+      if (confirm) {
+        let model = this.normsModel
+        if (model.title === '') {
+          return Toast('请输入规格名称')
+        }
 
-      if (model.price === '' || isNaN(model.price)) {
-        return Toast('请输入商品售价')
+        if (model.price === '' || isNaN(model.price)) {
+          return Toast('请输入商品售价')
+        }
+        // 添加规格
+        this.itemModel.norms.push({id: 0, title: model.title, commodityPrice: model.price, type: 1})
       }
-      // 添加规格
-      this.itemModel.norms.push({id: 0, title: model.title, commodityPrice: model.price, type: 1});
       this.showNorms = false
     },
     // 打开相册
@@ -212,10 +224,9 @@ export default {
         }
       })
     },
-    // 加载数据
-    loadItem: function () {
+    // 加载分类
+    loadCategory: function () {
       let _this = this
-
       // 加载分类
       Tools.ajax('get', 'commodityCategory/', null, function (res) {
         if (res.code === 0 && res.data.length > 0) {
@@ -226,6 +237,12 @@ export default {
           _this.commodityTypes = _commodityData
         }
       })
+    },
+    // 加载数据
+    loadItem: function () {
+      let _this = this
+      // 加载分类
+      _this.loadCategory()
 
       if (_this.itemModel.id === 0) {
         return
@@ -258,6 +275,34 @@ export default {
           }
         }
       })
+    },
+    // 新增分类
+    addCategory: function () {
+      this.category = {
+        showLayer: true,
+        name: '',
+        orderNum: 0
+      }
+    },
+    // 分类确认
+    bindCategoryComplete: function (confirm) {
+      let _this = this
+      if (confirm) {
+        if (_this.category.name === '') {
+          return Toast('请输入类别名称')
+        }
+        let subModel = {id: -1, name: _this.category.name, order: _this.category.orderNum}
+        // 执行保存
+        Tools.ajax('json', 'commodityCategory/', subModel, function (res) {
+          // 刷新数据
+          if (res.code === 0) {
+            _this.category.showLayer = false
+            _this.loadCategory()
+          }
+        })
+      } else {
+        _this.category.showLayer = false
+      }
     }
   }
 }
@@ -336,30 +381,19 @@ export default {
     color: orangered;
   }
 
-  .commodity-shard{
-    width:100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    position: fixed;
-    top: 40px;
-    z-index: 1;
+  .span-add{
+    border: 1px solid #26a2ff;
+    font-size: 0.666rem;
+    padding: 0.2rem;
+    color: #26a2ff;
+    border-radius: 0.2rem;
   }
-
-  .temp-bluetooth{
-    width: 80%;
-    height: 9rem;
-    position: fixed;
-    z-index: 2;
-    background: white;
-    left:60%;
-    margin-left: -10rem;
-    top: 15%;
+  .span-add .icon{
+    font-size: 0.666rem;
   }
-
-  .foot-bluetooth{
-    height: 1.8rem;
-    text-align: right;
-    padding-right: 1rem;
+  .add-img{
+    position: absolute;
+    right: 0.6rem;
   }
 
 </style>

@@ -61,6 +61,10 @@ export default {
   methods: {
     // 触发展示时
     onShow: function () {
+      // 加载用户信息
+      this.loadUser()
+      // 检查状态
+      Tools.checkShopState()
     },
     // 退出登录
     loginOut: function () {
@@ -93,9 +97,7 @@ export default {
     }
   },
   mounted () {
-    this.loadUser()
-  },
-  activated () {
+    // 加载用户信息
     this.loadUser()
   }
 }

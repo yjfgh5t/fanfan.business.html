@@ -8,7 +8,7 @@
     <div style="height: 40px;"></div>
 
     <!--授权弹框-->
-    <layer :title="authorizeLayerType===1?'支付宝扫码授权':'支付宝扫码认证确认'" :show="showAuthorizeLayer" :complete="bindAuthorizeLayer" tempStyle="width:16rem;margin-left:-8rem;" confirmText="打开支付宝">
+    <layer :title="authorizeLayerType===1?'请使用支付宝扫码授权':'请使用支付宝扫码认证'" :show="showAuthorizeLayer" :complete="bindAuthorizeLayer" tempStyle="width:16rem;margin-left:-8rem;" :confirmText="authorizeLayerType===1?'打卡支付宝授权':'打卡支付宝认证确认'">
       <div slot="content">
         <img :src="authorizeImgUrl" class="lay-img" />
       </div>

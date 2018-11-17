@@ -9,6 +9,7 @@
     <div style="height: 40px;"></div>
     <mt-cell title="商户头像" class="mint-field" >
       <img class="img" :src="model.icon" v-on:click="imgActionsVisible=true" id="img_icon" />
+      <span class="span-add add-img"  v-on:click="imgActionsVisible=true"> <i class="icon iconfont icon-upload"></i></span>
     </mt-cell>
     <mt-field label="商户姓名" placeholder="请输入商户姓名" v-model="model.name" length="8"></mt-field>
     <mt-field label="手机号" placeholder="请输入手机号" type="tel" v-model="model.mobile"></mt-field>
@@ -94,6 +95,7 @@ export default {
           _this.model.icon = res.data
           document.getElementById('img_icon').setAttribute('src', res.data)
           _this.modifyImg(_this)
+          _this.save()
         }
       })
     },
@@ -159,5 +161,19 @@ export default {
     border-radius: 1.5rem;
     width: 3rem;
     height: 3rem;
+  }
+  .span-add{
+    border: 1px solid #26a2ff;
+    font-size: 0.666rem;
+    padding: 0.2rem;
+    color: #26a2ff;
+    border-radius: 0.2rem;
+  }
+  .span-add .icon{
+    font-size: 0.666rem;
+  }
+  .add-img{
+    position: absolute;
+    right: 0.6rem;
   }
 </style>

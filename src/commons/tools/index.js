@@ -24,7 +24,8 @@ let Tools = {
     blueNotifyKey: 'local_notify_blue_booth_event',
     shopName: 'sp_shop_name',
     httpPath: 'sp_http_path',
-    authorizeKey: 'local_notify_authorize_event'
+    authorizeKey: 'local_notify_authorize_event',
+    shopState: 'sp_shop_state'
   },
   // 调用Ajax
   ajax: function (method, url, params, callback) {
@@ -58,6 +59,8 @@ let Tools = {
   },
   // 绑定用户至信鸽推送
   bindUser: function (userId, callback) {
+    // 加载条
+    Indicator.open({spinnerType: 'fading-circle'})
     Tools.app.bindUser(userId, Tools.getCallBackKey(callback))
   },
   // 退出登录
@@ -118,6 +121,68 @@ let Tools = {
             })
           } else {
             Tools.exitApp()
+          }
+        })
+      }
+    })
+  },
+  // 检查店铺状态
+  checkShopState: function () {
+    Tools.getKeyVal(Tools.globalKey.shopState, function (state) {
+      if (state !== '9') {
+        if (state === '' || state.length === 0 || isNaN(state)) {
+          state = 0
+        }
+        // 检查状态
+        Tools.ajax(Tools.method.post, 'shop/state', {state: state}, function (res) {
+          if (res.code === 0) {
+            if (res.data < 9) {
+              let msg = ''
+              let url = ''
+              let btn = ''
+              switch (parseInt(res.data)) {
+                case 1:
+                  msg = '您的店铺信息未完善'
+                  url = 'shopSetting'
+                  btn = '去完善'
+                  break
+                case 2:
+                  msg = '您的还未设置商品信息'
+                  url = 'commoditySetting'
+                  btn = '去设置'
+                  break
+                case 3:
+                  msg = '您还未设置支付宝授权,将无法收款'
+                  url = 'authorization'
+                  btn = '去授权'
+                  break
+                case 4:
+                  msg = '您还未申请支付宝认证,将无法收款'
+                  url = 'authorization'
+                  btn = '去认证'
+                  break
+                case 5:
+                  msg = '您支付宝认证失败,请重新认证'
+                  url = 'authorization'
+                  btn = '去认证'
+                  break
+                case 6:
+                  msg = '您支付宝认证已通过,请确认'
+                  url = 'authorization'
+                  btn = '去确认'
+                  break
+              }
+
+              MessageBox.confirm(msg, '系统提示', {
+                confirmButtonText: btn
+              }).then(action => {
+                if (action === 'confirm') {
+                  window.vueApp.$router.push({name: url})
+                }
+              })
+            }
+            // 设置值
+            Tools.setKeyVal(Tools.globalKey.shopState, res.data)
           }
         })
       }

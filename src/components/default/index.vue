@@ -88,6 +88,9 @@ export default {
       this.$route.query.active = undefined
     }
     Tools.global.defaultView = this
+
+    // 设置显示
+    _this.itemClick(_this.active)
   }
 }
 </script>

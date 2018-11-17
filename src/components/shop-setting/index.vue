@@ -10,6 +10,7 @@
     <div style="height: 40px;"></div>
     <mt-cell title="店铺Logo" class="mint-field" >
       <img class="img" :src="itemModel.logo" v-on:click="imgActionsVisible=true" id="img_logo" />
+      <span class="span-add add-img"  v-on:click="imgActionsVisible=true"> <i class="icon iconfont icon-upload"></i></span>
     </mt-cell>
     <mt-field label="店铺名称" placeholder="请输入店铺名称" v-model="itemModel.name" length="32"></mt-field>
     <mt-cell title="是否营业" class="mint-field" >
@@ -203,5 +204,19 @@ export default {
     display: block;
     float: left;
     border-radius: 0.4rem;
+  }
+  .span-add{
+    border: 1px solid #26a2ff;
+    font-size: 0.666rem;
+    padding: 0.2rem;
+    color: #26a2ff;
+    border-radius: 0.2rem;
+  }
+  .span-add .icon{
+    font-size: 0.666rem;
+  }
+  .add-img{
+    position: absolute;
+    right: 0.6rem;
   }
 </style>
