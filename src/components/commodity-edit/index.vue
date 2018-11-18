@@ -297,6 +297,7 @@ export default {
           // 刷新数据
           if (res.code === 0) {
             _this.category.showLayer = false
+            _this.itemModel.categoryId = parseInt(res.data)
             _this.loadCategory()
           }
         })

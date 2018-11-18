@@ -16,7 +16,7 @@
       </ul>
       <!--商品栏 -->
       <div class="div-commonditys">
-        <div v-for="items in commoditiesTypeFilter(commodities,activeTypeId)" class="div-item">
+        <div v-if="commodities.length>0" v-for="items in commoditiesTypeFilter(commodities,activeTypeId)" class="div-item">
           <img :src="items.icon" />
           <div class="div-item-right">
             <p class="item-title" v-text="items.title"></p>
@@ -29,6 +29,7 @@
             </div>
           </div>
         </div>
+        <div  v-if="commodities.length==0"  class="div-desc">您还未添加商品 请点击右上角按钮添加商品</div>
       </div>
     </div>
   </div>
@@ -44,7 +45,7 @@ export default {
       activeTypeId: 1,
       commodityTypes: [],
       commodities: [
-        {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 1, commodityTypeId: 0, icon: 'https://fuss10.elemecdn.com/4/7d/412c58ad49fed41f849989dc66270jpeg.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/'},
+        //{title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 1, commodityTypeId: 0, icon: 'https://fuss10.elemecdn.com/4/7d/412c58ad49fed41f849989dc66270jpeg.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/'}
       ]
     }
   },
@@ -133,6 +134,12 @@ export default {
     float: left;
     width: 14rem;
     padding: 0rem 0.4rem;
+  }
+
+  .div-desc{
+    text-align: center;
+    margin-top: 2rem;
+    color: #ccc;
   }
 
   .div-item{

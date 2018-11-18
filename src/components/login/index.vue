@@ -61,10 +61,9 @@ export default {
           // 保存至本地
           Tools.setKeyVal(Tools.globalKey.userInfo, JSON.stringify(userInfo), function (success) {
             // 绑定用户至信鸽推送
-            Tools.bindUser(userInfo.userId, function (bandState) {
-              // 跳转
-              _this.$router.push({name: 'default'})
-            })
+            Tools.bindUser(userInfo.userId)
+            // 跳转
+            _this.$router.push({name: 'default'})
           })
         } else {
           Toast('用户名或密码错误')
