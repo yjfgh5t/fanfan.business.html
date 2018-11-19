@@ -262,7 +262,7 @@ export default {
     }
   },
   created () {
-    this.loadItems({isMax: false, clear: true, lastId: this.minLoadId})
+    //this.loadItems({isMax: false, clear: true, lastId: this.minLoadId})
   }
 }
 </script>
