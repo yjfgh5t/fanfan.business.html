@@ -259,6 +259,8 @@ let Option = {
           switch (data.msgType) {
             // 授权通知
             case 'authorizeNotify': Tools.callback(data, Tools.globalKey.authorizeKey); break
+            // 刷新订单
+            case 'payOrder': Option.reloadMsg(); break
           }
         }
         break
