@@ -11,6 +11,7 @@ import UserSetting from '@/components/user-setting'
 import Login from '@/components/login'
 import Register from '@/components/register'
 import Authorization from '@/components/authorization'
+import PaySetting from '@/components/pay-setting'
 
 Vue.use(Router)
 Vue.use(require('vue-moment'))
@@ -60,6 +61,11 @@ export default new Router({
       path: '/userSetting',
       name: 'userSetting',
       component: UserSetting
+    },
+    {
+      path: '/paySetting',
+      name: 'paySetting',
+      component: PaySetting
     },
     {
       path: '/login',

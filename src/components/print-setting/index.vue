@@ -45,6 +45,7 @@
 
 <script>
 import Tools from '../../commons/tools/index'
+import Client from '@/commons/tools/clientexcute'
 import { Toast } from 'mint-ui'
 export default {
   data () {
@@ -108,7 +109,6 @@ export default {
         case 3:
           this.titleText = '蓝牙连接失败'
           this.isSearch = false
-          Toast('蓝牙链接失败')
           break
       }
     },
@@ -134,8 +134,6 @@ export default {
               _this.radioModel = blueToothModel
             }
             break
-          // 链接中
-          case 'connecting': break
           // 链接成功
           case 'connected':
             _this.connectBlue.stateText = '已连接'
@@ -147,8 +145,10 @@ export default {
             break
           // 设备断开链接
           case 'disConnected': _this.connectBlue.stateText = '未连接'; _this.setBluthState(3); break
-          // 链接失败
-          case 'disConnecting': _this.connectBlue.stateText = '未连接'; _this.setBluthState(3); break
+          case 'onOpen':
+            // 链接蓝牙
+            Client.blueToothConnect()
+            break
         }
       })
 

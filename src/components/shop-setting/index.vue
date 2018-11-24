@@ -4,24 +4,27 @@
       <router-link to="" slot="left">
         <mt-button icon="back" v-on:click="$router.go(-1)">返回</mt-button>
       </router-link>
-      <mt-button  slot="right" v-on:click="save()">保存</mt-button>
     </mt-header>
 
     <div style="height: 40px;"></div>
-    <mt-cell title="店铺Logo" class="mint-field" >
+    <mt-cell title="店铺Logo" class="mint-field" v-if="false" >
       <img class="img" :src="itemModel.logo" v-on:click="imgActionsVisible=true" id="img_logo" />
       <span class="span-add add-img"  v-on:click="imgActionsVisible=true"> <i class="icon iconfont icon-upload"></i></span>
     </mt-cell>
     <mt-field label="店铺名称" placeholder="请输入店铺名称" v-model="itemModel.name" length="32"></mt-field>
-    <mt-cell title="是否营业" class="mint-field" >
-      <mt-switch v-model="itemModel.state">{{itemModel.state?'是':'否'}}</mt-switch>
-    </mt-cell>
+    <mt-field label="店铺地址" placeholder="请输入店铺地址"  type="textarea" rows="2" length="128" v-model="itemModel.address"></mt-field>
     <mt-cell title="营业时间" class="mint-field" >
      <mt-field type="text" v-model="itemModel.businessStart" placeholder="开始时间" @click.native.capture="openPicker(true)" readonly="readonly" ></mt-field> -
       <mt-field type="text"  v-model="itemModel.businessEnd"  placeholder="结束时间" @click.native.capture="openPicker(false)" readonly="readonly"></mt-field>
     </mt-cell>
-    <mt-field label="起订价格" placeholder="请输入起订价格" type="number" length="7" v-model="itemModel.minOrderPrice"></mt-field>
-    <mt-field label="店铺地址" placeholder="请输入店铺地址"  type="textarea" rows="2" length="128" v-model="itemModel.address"></mt-field>
+    <mt-cell title="是否营业" class="mint-field" >
+      <mt-switch v-model="itemModel.state">{{itemModel.state?'是':'否'}}</mt-switch>
+    </mt-cell>
+    <mt-field label="起订价格" placeholder="请输入起订价格" v-if="false" type="number" length="7" v-model="itemModel.minOrderPrice"></mt-field>
+    <br />
+    <div style="text-align: center; margin-bottom: 1rem;margin-top: 0.6rem;">
+      <mt-button type="primary" plain="true" size="normal" style="font-size: 0.66rem;padding: 0rem 2rem;" v-on:click="save">保 存</mt-button>
+    </div>
     <!-- 选择相册或拍照-->
     <mt-actionsheet :actions="imgActions" v-model="imgActionsVisible"></mt-actionsheet>
     <!-- 日期控件-->
@@ -154,10 +157,6 @@ export default {
     },
     // 验证
     validate: function () {
-      if (this.itemModel.logo === '') {
-        return '请上传店铺logo'
-      }
-
       if (this.itemModel.name === '') {
         return '请输入店铺名称'
       }

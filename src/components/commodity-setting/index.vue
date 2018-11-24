@@ -17,7 +17,7 @@
       <!--商品栏 -->
       <div class="div-commonditys">
         <div v-if="commodities.length>0" v-for="items in commoditiesTypeFilter(commodities,activeTypeId)" class="div-item">
-          <img :src="items.icon" />
+          <img :src="items.icon==''?defCommodityIcon:items.icon" />
           <div class="div-item-right">
             <p class="item-title" v-text="items.title"></p>
             <div class="div-tag">
@@ -37,6 +37,7 @@
 
 <script>
 import Tools from '../../commons/tools/index'
+import defCommodityIcon from '../../assets/imgs/icon_commodity.png'
 import { Toast } from 'mint-ui'
 export default {
   data () {
@@ -46,7 +47,8 @@ export default {
       commodityTypes: [],
       commodities: [
         //{title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 1, commodityTypeId: 0, icon: 'https://fuss10.elemecdn.com/4/7d/412c58ad49fed41f849989dc66270jpeg.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/'}
-      ]
+      ],
+      defCommodityIcon: defCommodityIcon
     }
   },
   mounted () {

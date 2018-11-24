@@ -4,7 +4,6 @@
       <router-link to="" slot="left">
         <mt-button icon="back" v-on:click="$router.go(-1)">返回</mt-button>
       </router-link>
-      <mt-button  slot="right" v-on:click="save()">保存</mt-button>
     </mt-header>
     <!--分类弹出层-->
     <layer title="新增分类" :show="category.showLayer" :complete="bindCategoryComplete" tempStyle="width:16rem;margin-left:-8rem;">
@@ -24,23 +23,19 @@
 
     <div style="height: 40px;"></div>
     <div class="cell-title">商品设置</div>
-    <mt-cell title="商品图片" class="mint-field" >
-      <img class="img" :src="itemModel.icon" id="img_icon" />
-      <span class="span-add add-img"  v-on:click="imgActionsVisible=true"> <i class="icon iconfont icon-upload"></i></span>
-    </mt-cell>
     <mt-field label="商品名称" placeholder="请输入商品名称"  :attr="{ maxLength: 16 }" v-model="itemModel.title" length="32"></mt-field>
     <mt-cell title="商品分类" class="mint-field" >
       <select class="cell-select mint-field-core mint-cell-allow-right" v-model="itemModel.categoryId"><option v-for="item in commodityTypes" :value="item.id" v-text="item.name"></option></select>
       <span class="span-add" v-on:click="addCategory"> <i class="icon iconfont icon-tianjia"></i></span>
     </mt-cell>
-    <mt-field label="商品描述" placeholder="请输入商品描述" :attr="{ maxLength: 128 }" type="textarea" rows="2" length="128" v-model="itemModel.desc"></mt-field>
-
-    <div class="cell-title">售价设置</div>
-    <mt-field label="商品原价" placeholder="请输入商品原价" type="number" length="7" v-model="itemModel.price"></mt-field>
     <mt-field label="商品售价" placeholder="请输入商品售价" type="number" length="7" v-model="itemModel.salePrice"></mt-field>
-    <mt-field label="商品库存" placeholder="请输入商品库存" type="number" length="5" v-model="itemModel.inventory"></mt-field>
     <mt-field label="打包费" placeholder="请输入商品打包费用" type="number" length="5" v-model="itemModel.packagePrice"></mt-field>
-
+    <mt-field label="排序号" placeholder="请输入排序号" type="number" length="5" v-model="itemModel.order"></mt-field>
+    <mt-cell title="商品图片" class="mint-field" >
+      <img class="img def" v-if="itemModel.icon===''" :src="defCommodityIcon" />
+      <img class="img" v-if="itemModel.icon!==''" :src="itemModel.icon" id="img_icon" />
+      <span class="span-add add-img"  v-on:click="imgActionsVisible=true"> <i class="icon iconfont icon-upload"></i></span>
+    </mt-cell>
     <div class="cell-title">规格设置</div>
     <div class="div-guige">
       <ul class="ul-table">
@@ -61,11 +56,16 @@
         <li class="li-bottom" v-on:click="addNorms"> 点击添加规格 </li>
       </ul>
     </div>
-    <div class="cell-title">其它设置</div>
-    <mt-cell :title="'是否上架'" class="mint-field"><mt-switch v-model="itemModel.selling"></mt-switch></mt-cell>
-    <mt-field label="排序号" placeholder="请输入排序号" type="number" length="5" v-model="itemModel.order"></mt-field>
-    <mt-field label="商品单位" placeholder="请输入商品单位" length="10" v-model="itemModel.unit"></mt-field>
 
+    <div class="cell-title" v-if="false">其它设置</div>
+    <mt-field label="商品原价"  v-if="false" placeholder="请输入商品原价" type="number" length="7" v-model="itemModel.price"></mt-field>
+    <mt-field label="商品库存"  v-if="false" placeholder="请输入商品库存" type="number" length="5" v-model="itemModel.inventory"></mt-field>
+    <mt-cell :title="'是否上架'"  v-if="false" class="mint-field"><mt-switch v-model="itemModel.selling"></mt-switch></mt-cell>
+    <mt-field label="商品单位" v-if="false" placeholder="请输入商品单位" length="10" v-model="itemModel.unit"></mt-field>
+    <mt-field label="商品描述" v-if="false" placeholder="请输入商品描述" :attr="{ maxLength: 128 }" type="textarea" rows="2" length="128" v-model="itemModel.desc"></mt-field>
+    <div style="text-align: center; margin-bottom: 1rem;margin-top: 0.6rem;">
+      <mt-button type="primary" plain="true" size="normal" style="font-size: 0.66rem;padding: 0rem 2rem;" v-on:click="save">保 存</mt-button>
+    </div>
     <!-- 选择相册或拍照-->
     <mt-actionsheet :actions="imgActions" v-model="imgActionsVisible"></mt-actionsheet>
   </div>
@@ -73,6 +73,7 @@
 
 <script>
 import Tools from '../../commons/tools/index'
+import defCommodityIcon from '../../assets/imgs/icon_commodity.png'
 import { Toast } from 'mint-ui'
 import MtButton from '../../../node_modules/mint-ui/packages/button/src/button.vue'
 import Layer from '@/tools/layer'
@@ -82,13 +83,14 @@ export default {
   },
   data () {
     return {
-      itemModel: {id: 0, categoryId: 0, inventory: 9999, saleType: 1, selling: true, order: 0, unit: '份', norms: []},
-      commodityTypes: [{id: 0, name: '请选择'}],
+      itemModel: {id: 0, packagePrice: 0, title: '', categoryId: 0, price: 0, inventory: 9999, saleType: 1, selling: true, order: 0, unit: '份', icon: '', norms: []},
+      commodityTypes: [{id: 0, name: '点击请选择'}],
       imgActions: [{name: '打开相册', method: this.openAlbum}, {name: '拍照', method: this.takePhoto}],
       normsModel: {title: '', price: ''},
       imgActionsVisible: false,
       showNorms: false,
-      category: {showLayer: false, name: '', orderNum: 0}
+      category: {showLayer: false, name: '', orderNum: 0},
+      defCommodityIcon: defCommodityIcon
     }
   },
   mounted () {
@@ -131,11 +133,8 @@ export default {
     },
     // 验证
     validate: function () {
-      if (this.itemModel.icon === '') {
-        return '请设置商品图片'
-      }
       if (this.itemModel.title === '') {
-        return '标题不能为空'
+        return '请输入商品标题'
       }
       if (this.itemModel.categoryId === 0) {
         return '请选择商品分类'
@@ -230,7 +229,7 @@ export default {
       // 加载分类
       Tools.ajax('get', 'commodityCategory/', null, function (res) {
         if (res.code === 0 && res.data.length > 0) {
-          let _commodityData = [{id: 0, name: '请选择'}]
+          let _commodityData = [{id: 0, name: '点击请选择'}]
           res.data.forEach((item) => {
             _commodityData.push({name: item.name, id: item.id})
           })
@@ -341,6 +340,10 @@ export default {
     display: block;
     float: left;
     border-radius: 0.4rem;
+  }
+  .img.def{
+    width: 3rem;
+    height: 3rem;
   }
   .ul-table{
     padding: 0 0.6rem;

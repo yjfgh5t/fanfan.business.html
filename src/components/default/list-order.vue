@@ -8,9 +8,8 @@
             <label style="float: right;color:orangered;" v-text="item.stateText">订单已支付</label>
           </div>
           <div class="item-body">
-            <div class="body-commodity-size"><label>桌号：<label v-text="item.orderDeskNum"></label></label></div>
-            <div class="body-commodity-size"><label>用餐方式：<label v-text="item.orderTypeText"></label></label></div>
-            <div class="body-commodity-size"><label>订单号：<label v-text="item.orderNum"></label></label></div>
+            <div class="body-commodity-size"><label class="left">桌号：<label v-text="item.orderDeskNum"></label></label> <label class="right">下单时间：<label v-text="item.orderTime"></label></label></div>
+            <div class="body-commodity-size"><label class="left">用餐方式：<label v-text="item.orderTypeText"></label></label><label class="right">订单号：<label v-text="item.orderNum"></label></label></div>
             <div class="body-commodity">
               <div class="commodity" v-for="commodity in item.details">
                 <label class="name" v-text="commodity.outTitle"></label> <label class="size" v-show="commodity.outType !==6" v-text="'x '+commodity.outSize"></label> <label class="price" v-text="'￥'+commodity.outPrice"></label>
@@ -23,7 +22,7 @@
           <div class="item-foot">
             <div class="foot-price">
               <label class="foot-line">支付：<label class="lab-price" v-text="'￥'+item.orderPay"></label></label>
-              <label class="foot-line">时间：<label v-text="item.orderTime"></label></label>
+              <label class="foot-line">付款方式：<label v-text="item.orderPayTypeText"></label></label>
             </div>
             <div class="foot-option">
               <mt-button size="small" type="danger" v-show="!(item.state==999 || item.state===202)" v-on:click="showMoreOption(item)" style="background-color: #1afa29;">更多</mt-button>
@@ -170,6 +169,7 @@ export default {
         commoditySize: 0 || item.commoditySize,
         orderDateNum: item.orderDateNum,
         orderRemark: item.orderRemark,
+        orderPayTypeText: item.orderPayTypeText,
         open: false
       }
     },
@@ -322,6 +322,15 @@ export default {
   .body-commodity-size{
     font-size:0.625rem;
     padding-bottom: 0.4rem;
+  }
+  .body-commodity-size .left{
+    display: inline-block;
+    width: 7rem;
+  }
+  .body-commodity-size .right {
+    display: inline-block;
+    width: 10.2rem;
+    text-align: right;
   }
   .body-commodity{
     overflow: hidden;

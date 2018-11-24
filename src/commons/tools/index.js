@@ -73,6 +73,8 @@ let Tools = {
   },
   // 链接蓝牙
   blueConnect: function (address, callback) {
+    // 加载条
+    Indicator.open({spinnerType: 'fading-circle'})
     Tools.app.blueToothConnect(address, Tools.getCallBackKey(callback))
   },
   // 打印
@@ -217,15 +219,17 @@ let Tools = {
   },
   // App回调
   callback: function (jsonString, callKey) {
-    // 本地JS通知消息
-    if (callKey.indexOf('local_notify') === 0) {
-      Tools.callMap[callKey](jsonString)
-      return
-    }
-
     if (callKey === 'loading') {
       // 加载条
       Indicator.open({spinnerType: 'double-bounce'})
+      return
+    }
+    // 关闭加载条
+    Indicator.close()
+
+    // 本地JS通知消息
+    if (callKey.indexOf('local_notify') === 0) {
+      Tools.callMap[callKey](jsonString)
       return
     }
     if (callKey.indexOf('notify_msg.') === 0) {
@@ -233,8 +237,6 @@ let Tools = {
       Option.msgOption(callKey.replace('notify_msg.', ''), jsonString)
       return
     }
-    // 关闭加载条
-    Indicator.close()
     if (jsonString.code !== undefined) {
       if (jsonString.success && jsonString.code === 0) {
         // 执行回调

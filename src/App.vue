@@ -9,7 +9,8 @@
 
 <script>
 import Tools from '@/commons/tools/index'
-import { Toast } from 'mint-ui'
+import Client from '@/commons/tools/clientexcute'
+import { Toast,Indicator } from 'mint-ui'
 export default {
   name: 'App',
   mounted () {
@@ -20,19 +21,26 @@ export default {
       })()
     }
     window.onresize()
+    // 5s后自动链接蓝牙
+    try {
+      window.setTimeout(function () {
+        // 监听蓝牙事件
+        Tools.localNotify(Tools.globalKey.blueNotifyKey, function (res) {
+          switch (res.data.event) {
+            case 'onOpen':
+              // 链接蓝牙
+              Client.blueToothConnect()
+              break
+          }
+        })
+        // 链接蓝牙
+        Client.blueToothConnect(true)
+      }, 5000)
+    } catch (ex) {}
   },
   created () {
-    let _this = this
     // 检查登录
     Tools.checkLogin()
-    // 链接蓝牙
-    Tools.getKeyVal(Tools.globalKey.blueToothConnect, function (data) {
-      if (data.indexOf(';') > 0) {
-        let blueStr = data.split(';')
-        // 执行链接蓝牙
-        Tools.blueConnect(blueStr[1])
-      }
-    })
     // 设置API地址
     Tools.getKeyVal(Tools.globalKey.httpPath, function (data) {
       Tools.global.httpPath = data

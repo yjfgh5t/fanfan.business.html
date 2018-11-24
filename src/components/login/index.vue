@@ -58,6 +58,8 @@ export default {
             mobile: res.data.mobile,
             picPath: res.data.picPath
           }
+          // 店铺名称保存至本地
+          Tools.setKeyVal(Tools.globalKey.shopName, res.data.shopName)
           // 保存至本地
           Tools.setKeyVal(Tools.globalKey.userInfo, JSON.stringify(userInfo), function (success) {
             // 绑定用户至信鸽推送

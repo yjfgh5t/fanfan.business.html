@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="div-program" v-on:click="openProgram">
-        <i class="icon iconfont icon-commodity"></i> 我的店铺
+        <i class="icon iconfont icon-commodity"></i> 店铺预览
       </div>
     </div>
 
@@ -38,8 +38,8 @@
     </mt-cell>
 
     <br />
-    <mt-cell title="支付宝认证" is-link :to="{ path: '/authorization'}">
-      <i slot="icon" class="icon iconfont icon-shouquan" />
+    <mt-cell title="收款设置" is-link :to="{ path: '/paySetting'}">
+      <i slot="icon" class="icon iconfont icon-shoukuan" />
     </mt-cell>
 
     <div class="login-out">
