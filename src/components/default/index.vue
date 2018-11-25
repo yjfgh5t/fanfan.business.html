@@ -69,20 +69,11 @@ export default {
   mounted () {
     // 检查版本更新
     Tools.checkNewAPK()
-  },
-  activated () {
     // 检查登录
     Tools.checkLogin()
+  },
+  activated () {
     let _this = this
-    // 是否登录窗口
-    Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
-      if (data === '') {
-        _this.$router.push({name: 'login'})
-      } else {
-        // 绑定信鸽推送
-        Tools.bindUser(data.userId, function (bind) {})
-      }
-    })
     if (this.$route.query.active) {
       this.itemClick(this.$route.query.active)
       this.$route.query.active = undefined

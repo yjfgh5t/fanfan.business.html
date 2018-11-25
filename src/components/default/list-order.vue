@@ -15,17 +15,17 @@
                 <label class="name" v-text="commodity.outTitle"></label> <label class="size" v-show="commodity.outType !==6" v-text="'x '+commodity.outSize"></label> <label class="price" v-text="'￥'+commodity.outPrice"></label>
               </div>
               <div class="commodity">
-                <label class="name">合计</label> <label class="size"></label> <label class="price" v-text="'￥'+item.orderTotal"></label>
+                <label class="name">合计</label> <label class="size"></label>  <label class="size" v-text="'x '+ item.details.filter(f =>(f.outType=== detailType.commodity || f.outType== detailType.commodityNorms)).length"></label>  <label class="price" v-text="'￥'+item.orderTotal"></label>
               </div>
             </div>
           </div>
           <div class="item-foot">
             <div class="foot-price">
-              <label class="foot-line">支付：<label class="lab-price" v-text="'￥'+item.orderPay"></label></label>
+              <label class="foot-line"><label v-text="(item.orderPayType===payType.offline && (item.state===staticOrderState.businessCancel || item.state===staticOrderState.businessPending))?'待付款：':'已付款：'"></label><label class="lab-price" v-text="'￥'+item.orderPay"></label></label>
               <label class="foot-line">付款方式：<label v-text="item.orderPayTypeText"></label></label>
             </div>
             <div class="foot-option">
-              <mt-button size="small" type="danger" v-show="!(item.state==999 || item.state===202)" v-on:click="showMoreOption(item)" style="background-color: #1afa29;">更多</mt-button>
+              <mt-button size="small" type="danger" v-show="!(item.state==staticOrderState.orderSuccess || item.state===staticOrderState.businessCancel)" v-on:click="showMoreOption(item)" style="background-color: #1afa29;">更多</mt-button>
               <mt-button size="small" type="primary" v-on:click="print(item)" >打 印</mt-button>
             </div>
           </div>
@@ -56,15 +56,22 @@ export default {
       // 消息列表
       orderArray: [],
       bodyHeight: window.document.body.clientHeight - this.height,
-      // 加载状态 0:加载更多  1:加载中  2: 为没有更多
+      // 加载状态 0:加载更多  1:加载中  2: 全部加载完毕 3 没有订单
       loadState: 3,
+      pageSize: 6,
       minLoadId: -1,
       maxLoadId: -1,
       moreOption: {
         actions: [],
         actionsVisible: false,
         item: null
-      }
+      },
+      // 支付类型
+      payType: { alipay: 1, wechate: 2, offline: 3 },
+      // 订单状态
+      staticOrderState: { businessPending: 200, businessCancel: 202, orderSuccess: 999 },
+      // 商品详情的类型
+      detailType: {commodity: 1, commodityNorms: 5}
     }
   },
   methods: {
@@ -80,14 +87,13 @@ export default {
       this.loadItems({isMax: false, lastId: this.minLoadId})
     },
     // 设置加载文本
-    setLoadText: function (data, fastPage) {
+    setLoadText: function (data, fastPage, isMax) {
       let _this = this
-      // 加载数据 向下拉取数据
-      _this.loadState = 1
-      if (data == null || (data.length === 0 && fastPage)) {
+      if (data.length === 0 && fastPage) {
         _this.loadState = 3
-      } else {
-        if (data.length === 10) {
+      } else if (fastPage || !isMax) {
+        // 第一次加载 或者向下拉数据
+        if (data.length === _this.pageSize) {
           _this.loadState = 0
         } else {
           _this.loadState = 2
@@ -106,10 +112,10 @@ export default {
         option.lastId = -1
       }
       // 拉取订单列表
-      Tools.ajax('post', 'order/query/' + _this.queryDate, {lastId: option.lastId, isMax: option.isMax, orderState: _this.orderState, newOrder: _this.newOrder}, (res) => {
+      Tools.ajax('post', 'order/query/' + _this.queryDate, {lastId: option.lastId, isMax: option.isMax, orderState: _this.orderState, newOrder: _this.newOrder, pageSize: _this.pageSize}, (res) => {
         let fastPage = option.lastId === -1
-        // 设置状态值
-        _this.setLoadText(res.data, fastPage)
+        // 设置状态值向下拉数据时
+        _this.setLoadText(res.data, fastPage, option.isMax)
         if (callback) {
           callback(res.data)
         }
@@ -170,6 +176,7 @@ export default {
         orderDateNum: item.orderDateNum,
         orderRemark: item.orderRemark,
         orderPayTypeText: item.orderPayTypeText,
+        orderPayType: item.orderPayType,
         open: false
       }
     },
@@ -177,10 +184,11 @@ export default {
     backOrder: function () {
       let _this = this
       let model = _this.moreOption.item
-      MessageBox.confirm('确定退回订单并退款吗？', '操作提示').then(() => {
+      let msg = model.orderPayType === this.payType.offline ? '确定取消该订单吗？' : '确定取消该订单并退款吗？'
+      MessageBox.confirm(msg, '操作提示').then(() => {
         Tools.ajax('post', 'order/state/' + model.id, {state: 'business-cancel'}, function (res) {
           if (res.code === 0) {
-            Toast('退单成功')
+            Toast('订单取消成功')
             model.stateText = res.data.orderStateText
             model.state = res.data.orderState
             // 通知回调函数
@@ -196,7 +204,7 @@ export default {
       let model = _this.moreOption.item
       Tools.ajax('post', 'order/state/' + model.id, {state: 'order-completed'}, function (res) {
         if (res.code === 0) {
-          Toast('结单成功')
+          Toast('操作成功')
           model.stateText = res.data.orderStateText
           model.state = res.data.orderState
           // 通知回调函数
@@ -219,10 +227,10 @@ export default {
       let actions = []
       // 不是退单状态
       if (item.state !== 202 && item.state !== 999) {
-        actions.push({name: '退单', method: this.backOrder})
+        actions.push({name: '取消订单', method: this.backOrder})
       }
       if (item.state !== 999) {
-        actions.push({name: '结单', method: this.completedOrder})
+        actions.push({name: '完成订单', method: this.completedOrder})
       }
       this.moreOption.actionsVisible = true
       this.moreOption.item = item

@@ -53,6 +53,7 @@ export default {
       radioOptions: [],
       radioModel: null,
       isSearch: true,
+      optionState: 0,
       titleText: '蓝牙列表',
       showBlueTooths: false,
       autoPrint: true,
@@ -76,8 +77,12 @@ export default {
       if (_this.radioModel === null) {
         return Toast('请选择蓝牙打印机')
       }
-      _this.setBluthState(2)
-      Tools.blueConnect(_this.radioModel.address)
+      if (_this.optionState === 2) {
+        Toast(this.titleText + '请稍后')
+      } else {
+        _this.setBluthState(2)
+        Tools.blueConnect(_this.radioModel.address)
+      }
     },
     // 取消
     cancelBlueTooth: function () {
@@ -90,7 +95,8 @@ export default {
     },
     // 设置蓝牙状态
     setBluthState (state) {
-      switch (state) {
+      this.optionState = state
+      switch (this.optionState) {
         case 0:
           this.titleText = '蓝牙列表'
           this.isSearch = false

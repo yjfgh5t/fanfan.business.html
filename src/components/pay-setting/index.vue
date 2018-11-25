@@ -18,7 +18,7 @@
 
     <mt-cell title="微信收款" is-link>
       <span slot="icon"><i class="icon iconfont icon-weixin" /></span>
-      <mt-switch v-model="model.wechate"  @change="changeState(3)">{{model.wechate?'开启':'关闭'}}</mt-switch>
+      <mt-switch v-model="model.wechat"  @change="changeState(3)">{{model.wechat?'开启':'关闭'}}</mt-switch>
     </mt-cell>
   </div>
 </template>
@@ -29,7 +29,7 @@ import { Toast, MessageBox } from 'mint-ui'
 export default {
   data () {
     return {
-      model: {id: -1, offline: true, alipay: false, wechate: false}
+      model: {id: -1, offline: true, alipay: false, wechat: false}
     }
   },
   mounted () {
@@ -44,7 +44,7 @@ export default {
         id: _this.model.id,
         offline: _this.model.offline,
         alipay: _this.model.alipay,
-        wechate: _this.model.wechate
+        wechat: _this.model.wechat
       }, function (res) {
         if (res.code === 0) {
           // 支付宝未授权
@@ -76,14 +76,14 @@ export default {
             id: res.data.id,
             offline: res.data.offline,
             alipay: res.data.alipay,
-            wechate: res.data.wechate
+            wechat: res.data.wechat
           }
         }
       })
     },
     changeState: function (type) {
       let submit = true
-      if (!this.model.offline && !this.model.alipay && !this.model.wechate) {
+      if (!this.model.offline && !this.model.alipay && !this.model.wechat) {
         Toast('不可关闭所有收款方式')
         submit = false
       }
@@ -103,7 +103,7 @@ export default {
           }
           break
         case 3:
-          this.model.wechate = false
+          this.model.wechat = false
           Toast('微信收款真正开发中,敬请期待!')
           break
       }
