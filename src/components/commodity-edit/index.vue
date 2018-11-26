@@ -97,6 +97,9 @@ export default {
     if (this.$route.params.id && this.$route.params.id > 0) {
       this.itemModel.id = this.$route.params.id
     }
+    if (this.$route.params.typeId) {
+      this.itemModel.categoryId = this.$route.params.typeId
+    }
     this.loadItem()
   },
   methods: {
@@ -128,6 +131,11 @@ export default {
         if (res.code === 0) {
           _this.itemModel.id = res.data
           Toast('保存成功')
+          // 返回
+          setTimeout(() => {
+            Tools.global.categoryId = _this.itemModel.categoryId
+            window.vueApp.$router.go(-1)
+          }, 3000)
         }
       })
     },

@@ -13,7 +13,9 @@ let Tools = {
     // 打开支付宝指定的地址
     openAliPayLink: 'alipays://platformapi/startapp?appId=20000067&url=',
     // 打开小程序
-    openAliPayProgram: 'alipays://platformapi/startapp?appId=2018033102482725'
+    openAliPayProgram: 'alipays://platformapi/startapp?appId=2018033102482725',
+    // 记录分类id
+    categoryId: 0
   },
   callKeyIndex: 1,
   method: {post: 'post', get: 'get', json: 'json'},
@@ -128,7 +130,7 @@ let Tools = {
       }
     })
   },
-  // 检查店铺状态
+  // 检查店铺状态--丢弃
   checkShopState: function () {
     Tools.getKeyVal(Tools.globalKey.shopState, function (state) {
       if (state !== '9') {

@@ -48,7 +48,7 @@ export default {
     MtButton},
   data () {
     return {
-      itemModel: {id: -1, name: '', businessStart: '00:00', businessEnd: '23:59', minOrderPrice: 0, address: '', logo: '', state: false},
+      itemModel: {id: -1, name: '', businessStart: '00:00', businessEnd: '23:59', minOrderPrice: 0, address: '', logo: '', state: true},
       imgActions: [{name: '打开相册', method: this.openAlbum}, {name: '拍照', method: this.takePhoto}],
       imgActionsVisible: false,
       isStartTime: true,

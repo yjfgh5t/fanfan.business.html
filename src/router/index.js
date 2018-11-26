@@ -48,7 +48,7 @@ export default new Router({
       component: CommodityTypeSetting
     },
     {
-      path: '/commodityEdit/:id',
+      path: '/commodityEdit/:id/:typeId',
       name: 'commodityEdit',
       component: CommodityEdit
     },

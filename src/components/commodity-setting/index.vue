@@ -4,7 +4,7 @@
       <router-link to="/" slot="left">
         <mt-button icon="back">返回</mt-button>
       </router-link>
-      <mt-button  slot="right" v-on:click="$router.push({path: '/commodityEdit/0'})">
+      <mt-button  slot="right" v-on:click="$router.push({path: '/commodityEdit/0/'+activeTypeId})">
         <i class="icon iconfont icon-tianjia"></i>
       </mt-button>
     </mt-header>
@@ -25,7 +25,7 @@
             </div>
             <div class="div-btn">
               <mt-button size="small" :type="items.isPullOff?'primary':'danger'" v-text="items.isPullOff?'上架':'下架'" v-on:click="pullOffShelves(items)"></mt-button>
-              <mt-button size="small" type="primary" v-on:click="$router.push({path: '/commodityEdit/'+items.id })">编辑</mt-button>
+              <mt-button size="small" type="primary" v-on:click="$router.push({path: '/commodityEdit/'+items.id+'/'+activeTypeId })">编辑</mt-button>
             </div>
           </div>
         </div>
@@ -43,7 +43,7 @@ export default {
   data () {
     return {
       divBodyStyle: { },
-      activeTypeId: 1,
+      activeTypeId: 0,
       commodityTypes: [],
       commodities: [
         //{title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 1, commodityTypeId: 0, icon: 'https://fuss10.elemecdn.com/4/7d/412c58ad49fed41f849989dc66270jpeg.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/'}
@@ -85,7 +85,13 @@ export default {
           _this.commodityTypes = _commodityTypeData
           // 默认第一个
           if (_this.commodityTypes.length > 0) {
-            _this.activeTypeId = _this.commodityTypes[0].id
+            if (Tools.global.categoryId === 0) {
+              _this.activeTypeId = _this.commodityTypes[0].id
+            } else {
+              // 设置默认值
+              _this.activeTypeId = Tools.global.categoryId
+              Tools.global.categoryId = 0
+            }
           }
         }
       })
