@@ -103,7 +103,7 @@ export default {
         if (res.code === 0 && res.data.length > 0) {
           let _commodityData = []
           res.data.forEach((item) => {
-            _commodityData.push({title: item.title, price: item.salePrice, id: item.id, icon: item.icon})
+            _commodityData.push({title: item.title, price: item.salePrice, id: item.id, icon: item.icon, extendArray: item.extendList})
           })
           _this.commodities = _commodityData
         }
@@ -121,6 +121,9 @@ export default {
     checkItem: function (items) {
       if (items.icon === '') {
         return Toast('需先设置该商品图片')
+      }
+      if (items.extendArray !== null && items.extendArray.length > 0) {
+        return Toast('不能选择包含规格的商品')
       }
       let index = this.selectedIds.indexOf(items.id)
       if (index > -1) {
