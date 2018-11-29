@@ -7,6 +7,7 @@ import CommoditySetting from '@/components/commodity-setting'
 import CommodityTypeSetting from '@/components/commodity-type-setting'
 import CommodityEdit from '@/components/commodity-edit'
 import DeskSetting from '@/components/desk-setting'
+import recommendSetting from '@/components/recommend-setting'
 import UserSetting from '@/components/user-setting'
 import Login from '@/components/login'
 import Register from '@/components/register'
@@ -66,6 +67,16 @@ export default new Router({
       path: '/paySetting',
       name: 'paySetting',
       component: PaySetting
+    },
+    {
+      path: '/recommendSetting',
+      name: 'recommendSetting',
+      component: recommendSetting
+    },
+    {
+      path: '/authorization',
+      name: 'authorization',
+      component: Authorization
     },
     {
       path: '/login',

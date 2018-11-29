@@ -23,8 +23,18 @@
     </mt-cell>
 
     <br />
+    <mt-cell title="推荐商品设置" is-link :to="{ path: '/recommendSetting'}">
+      <i slot="icon" class="icon iconfont icon-commodity-type" />
+    </mt-cell>
+
+    <br />
     <mt-cell title="商品分类设置" is-link :to="{ path: '/commodityTypeSetting'}">
       <i slot="icon" class="icon iconfont icon-commodity-type" />
+    </mt-cell>
+
+    <br />
+    <mt-cell title="收款设置" is-link :to="{ path: '/paySetting'}">
+      <i slot="icon" class="icon iconfont icon-shoukuan" />
     </mt-cell>
 
     <br />
@@ -37,10 +47,7 @@
       <i slot="icon" class="icon iconfont icon-zhuozi" />
     </mt-cell>
 
-    <br />
-    <mt-cell title="收款设置" is-link :to="{ path: '/paySetting'}">
-      <i slot="icon" class="icon iconfont icon-shoukuan" />
-    </mt-cell>
+
 
     <div class="login-out">
       <mt-button size="large" style="height: 1.8rem;line-height: 1.8rem;font-size: 0.8rem;" type="danger" v-on:click="loginOut">退 出</mt-button>
