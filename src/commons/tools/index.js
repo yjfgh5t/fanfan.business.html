@@ -240,13 +240,12 @@ let Tools = {
       return
     }
     if (jsonString.code !== undefined) {
-      if (jsonString.success && jsonString.code === 0) {
-        // 执行回调
-        Tools.callMap[callKey](jsonString)
-      } else {
+      if (!jsonString.success || jsonString.code !== 0) {
         // 错误提示
         Toast(jsonString.msg)
       }
+      // 执行回调
+      Tools.callMap[callKey](jsonString)
     } else {
       Tools.callMap[callKey](jsonString)
     }

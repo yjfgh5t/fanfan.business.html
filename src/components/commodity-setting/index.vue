@@ -21,7 +21,7 @@
           <div class="div-item-right">
             <p class="item-title" v-text="items.title"></p>
             <div class="div-tag">
-              <span v-text="'排序 '+items.order"></span> <span v-text="'库存'+items.inventory"></span> <span class="price" v-text="'￥'+items.price"></span>
+              <span v-text="'排序 '+items.order"></span> <span class="price" v-text="'￥'+items.price"></span>
             </div>
             <div class="div-btn">
               <mt-button size="small" :type="items.isPullOff?'primary':'danger'" v-text="items.isPullOff?'上架':'下架'" v-on:click="pullOffShelves(items)"></mt-button>
@@ -181,7 +181,7 @@ export default {
 
   .div-tag,.div-btn{
     margin-top: 0.4rem;
-    text-align: right;
+    text-align: left;
   }
 
   .div-tag span{

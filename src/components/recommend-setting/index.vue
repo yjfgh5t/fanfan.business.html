@@ -17,11 +17,10 @@
           <div class="div-item-right">
             <p class="item-title" v-text="items.title"></p>
             <div class="div-tag">
-              <span v-text="'排序 '+items.order"></span> <span v-text="'库存'+items.inventory"></span> <span class="price" v-text="'￥'+items.price"></span>
+             <span class="price" v-text="'￥'+items.price"></span>
             </div>
             <div class="div-btn">
-              <mt-button size="small" :type="items.isPullOff?'primary':'danger'" v-text="items.isPullOff?'上架':'下架'" v-on:click="pullOffShelves(items)"></mt-button>
-              <mt-button size="small" type="primary" v-on:click="$router.push({path: '/commodityEdit/'+items.id+'/'+activeTypeId })">编辑</mt-button>
+              <mt-button size="small" :type="'danger'" v-text="'删除'" v-on:click="submit(undefined,items.id)"></mt-button>
             </div>
           </div>
         </div>
@@ -40,7 +39,7 @@
               <span class="price" v-text="'￥'+items.price"></span>
             </div>
             <div class="div-box">
-              <i v-on:click="checkItem(items.id)" v-bind:class="selectedIds.indexOf(items.id) !=-1 ? 'icon iconfont icon-gouxuan active' : 'icon iconfont icon-gouxuan'"></i>
+              <i v-on:click="checkItem(items)" v-bind:class="selectedIds.indexOf(items.id) !=-1 ? 'icon iconfont icon-gouxuan active' : 'icon iconfont icon-gouxuan'"></i>
             </div>
           </div>
         </div>
@@ -80,13 +79,15 @@ export default {
       let _this = this
       // 加载商品
       Tools.ajax('get', 'commodity/getRecommend', null, function (res) {
-        if (res.code === 0 && res.data.length > 0) {
+        if (res.code === 0) {
           let _commodityData = []
           let _selectedIds = []
-          res.data.forEach((item) => {
-            _selectedIds.push(item.id)
-            _commodityData.push({title: item.title, price: item.salePrice, id: item.id, icon: item.icon})
-          })
+          if (res.data.length > 0) {
+            res.data.forEach((item) => {
+              _selectedIds.push(item.id)
+              _commodityData.push({title: item.title, price: item.salePrice, id: item.id, icon: item.icon})
+            })
+          }
           _this.recommends = _commodityData
           _this.selectedIds = _selectedIds
         }
@@ -113,18 +114,37 @@ export default {
       let _this = this
       // 关闭弹出层
       _this.showCommodityLayer = false
-      Tools.ajax(Tools.method.post, '', { idArray: this.selectedIds }, function (res) {
-        _this.loadData()
-      })
+      // 提交数据
+      _this.submit(_this.selectedIds)
     },
     // 点击事件
-    checkItem: function (itemId) {
-      let index = this.selectedIds.indexOf(itemId)
+    checkItem: function (items) {
+      if (items.icon === '') {
+        return Toast('需先设置该商品图片')
+      }
+      let index = this.selectedIds.indexOf(items.id)
       if (index > -1) {
         this.selectedIds.splice(index, 1)
       } else {
-        this.selectedIds.push(itemId)
+        if (this.selectedIds.length === 6) {
+          return Toast('最多只能设置6个推荐商品')
+        }
+        this.selectedIds.push(items.id)
       }
+    },
+    // 提交数据
+    submit: function (updateIdArray, deleteId) {
+      let _this = this
+      let subData = {}
+      if (updateIdArray) {
+        subData.commodityIds = updateIdArray
+      } else {
+        subData.deleteId = deleteId
+      }
+      // 执行提交
+      Tools.ajax(Tools.method.json, 'commodity/setRecommend', subData, function (res) {
+        _this.loadData()
+      })
     }
   }
 }
@@ -137,8 +157,8 @@ export default {
     overflow-y: scroll;
     overflow-x: hidden;
     float: left;
-    padding: 0rem 0.4rem;
-    width:100%;
+    padding: 0rem 0.8rem;
+    width: 18rem;
   }
 
   .div-desc{
@@ -158,8 +178,8 @@ export default {
   }
 
   .div-item img{
-    width: 5rem;
-    height: 5rem;
+    width: 4rem;
+    height: 4rem;
     display: block;
     float: left;
     border-radius: 0.4rem;

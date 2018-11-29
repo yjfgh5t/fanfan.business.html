@@ -115,6 +115,8 @@ export default {
             }
           }, 1000)
         } else {
+          // 发送失败
+          _that.showImgCodeLayer = true
           _that.codeModel.disabled = true
           _that.refreshCodeImg()
         }

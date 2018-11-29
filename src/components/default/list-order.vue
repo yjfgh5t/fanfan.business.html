@@ -35,7 +35,7 @@
           <mt-button plain="plain" v-if="loadState===0" v-on:click="loadMore" class="btn-loadmore" type="primary" size="large">加载更多</mt-button>
           <p class="txt-loadmore" v-if="loadState==1">加载中...</p>
           <p class="txt-loadmore" v-if="loadState==2">全部加载完毕</p>
-          <p class="txt-loadmore" v-if="loadState==3">没有订单</p>
+          <p class="txt-loadmore" v-if="loadState==3">下拉刷新</p>
         </li>
       </ul>
       <div class="div-empty"></div>

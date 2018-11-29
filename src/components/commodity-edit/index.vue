@@ -31,6 +31,7 @@
     <mt-field label="商品售价" placeholder="请输入商品售价" type="number" length="7" v-model="itemModel.salePrice"></mt-field>
     <mt-field label="打包费" placeholder="请输入商品打包费用" type="number" length="5" v-model="itemModel.packagePrice"></mt-field>
     <mt-field label="排序号" placeholder="请输入排序号" type="number" length="5" v-model="itemModel.order"></mt-field>
+    <mt-field label="商品单位" v-if="false" placeholder="请输入商品单位" length="10" v-model="itemModel.unit"></mt-field>
     <mt-cell title="商品图片" class="mint-field" >
       <img class="img def" v-if="itemModel.icon===''" :src="defCommodityIcon" />
       <img class="img" v-if="itemModel.icon!==''" :src="itemModel.icon" id="img_icon" />
@@ -61,7 +62,7 @@
     <mt-field label="商品原价"  v-if="false" placeholder="请输入商品原价" type="number" length="7" v-model="itemModel.price"></mt-field>
     <mt-field label="商品库存"  v-if="false" placeholder="请输入商品库存" type="number" length="5" v-model="itemModel.inventory"></mt-field>
     <mt-cell :title="'是否上架'"  v-if="false" class="mint-field"><mt-switch v-model="itemModel.selling"></mt-switch></mt-cell>
-    <mt-field label="商品单位" v-if="false" placeholder="请输入商品单位" length="10" v-model="itemModel.unit"></mt-field>
+
     <mt-field label="商品描述" v-if="false" placeholder="请输入商品描述" :attr="{ maxLength: 128 }" type="textarea" rows="2" length="128" v-model="itemModel.desc"></mt-field>
     <div style="text-align: center; margin-bottom: 1rem;margin-top: 0.6rem;">
       <mt-button type="primary" plain="true" size="normal" style="font-size: 0.66rem;padding: 0rem 2rem;" v-on:click="save">保 存</mt-button>
