@@ -69,7 +69,8 @@ export default {
         _this.modelType = {name: '', orderNum: 0, id: -1}
       } else {
         _this.isEdit = 2
-        _this.modelType =  _this.commodityTypes[index]
+        let selected = _this.commodityTypes[index]
+        _this.modelType = {name: selected.name, orderNum: selected.orderNum, id: selected.id}
       }
     },
     cancel: function () {

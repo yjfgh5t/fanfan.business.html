@@ -59,8 +59,8 @@ export default {
       // 加载状态 0:加载更多  1:加载中  2: 全部加载完毕 3 没有订单
       loadState: 3,
       pageSize: 6,
-      minLoadId: -1,
-      maxLoadId: -1,
+      minOrderTime: null,
+      maxOrderTime: null,
       moreOption: {
         actions: [],
         actionsVisible: false,
@@ -78,13 +78,13 @@ export default {
     loadTop: function () {
       let _this = this
       // 加载数据 向上拉取数据
-      this.loadItems({isMax: true, lastId: this.maxLoadId}, function () {
+      this.loadItems({isMax: true, lastOrderTime: this.maxOrderTime}, function () {
         _this.$refs.loadmore.onTopLoaded()
       })
     },
     // 加载更多
     loadMore: function () {
-      this.loadItems({isMax: false, lastId: this.minLoadId})
+      this.loadItems({isMax: false, lastOrderTime: this.minOrderTime})
     },
     // 设置加载文本
     setLoadText: function (data, fastPage, isMax) {
@@ -108,12 +108,14 @@ export default {
         _this.orderArray = []
       }
       // 最后一个订单id
-      if (option.lastId === undefined) {
-        option.lastId = -1
+      if (option.lastOrderTime === null) {
+        option.lastOrderTime = undefined
       }
+
+      let subData = {lastOrderTime: option.lastOrderTime, isMax: option.isMax, orderState: _this.orderState, newOrder: _this.newOrder, pageSize: _this.pageSize}
       // 拉取订单列表
-      Tools.ajax('post', 'order/query/' + _this.queryDate, {lastId: option.lastId, isMax: option.isMax, orderState: _this.orderState, newOrder: _this.newOrder, pageSize: _this.pageSize}, (res) => {
-        let fastPage = option.lastId === -1
+      Tools.ajax('post', 'order/query/' + _this.queryDate, subData, (res) => {
+        let fastPage = option.lastOrderTime === undefined
         // 设置状态值向下拉数据时
         _this.setLoadText(res.data, fastPage, option.isMax)
         if (callback) {
@@ -124,17 +126,17 @@ export default {
           let resData = res.data
           // 初始加载时 同时设置两个记录id值
           if (_this.orderArray.length === 0) {
-            _this.minLoadId = resData[resData.length - 1].id
-            _this.maxLoadId = resData[0].id
+            _this.minOrderTime = resData[resData.length - 1].orderTime
+            _this.maxOrderTime = resData[0].orderTime
           }
           // 数组顶部反向添加数据
           if (option.isMax) {
-            _this.maxLoadId = resData[0].id
+            _this.maxOrderTime = resData[0].orderTime
             for (let i = resData.length - 1; i >= 0; i--) {
               _this.orderArray.unshift(_this.convertItem(resData[i]))
             }
           } else {
-            _this.minLoadId = resData[resData.length - 1].id
+            _this.minOrderTime = resData[resData.length - 1].orderTime
             // 顺序添加数据
             for (let item in resData) {
               _this.orderArray.push(_this.convertItem(resData[item]))
@@ -248,29 +250,29 @@ export default {
     'queryDate': {default: moment().format('YYYY-MM-DD')},
     // 订单状态 0:全部 1:进行中 2:已完成 3:已退回
     'orderState': { default: 0 },
-    'lastId': {default: 0},
+    'lastOrderTime': {default: null},
     'newOrder': {default: false}
   },
   watch: {
     queryDate (val, oldVal) {
       if (val !== oldVal) {
         // 向下拉取数据
-        this.minLoadId = -1
-        this.maxLoadId = -1
-        this.loadItems({isMax: false, clear: true, lastId: this.minLoadId})
+        this.minOrderTime = null
+        this.maxOrderTime = null
+        this.loadItems({isMax: false, clear: true, lastOrderTime: this.minOrderTime})
       }
     },
     orderState (val, oldVal) {
       if (val !== oldVal) {
         // 向下拉取数据
-        this.minLoadId = -1
-        this.maxLoadId = -1
-        this.loadItems({isMax: false, clear: true, lastId: this.minLoadId})
+        this.minOrderTime = null
+        this.maxOrderTime = null
+        this.loadItems({isMax: false, clear: true, lastOrderTime: this.minLoadId})
       }
     }
   },
   created () {
-    //this.loadItems({isMax: false, clear: true, lastId: this.minLoadId})
+    //this.loadItems({isMax: false, clear: true, lastOrderTime: this.minOrderTime})
   }
 }
 </script>

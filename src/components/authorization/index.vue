@@ -310,6 +310,10 @@ export default {
           if (model.identificationState === 2) {
             MessageBox.alert(model.failRemark, '认证失败')
           }
+          // 已授权、未认证或待确认需查询状态
+          if (model.authorizeState === 1 && (model.identificationState === 0 || model.identificationState === 3)) {
+            _this.loadState()
+          }
         }
       })
     },

@@ -65,7 +65,7 @@
 
     <mt-field label="商品描述" v-if="false" placeholder="请输入商品描述" :attr="{ maxLength: 128 }" type="textarea" rows="2" length="128" v-model="itemModel.desc"></mt-field>
     <div style="text-align: center; margin-bottom: 1rem;margin-top: 0.6rem;">
-      <mt-button type="primary" plain="true" size="normal" style="font-size: 0.66rem;padding: 0rem 2rem;" v-on:click="save">保 存</mt-button>
+      <mt-button type="primary" plain="true" size="normal" style="font-size: 0.66rem;padding: 0rem 2rem;" v-on:click="save(true)">保 存</mt-button>
     </div>
     <!-- 选择相册或拍照-->
     <mt-actionsheet :actions="imgActions" v-model="imgActionsVisible"></mt-actionsheet>
@@ -75,7 +75,7 @@
 <script>
 import Tools from '../../commons/tools/index'
 import defCommodityIcon from '../../assets/imgs/icon_commodity.png'
-import { Toast } from 'mint-ui'
+import { Toast, MessageBox } from 'mint-ui'
 import MtButton from '../../../node_modules/mint-ui/packages/button/src/button.vue'
 import Layer from '@/tools/layer'
 export default {
@@ -100,12 +100,13 @@ export default {
     }
     if (this.$route.params.typeId) {
       this.itemModel.categoryId = this.$route.params.typeId
+      Tools.global.categoryId = this.itemModel.categoryId
     }
     this.loadItem()
   },
   methods: {
     // 保存
-    save: function () {
+    save: function (goback) {
       let errorText = this.validate()
       if (errorText !== '') {
         return Toast(errorText)
@@ -133,10 +134,14 @@ export default {
           _this.itemModel.id = res.data
           Toast('保存成功')
           // 返回
-          setTimeout(() => {
-            Tools.global.categoryId = _this.itemModel.categoryId
-            window.vueApp.$router.go(-1)
-          }, 3000)
+          if (goback) {
+            window.setTimeout(() => {
+              Tools.global.categoryId = _this.itemModel.categoryId
+              window.vueApp.$router.go(-1)
+            }, 2000)
+          } else {
+            this.loadItem()
+          }
         }
       })
     },
@@ -170,10 +175,30 @@ export default {
     },
     // 删除对象
     deleteNorms: function (item) {
+      let _this = this
       // 删除数组元素
       for (let i = 0; i < this.itemModel.norms.length; i++) {
         if (item.id === this.itemModel.norms[i].id) {
-          this.itemModel.norms.splice(i, 1)
+          MessageBox.confirm('确认删除改规则吗', '系统提示', {
+            confirmButtonText: '确定'
+          }).then(action => {
+            if (action === 'confirm') {
+              if (_this.itemModel.id > 0 && item.id > 0) {
+                Tools.ajax(Tools.method.post, 'commodity/removeNorms', {
+                  normId: item.id,
+                  commodityId: _this.itemModel.id
+                }, function (res) {
+                  if (res.code === 0 && res.data) {
+                    _this.itemModel.norms.splice(i, 1)
+                  } else {
+                    Toast('删除失败，请重试')
+                  }
+                })
+              } else {
+                _this.itemModel.norms.splice(i, 1)
+              }
+            }
+          })
           break
         }
       }
@@ -196,6 +221,10 @@ export default {
         }
         // 添加规格
         this.itemModel.norms.push({id: 0, title: model.title, commodityPrice: model.price, type: 1})
+        // 如果修改商品 则提交保存
+        if (this.itemModel.id > 0) {
+          this.save(false)
+        }
       }
       this.showNorms = false
     },

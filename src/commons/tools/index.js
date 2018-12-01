@@ -193,7 +193,7 @@ let Tools = {
     })
   },
   // 检查是否登录
-  checkLogin: function () {
+  checkLogin: function (callback) {
     // 是否登录窗口
     Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
       if (data === '') {
@@ -201,6 +201,9 @@ let Tools = {
       } else {
         // 绑定信鸽推送
         Tools.bindUser(data.userId, function (bind) {})
+      }
+      if(callback!=undefined){
+        callback(data !== '')
       }
     })
   },

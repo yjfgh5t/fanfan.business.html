@@ -23,7 +23,7 @@
     <mt-field label="起订价格" placeholder="请输入起订价格" v-if="false" type="number" length="7" v-model="itemModel.minOrderPrice"></mt-field>
     <br />
     <div style="text-align: center; margin-bottom: 1rem;margin-top: 0.6rem;">
-      <mt-button type="primary" plain="true" size="normal" style="font-size: 0.66rem;padding: 0rem 2rem;" v-on:click="save">保 存</mt-button>
+      <mt-button type="primary" plain="true" size="normal" style="font-size: 0.66rem;padding: 0rem 2rem;" v-on:click="save">{{nextCommodity ? '下一步': '保 存'}}</mt-button>
     </div>
     <!-- 选择相册或拍照-->
     <mt-actionsheet :actions="imgActions" v-model="imgActionsVisible"></mt-actionsheet>
@@ -52,11 +52,19 @@ export default {
       imgActions: [{name: '打开相册', method: this.openAlbum}, {name: '拍照', method: this.takePhoto}],
       imgActionsVisible: false,
       isStartTime: true,
-      defDateVal: ''
+      defDateVal: '',
+      nextCommodity: false
     }
   },
   mounted () {
+    let _that = this
     this.loadItem()
+    Tools.getKeyVal(Tools.globalKey.shopName, function (shopName) {
+      // 下一步编辑商品
+      if (shopName == null || shopName === '') {
+        _that.nextCommodity = true
+      }
+    })
   },
   methods: {
     // 保存
@@ -78,10 +86,15 @@ export default {
         state: _this.itemModel.state ? 1 : 2
       }, function (res) {
         if (res.code === 0) {
-          _this.itemModel.id = res.data
           // 店铺名称保存至本地
           Tools.setKeyVal(Tools.globalKey.shopName, _this.itemModel.name)
+          _this.itemModel.id = res.data
           Toast('保存成功')
+          if (_this.nextCommodity) {
+            window.setTimeout(() => {
+              window.vueApp.$router.push({path: '/commoditySetting'})
+            }, 2000)
+          }
         }
       })
     },

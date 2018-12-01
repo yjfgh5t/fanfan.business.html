@@ -37,7 +37,7 @@
 
 <script>
 import Tools from '../../commons/tools/index'
-import { Loadmore, Toast } from 'mint-ui'
+import { Loadmore, Toast,  MessageBox } from 'mint-ui'
 import NewOrder from '@/components/default/new-order'
 import SearchOrder from '@/components/default/search-order'
 import Setting from '@/components/default/setting'
@@ -67,10 +67,26 @@ export default {
     }
   },
   mounted () {
+    let _this = this
     // 检查版本更新
     Tools.checkNewAPK()
     // 检查登录
-    Tools.checkLogin()
+    Tools.checkLogin(function (login) {
+      if(login) {
+        // 是否完善店铺信息
+        Tools.getKeyVal(Tools.globalKey.shopName, function (shopName) {
+          if (shopName == null || shopName === '') {
+            MessageBox.confirm('您还未完善店铺信息', '系统提示', {
+              confirmButtonText: '去完善'
+            }).then(action => {
+              if (action === 'confirm') {
+                _this.$router.push({path: '/shopSetting'})
+              }
+            })
+          }
+        })
+      }
+    })
   },
   activated () {
     let _this = this
