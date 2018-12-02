@@ -15,7 +15,7 @@
                 <label class="name" v-text="commodity.outTitle"></label> <label class="size" v-show="commodity.outType !==6" v-text="'x '+commodity.outSize"></label> <label class="price" v-text="'￥'+commodity.outPrice"></label>
               </div>
               <div class="commodity">
-                <label class="name">合计</label> <label class="size"></label>  <label class="size" v-text="'x '+ item.details.filter(f =>(f.outType=== detailType.commodity || f.outType== detailType.commodityNorms)).length"></label>  <label class="price" v-text="'￥'+item.orderTotal"></label>
+                <label class="name">合计</label> <label class="size"></label>  <label class="size" v-text="'x '+item.sumCount"></label>  <label class="price" v-text="'￥'+item.orderTotal"></label>
               </div>
             </div>
           </div>
@@ -148,9 +148,15 @@ export default {
     // 转换对象
     convertItem: function (item) {
       let details = []
+      let _this = this
+      // 合计
+      let sumCount = 0
       if (item.details !== null && item.details !== undefined) {
         details = item.details.map(function (detail) {
           // if(detail.outType==2)
+          if (detail.outType === _this.detailType.commodity || detail.outType === _this.detailType.commodityNorms) {
+            sumCount += detail.outSize
+          }
           return {
             id: detail.id,
             outId: detail.outId,
@@ -179,6 +185,7 @@ export default {
         orderRemark: item.orderRemark,
         orderPayTypeText: item.orderPayTypeText,
         orderPayType: item.orderPayType,
+        sumCount: sumCount,
         open: false
       }
     },
