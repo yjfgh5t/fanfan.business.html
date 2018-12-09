@@ -72,7 +72,7 @@ export default {
     Tools.checkNewAPK()
     // 检查登录
     Tools.checkLogin(function (login) {
-      if(login) {
+      if (login) {
         // 是否完善店铺信息
         Tools.getKeyVal(Tools.globalKey.shopName, function (shopName) {
           if (shopName == null || shopName === '') {

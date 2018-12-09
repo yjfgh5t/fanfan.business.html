@@ -20,12 +20,14 @@ let Tools = {
   callKeyIndex: 1,
   method: {post: 'post', get: 'get', json: 'json'},
   globalKey: {
+    customerId: 'sp_customer_id',
     userInfo: 'sp_user_info',
     blueToothConnect: 'sp_blue_tooth_connect',
     autoPrint: 'sp_auto_print',
     blueNotifyKey: 'local_notify_blue_booth_event',
     shopName: 'sp_shop_name',
     httpPath: 'sp_http_path',
+    authTokenKey: 'sp_auth_token_key',
     authorizeKey: 'local_notify_authorize_event',
     shopState: 'sp_shop_state'
   },
@@ -244,8 +246,15 @@ let Tools = {
     }
     if (jsonString.code !== undefined) {
       if (!jsonString.success || jsonString.code !== 0) {
-        // 错误提示
-        Toast(jsonString.msg)
+        // 如果登录过期
+        if (jsonString.code === 401) {
+          Option.autoLogin()
+        } else if (jsonString.code === 402) {
+          Toast('无权访问')
+        } else {
+          // 错误提示
+          Toast(jsonString.msg)
+        }
       }
       // 执行回调
       Tools.callMap[callKey](jsonString)
@@ -325,6 +334,27 @@ let Option = {
     }
   },
   print: function (data) {
+  },
+  autoLogin: function () {
+    Tools.getKeyVal(Tools.globalKey.userInfo, function (userInfo) {
+      Tools.ajax(Tools.method.post, 'user/customer/autoLogin', {userId: userInfo.userId, pwd: userInfo.pwd}, function (res) {
+        if (res.code === 0) {
+          // 保存Token
+          Tools.setKeyVal(Tools.globalKey.authTokenKey, res.data.token)
+        } else {
+          MessageBox({
+            title: '登录提示',
+            message: '您的登录信息已过期',
+            showCancelButton: false,
+            showConfirmButton: true,
+            confirmButtonText: '重新登录',
+            closeOnClickModal: false
+          }).then(action => {
+            window.vueApp.$router.push({name: 'login'})
+          })
+        }
+      })
+    })
   }
 }
 

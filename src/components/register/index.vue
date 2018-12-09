@@ -192,18 +192,24 @@ export default {
       Tools.ajax(Tools.method.post, 'user/customer/codeLogin', subData, function (res) {
         if (res.code === 0 && res.data !== '') {
           let userInfo = {
-            userId: res.data.userId,
-            name: res.data.name,
-            mobile: res.data.mobile,
-            picPath: res.data.picPath
+            userId: res.data.userInfo.userId,
+            name: res.data.userInfo.name,
+            mobile: res.data.userInfo.mobile,
+            picPath: res.data.userInfo.picPath,
+            pwd: res.data.userInfo.password
           }
+          // 保存Token
+          Tools.setKeyVal(Tools.globalKey.authTokenKey, res.data.token)
+          // 保存CustomerId
+          Tools.setKeyVal(Tools.globalKey.customerId, userInfo.userId)
+          // 店铺名称保存至本地
+          Tools.setKeyVal(Tools.globalKey.shopName, res.data.userInfo.shopName)
           // 保存至本地
           Tools.setKeyVal(Tools.globalKey.userInfo, JSON.stringify(userInfo), function (success) {
             // 绑定用户至信鸽推送
-            Tools.bindUser(userInfo.userId, function (bandState) {
-              // 跳转
-              _this.$router.push({name: 'default'})
-            })
+            Tools.bindUser(userInfo.userId)
+            // 跳转
+            _this.$router.push({name: 'default'})
           })
         }
       })

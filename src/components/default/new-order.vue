@@ -20,7 +20,12 @@ export default {
   methods: {
     // 当触发展示时
     onShow: function () {
-      this.$refs.order.loadTop()
+      // 检查登录
+      Tools.checkLogin(function (login) {
+        if (login) {
+          this.$refs.order.loadTop()
+        }
+      })
     }
   },
   created () {

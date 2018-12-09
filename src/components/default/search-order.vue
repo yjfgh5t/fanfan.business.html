@@ -62,7 +62,12 @@ export default {
     }
   },
   mounted () {
-    this.loadOrderStatistic()
+    // 检查登录
+    Tools.checkLogin(function (login) {
+      if (login) {
+        this.loadOrderStatistic()
+      }
+    })
   },
   methods: {
     // 触发展示时

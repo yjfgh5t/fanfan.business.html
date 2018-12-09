@@ -49,57 +49,58 @@
 </template>
 
 <script>
-  import Tools from '../../commons/tools/index'
-  import {Toast} from 'mint-ui'
-  import userIcon from '../../assets/imgs/icon_user.png'
+import Tools from '../../commons/tools/index'
+import {Toast} from 'mint-ui'
+import userIcon from '../../assets/imgs/icon_user.png'
 
-  export default {
-    data() {
-      return {
-        userInfo: {}
-      }
-    },
-    methods: {
-      // 触发展示时
-      onShow: function () {
-        // 加载用户信息
-        this.loadUser()
-      },
-      // 退出登录
-      loginOut: function () {
-        let _this = this
-        Tools.getKeyVal(Tools.globalKey.userInfo, function (userInfo) {
-          // 删除用户信息
-          Tools.setKeyVal(Tools.globalKey.userInfo, '', function () {
-            // 退出登录
-            Tools.loginOut(userInfo.userId, function () {
-              _this.$router.push({name: 'login'})
-            })
-          })
-        })
-      },
-      // 打开小程序
-      openProgram: function () {
-        Tools.getKeyVal(Tools.globalKey.userInfo, function (userInfo) {
-          Tools.openApp(Tools.global.openAliPayProgram + '&page=pages/home/home&query=' + encodeURIComponent('customerId=' + userInfo.userId))
-        })
-      },
-      loadUser: function () {
-        let _this = this
-        Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
-          _this.userInfo = {
-            name: data.name,
-            mobile: data.mobile,
-            icon: (data.picPath === '' || data.picPath === undefined) ? userIcon : data.picPath
-          }
-        })
-      }
-    },
-    mounted() {
+export default {
+  data() {
+    return {
+      userInfo: {}
+    }
+  },
+  methods: {
+    // 触发展示时
+    onShow: function () {
       // 加载用户信息
       this.loadUser()
+    },
+    // 退出登录
+    loginOut: function () {
+      let _this = this
+      Tools.getKeyVal(Tools.globalKey.userInfo, function (userInfo) {
+        // 删除用户信息
+        Tools.setKeyVal(Tools.globalKey.userInfo, '')
+        Tools.setKeyVal(Tools.globalKey.customerId, '-1')
+        Tools.setKeyVal(Tools.globalKey.authTokenKey, '')
+        // 退出登录
+        Tools.loginOut(userInfo.userId, function () {
+          _this.$router.push({name: 'login'})
+        })
+      })
+    },
+    // 打开小程序
+    openProgram: function () {
+      Tools.getKeyVal(Tools.globalKey.userInfo, function (userInfo) {
+        Tools.openApp(Tools.global.openAliPayProgram + '&page=pages/home/home&query=' + encodeURIComponent('customerId=' + userInfo.userId))
+      })
+    },
+    loadUser: function () {
+      let _this = this
+      Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
+        _this.userInfo = {
+          name: data.name,
+          mobile: data.mobile,
+          icon: (data.picPath === '' || data.picPath === undefined) ? userIcon : data.picPath
+        }
+      })
     }
+  },
+  mounted() {
+    // 加载用户信息
+    this.loadUser()
   }
+}
 </script>
 <style lang="css" scoped="scoped">
   .login-out {
