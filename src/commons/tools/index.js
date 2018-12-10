@@ -35,6 +35,9 @@ let Tools = {
   ajax: function (method, url, params, callback) {
     // 加载条
     Indicator.open({spinnerType: 'fading-circle'})
+
+    // 回调放入临时callMap并存放用于执行失败是的参数
+    let callKey = Tools.getCallBackKey(callback, {method: method, url: url, params: params, callback: callback})
     // 构建参数
     let paramsMap = {}
     if (method === 'json') {
@@ -43,8 +46,6 @@ let Tools = {
     } else {
       paramsMap = params === null ? {} : params
     }
-    // 回调放入临时callMap
-    let callKey = Tools.getCallBackKey(callback)
     // 调用后台方法
     if (method === 'get') {
       Tools.app.ajaxGet(url, JSON.stringify(paramsMap), callKey)
@@ -100,6 +101,10 @@ let Tools = {
   // 打开第三方app
   openApp: function (url, callback) {
     Tools.app.openApp(url, Tools.getCallBackKey(callback))
+  },
+  // 获取自动登录Code
+  getLoginCode: function (time, callback) {
+    Tools.app.getLoginCode(time, Tools.getCallBackKey(callback))
   },
   // 1检查新版本, 2执行安装
   checkOrInstallAPK: function (type, callback) {
@@ -210,13 +215,13 @@ let Tools = {
     })
   },
   // 获取回调方法key
-  getCallBackKey: function (callback) {
+  getCallBackKey: function (callback, params) {
     // 回调放入临时callMap
     let callKey = 'call_back_' + (Tools.callKeyIndex++)
     if (callback === undefined) {
-      Tools.callMap[callKey] = Tools.global.defaultCall
+      Tools.callMap[callKey] = {call: Tools.global.defaultCall}
     } else {
-      Tools.callMap[callKey] = callback
+      Tools.callMap[callKey] = {call: callback, params: params}
     }
     return callKey
   },
@@ -236,7 +241,7 @@ let Tools = {
 
     // 本地JS通知消息
     if (callKey.indexOf('local_notify') === 0) {
-      Tools.callMap[callKey](jsonString)
+      Tools.callMap[callKey].call(jsonString)
       return
     }
     if (callKey.indexOf('notify_msg.') === 0) {
@@ -248,18 +253,23 @@ let Tools = {
       if (!jsonString.success || jsonString.code !== 0) {
         // 如果登录过期
         if (jsonString.code === 401) {
-          Option.autoLogin()
+          // 自动登录并重试执行失败的方法
+          Option.autoLogin(function (hasSuccess) {
+            let params = Tools.callMap[callKey].params
+            if (params !== undefined && hasSuccess) {
+              Tools.ajax(params.method, params.url, params.params, params.callback)
+            }
+          })
         } else if (jsonString.code === 402) {
           Toast('无权访问')
-        } else {
-          // 错误提示
+        } else if (jsonString.msg) {
           Toast(jsonString.msg)
         }
       }
       // 执行回调
-      Tools.callMap[callKey](jsonString)
+      Tools.callMap[callKey].call(jsonString)
     } else {
-      Tools.callMap[callKey](jsonString)
+      Tools.callMap[callKey].call(jsonString)
     }
   }
 }
@@ -335,25 +345,45 @@ let Option = {
   },
   print: function (data) {
   },
-  autoLogin: function () {
+  // 自动登录
+  autoLogin: function (call) {
+    // 1.获取用户信息
     Tools.getKeyVal(Tools.globalKey.userInfo, function (userInfo) {
-      Tools.ajax(Tools.method.post, 'user/customer/autoLogin', {userId: userInfo.userId, pwd: userInfo.pwd}, function (res) {
-        if (res.code === 0) {
-          // 保存Token
-          Tools.setKeyVal(Tools.globalKey.authTokenKey, res.data.token)
-        } else {
-          MessageBox({
-            title: '登录提示',
-            message: '您的登录信息已过期',
-            showCancelButton: false,
-            showConfirmButton: true,
-            confirmButtonText: '重新登录',
-            closeOnClickModal: false
-          }).then(action => {
-            window.vueApp.$router.push({name: 'login'})
-          })
-        }
-      })
+      if (userInfo !== '') {
+        // 2.获取服务器时间
+        Tools.ajax(Tools.method.get, 'info/time', {}, function (time) {
+          if (time.code === 0) {
+            // 3.获取加密code
+            Tools.getLoginCode(time.data, function (code) {
+              if (code !== '') {
+                // 4.自动登录
+                Tools.ajax(Tools.method.post, 'user/customer/autoLogin', {
+                  code: code,
+                  time: time.data
+                }, function (res) {
+                  if (res.code === 0) {
+                    // 保存Token
+                    Tools.setKeyVal(Tools.globalKey.authTokenKey, res.data.token)
+                    call(true)
+                  } else {
+                    MessageBox({
+                      title: '登录提示',
+                      message: '您的登录信息已过期',
+                      showCancelButton: false,
+                      showConfirmButton: true,
+                      confirmButtonText: '重新登录',
+                      closeOnClickModal: false
+                    }).then(action => {
+                      window.vueApp.$router.push({name: 'login'})
+                    })
+                    call(false)
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
     })
   }
 }

@@ -57,7 +57,7 @@ export default {
             name: res.data.userInfo.name,
             mobile: res.data.userInfo.mobile,
             picPath: res.data.userInfo.picPath,
-            pwd: res.data.userInfo.password
+            code: res.data.userInfo.code
           }
           // 保存Token
           Tools.setKeyVal(Tools.globalKey.authTokenKey, res.data.token)
