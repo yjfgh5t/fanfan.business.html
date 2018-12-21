@@ -9,10 +9,12 @@ import CommodityEdit from '@/components/commodity-edit'
 import DeskSetting from '@/components/desk-setting'
 import recommendSetting from '@/components/recommend-setting'
 import UserSetting from '@/components/user-setting'
+import TakeoutSetting from '@/components/takeout-setting'
 import Login from '@/components/login'
 import Register from '@/components/register'
 import Authorization from '@/components/authorization'
 import PaySetting from '@/components/pay-setting'
+import QRCodeSetting from '@/components/qrcode-setting'
 
 Vue.use(Router)
 Vue.use(require('vue-moment'))
@@ -74,6 +76,11 @@ export default new Router({
       component: recommendSetting
     },
     {
+      path: '/takeoutSetting',
+      name: 'takeoutSetting',
+      component: TakeoutSetting
+    },
+    {
       path: '/authorization',
       name: 'authorization',
       component: Authorization
@@ -92,6 +99,11 @@ export default new Router({
       path: '/authorization',
       name: 'authorization',
       component: Authorization
+    },
+    {
+      path: '/qrCodeSetting',
+      name: 'qrCodeSetting',
+      component: QRCodeSetting
     }
   ]
 })

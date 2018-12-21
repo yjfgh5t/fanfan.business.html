@@ -7,12 +7,7 @@
     </mt-header>
 
     <div style="height: 40px;"></div>
-    <mt-cell title="店铺Logo" class="mint-field" v-if="false" >
-      <img class="img" :src="itemModel.logo" v-on:click="imgActionsVisible=true" id="img_logo" />
-      <span class="span-add add-img"  v-on:click="imgActionsVisible=true"> <i class="icon iconfont icon-upload"></i></span>
-    </mt-cell>
     <mt-field label="店铺名称" placeholder="请输入店铺名称" v-model="itemModel.name" length="32"></mt-field>
-    <mt-field label="店铺地址" placeholder="请输入店铺地址"  type="textarea" rows="2" length="128" v-model="itemModel.address"></mt-field>
     <mt-cell title="营业时间" class="mint-field" >
      <mt-field type="text" v-model="itemModel.businessStart" placeholder="开始时间" @click.native.capture="openPicker(true)" readonly="readonly" ></mt-field> -
       <mt-field type="text"  v-model="itemModel.businessEnd"  placeholder="结束时间" @click.native.capture="openPicker(false)" readonly="readonly"></mt-field>
@@ -20,7 +15,10 @@
     <mt-cell title="是否营业" class="mint-field" >
       <mt-switch v-model="itemModel.state">{{itemModel.state?'是':'否'}}</mt-switch>
     </mt-cell>
-    <mt-field label="起订价格" placeholder="请输入起订价格" v-if="false" type="number" length="7" v-model="itemModel.minOrderPrice"></mt-field>
+    <mt-cell title="店铺Logo" class="mint-field">
+      <img class="img" :src="itemModel.logo" v-on:click="imgActionsVisible=true" id="img_logo" />
+      <span class="span-add add-img"  v-on:click="imgActionsVisible=true"> <i class="icon iconfont icon-upload"></i></span>
+    </mt-cell>
     <br />
     <div style="text-align: center; margin-bottom: 1rem;margin-top: 0.6rem;">
       <mt-button type="primary" plain="true" size="normal" style="font-size: 0.66rem;padding: 0rem 2rem;" v-on:click="save">{{nextCommodity ? '下一步': '保 存'}}</mt-button>
@@ -48,7 +46,7 @@ export default {
     MtButton},
   data () {
     return {
-      itemModel: {id: -1, name: '', businessStart: '00:00', businessEnd: '23:59', minOrderPrice: 0, address: '', logo: '', state: true},
+      itemModel: {id: -1, name: '', businessStart: '00:00', businessEnd: '23:59', logo: '', state: true},
       imgActions: [{name: '打开相册', method: this.openAlbum}, {name: '拍照', method: this.takePhoto}],
       imgActionsVisible: false,
       isStartTime: true,
@@ -80,8 +78,6 @@ export default {
         name: _this.itemModel.name,
         businessStart: _this.itemModel.businessStart,
         businessEnd: _this.itemModel.businessEnd,
-        minOrderPrice: _this.itemModel.minOrderPrice,
-        address: _this.itemModel.address,
         logo: _this.itemModel.logo,
         state: _this.itemModel.state ? 1 : 2
       }, function (res) {
@@ -142,8 +138,6 @@ export default {
             name: res.data.name,
             businessStart: res.data.businessStart,
             businessEnd: res.data.businessEnd,
-            minOrderPrice: res.data.minOrderPrice,
-            address: res.data.address,
             logo: res.data.logo,
             state: res.data.state === 1
           }

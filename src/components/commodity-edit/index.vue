@@ -16,7 +16,7 @@
     <!--添加规格弹出层 -->
     <layer title="添加规格" :show="showNorms" :complete="sureAddNorms" tempStyle="width:16rem;margin-left:-8rem;">
       <div slot="content">
-        <mt-field label="规格名称" placeholder="大份" v-model="normsModel.title" length="16"></mt-field>
+        <mt-field label="规格名称" placeholder="如：大份" v-model="normsModel.title" length="16"></mt-field>
         <mt-field label="商品价格" placeholder="0" v-model="normsModel.price" length="16"></mt-field>
       </div>
     </layer>
@@ -59,10 +59,11 @@
     </div>
 
     <div class="cell-title" v-if="false">其它设置</div>
-    <mt-field label="商品原价"  v-if="false" placeholder="请输入商品原价" type="number" length="7" v-model="itemModel.price"></mt-field>
+    <mt-field label="商品原价"  v-if="false" placeholder="请输入商品原价" type="number" length="7" v-model="itemModel.price">
+      <solt>元</solt>
+    </mt-field>
     <mt-field label="商品库存"  v-if="false" placeholder="请输入商品库存" type="number" length="5" v-model="itemModel.inventory"></mt-field>
     <mt-cell :title="'是否上架'"  v-if="false" class="mint-field"><mt-switch v-model="itemModel.selling"></mt-switch></mt-cell>
-
     <mt-field label="商品描述" v-if="false" placeholder="请输入商品描述" :attr="{ maxLength: 128 }" type="textarea" rows="2" length="128" v-model="itemModel.desc"></mt-field>
     <div style="text-align: center; margin-bottom: 1rem;margin-top: 0.6rem;">
       <mt-button type="primary" plain="true" size="normal" style="font-size: 0.66rem;padding: 0rem 2rem;" v-on:click="save(true)">保 存</mt-button>

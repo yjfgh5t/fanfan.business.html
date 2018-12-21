@@ -32,11 +32,14 @@
         <i slot="icon" class="icon iconfont icon-commodity-type"/>
       </mt-cell>
       <br/>
+      <mt-cell title="外卖设置" is-link :to="{ path: '/takeoutSetting'}">
+        <i slot="icon" class="icon iconfont icon-waimai"/>
+      </mt-cell>
       <mt-cell title="打印设置" is-link :to="{ path: '/printSetting' }">
         <i slot="icon" class="icon iconfont icon-print"/>
       </mt-cell>
-      <mt-cell title="客桌设置" is-link :to="{ path: '/deskSetting'}">
-        <i slot="icon" class="icon iconfont icon-zhuozi"/>
+      <mt-cell title="点单码设置" is-link :to="{ path: '/qrCodeSetting'}">
+        <i slot="icon" class="icon iconfont icon-erweima"/>
       </mt-cell>
 
       <div class="login-out">
@@ -96,7 +99,7 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     // 加载用户信息
     this.loadUser()
   }
@@ -117,8 +120,8 @@ export default {
   }
 
   .img-user {
-    border-radius: 1.5rem;
-    border: 0.1rem solid #fff;
+    border-radius: 50%;
+    border: 0.05rem solid #fff;
     width: 3rem;
     height: 3rem;
     float: left;
@@ -149,5 +152,8 @@ export default {
   .mint-cell-title .icon {
     position: relative;
     top: 0.1rem;
+  }
+  .icon{
+    color:  rgb(38, 162, 255);
   }
 </style>

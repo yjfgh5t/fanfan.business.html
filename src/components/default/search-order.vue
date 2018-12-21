@@ -62,10 +62,11 @@ export default {
     }
   },
   mounted () {
+    let that = this
     // 检查登录
     Tools.checkLogin(function (login) {
       if (login) {
-        this.loadOrderStatistic()
+        that.loadOrderStatistic()
       }
     })
   },

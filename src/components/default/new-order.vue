@@ -20,10 +20,11 @@ export default {
   methods: {
     // 当触发展示时
     onShow: function () {
+      let that = this
       // 检查登录
       Tools.checkLogin(function (login) {
         if (login) {
-          this.$refs.order.loadTop()
+          that.$refs.order.loadTop()
         }
       })
     }

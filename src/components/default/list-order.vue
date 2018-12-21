@@ -10,12 +10,28 @@
           <div class="item-body">
             <div class="body-commodity-size"><label class="left">桌号：<label v-text="item.orderDeskNum"></label></label> <label class="right">下单时间：<label v-text="item.orderTime"></label></label></div>
             <div class="body-commodity-size"><label class="left">用餐方式：<label v-text="item.orderTypeText"></label></label><label class="right">订单号：<label v-text="item.orderNum"></label></label></div>
+            <!--商品-->
             <div class="body-commodity">
               <div class="commodity" v-for="commodity in item.details">
                 <label class="name" v-text="commodity.outTitle"></label> <label class="size" v-show="commodity.outType !==6" v-text="'x '+commodity.outSize"></label> <label class="price" v-text="'￥'+commodity.outPrice"></label>
               </div>
               <div class="commodity">
                 <label class="name">合计</label> <label class="size"></label>  <label class="size" v-text="'x '+item.sumCount"></label>  <label class="price" v-text="'￥'+item.orderTotal"></label>
+              </div>
+            </div>
+            <!--配送信息-->
+            <div class="body-delivery" v-if="item.orderType===orderType.takeOut">
+               <div v-bind:class="item.showReceiver?'lab-receiver  open':'lab-receiver '" v-on:click="item.showReceiver=!item.showReceiver"><span class="lab-title">配送信息
+                 <i v-if="item.showReceiver" class="icon iconfont icon-top"></i>
+                 <i v-if="!item.showReceiver" class="icon iconfont icon-xiala"></i>
+               </span></div>
+              <div v-if="item.showReceiver">
+                <div class="body-commodity-size">
+                  <label class="left">配送人：<label>{{item.receiver.deliveryName}}<label class="lab-telphone"  v-on:click="callTel(item.receiver.deliveryTel)"><i class="icon iconfont icon-telephone"></i>拨打电话</label></label></label>
+                </div>
+                <div class="body-commodity-size"><label class="left">配送距离：<label v-text="item.receiver.deliveryRange"></label>公里</label></div>
+                <div class="body-commodity-size"><label class="left">收货人：<label>{{item.receiver.name}}<label class="lab-telphone"  v-on:click="callTel(item.receiver.tel)"><i class="icon iconfont icon-telephone"></i>拨打电话</label></label></label></div>
+                <div class="body-commodity-size"><label class="left">收货地址：<label v-text="item.receiver.address"></label></label></div>
               </div>
             </div>
           </div>
@@ -70,6 +86,8 @@ export default {
       payType: { alipay: 1, wechate: 2, offline: 3 },
       // 订单状态
       staticOrderState: { businessPending: 200, businessCancel: 202, orderSuccess: 999 },
+      // 订单类型
+      orderType: {diningRoom: 1, pack: 2, takeOut: 3},
       // 商品详情的类型
       detailType: {commodity: 1, commodityNorms: 5}
     }
@@ -148,12 +166,12 @@ export default {
     // 转换对象
     convertItem: function (item) {
       let details = []
+      let receiver = {}
       let _this = this
       // 合计
       let sumCount = 0
       if (item.details !== null && item.details !== undefined) {
         details = item.details.map(function (detail) {
-          // if(detail.outType==2)
           if (detail.outType === _this.detailType.commodity || detail.outType === _this.detailType.commodityNorms) {
             sumCount += detail.outSize
           }
@@ -167,12 +185,23 @@ export default {
           }
         })
       }
+      if (item.receiver) {
+        receiver = {
+          name: item.receiver.name,
+          tel: item.receiver.tel,
+          address: item.receiver.addr + item.receiver.addrDetail,
+          deliveryName: item.receiver.deliveryName,
+          deliveryTel: item.receiver.deliveryTel,
+          deliveryRange: item.receiver.deliveryRange
+        }
+      }
       return {
         id: item.id,
         orderNum: item.orderNum,
         state: item.orderState,
         stateText: item.orderStateText,
         orderTypeText: item.orderTypeText,
+        orderType: item.orderType,
         orderPay: item.orderPay,
         orderTotal: item.orderTotal,
         orderTime: item.orderTime,
@@ -186,18 +215,20 @@ export default {
         orderPayTypeText: item.orderPayTypeText,
         orderPayType: item.orderPayType,
         sumCount: sumCount,
-        open: false
+        showReceiver: false,
+        // 配送信息
+        receiver: receiver
       }
     },
     // 退回订单
     backOrder: function () {
       let _this = this
       let model = _this.moreOption.item
-      let msg = model.orderPayType === this.payType.offline ? '确定取消该订单吗？' : '确定取消该订单并退款吗？'
+      let msg = model.orderPayType === this.payType.offline ? '确定退回该订单吗？' : '确定退回该订单并退款吗？'
       MessageBox.confirm(msg, '操作提示').then(() => {
         Tools.ajax('post', 'order/state/' + model.id, {state: 'business-cancel'}, function (res) {
           if (res.code === 0) {
-            Toast('订单取消成功')
+            Toast('退回订单成功')
             model.stateText = res.data.orderStateText
             model.state = res.data.orderState
             // 通知回调函数
@@ -236,7 +267,7 @@ export default {
       let actions = []
       // 不是退单状态
       if (item.state !== 202 && item.state !== 999) {
-        actions.push({name: '取消订单', method: this.backOrder})
+        actions.push({name: '退回订单', method: this.backOrder})
       }
       if (item.state !== 999) {
         actions.push({name: '完成订单', method: this.completedOrder})
@@ -247,9 +278,13 @@ export default {
     },
     // 打印
     print: function (model) {
-      Tools.print(JSON.stringify(model), function (res) {
+      Tools.print(JSON.stringify(model),'order', function (res) {
         Toast(res === 'true' ? '打印成功' : '打印失败')
       })
+    },
+    // 拨打电话
+    callTel: function (phoneNum) {
+      Tools.openApp('tel://' + phoneNum)
     }
   },
   props: {
@@ -339,15 +374,17 @@ export default {
   .body-commodity-size{
     font-size:0.625rem;
     padding-bottom: 0.4rem;
+    overflow: hidden;
   }
   .body-commodity-size .left{
     display: inline-block;
-    width: 7rem;
+    min-width: 6rem;
   }
   .body-commodity-size .right {
     display: inline-block;
-    width: 10.2rem;
+    max-width: 11.2rem;
     text-align: right;
+    float: right;
   }
   .body-commodity{
     overflow: hidden;
@@ -419,4 +456,37 @@ export default {
     text-align: center;
   }
 
+/**配送信息**/
+  .lab-receiver{
+    display: block;
+    width: 100%;
+    text-align: center;
+    line-height: 1.2rem;
+    margin-top: 0.3rem;
+  }
+  .lab-receiver.open{
+    margin-bottom: 0.4rem;
+  }
+  .lab-title{
+    margin: 0;
+    padding: 0.1rem 0.3rem;
+    display: inline-block;
+    border: 0.05rem solid #99CCFF;
+    line-height: 1.2rem;
+    height: 1rem;
+    border-radius: 0.3rem;
+    color: #99CCFF;
+  }
+  .lab-title .icon{
+    font-size: 0.6rem;
+    color: #99CCFF;
+  }
+  .lab-telphone{
+    color: #99CCFF;
+    font-size: 0.6rem;
+    line-height: 0.8rem;
+    height: 1rem;
+    margin-left: 0.2rem;
+    display: inline-block;
+  }
 </style>

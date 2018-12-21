@@ -86,6 +86,10 @@ let Tools = {
   print: function (orderString, callback) {
     Tools.app.print(orderString, Tools.getCallBackKey(callback))
   },
+  // 保存图片至相册
+  saveImg: function (imgData, imgName, callback) {
+    Tools.app.saveImage(imgData, imgName, Tools.getCallBackKey(callback))
+  },
   // 选择图片 {openType:1/2, hasWatermark: 1/2, hasCutImage: 1/2, watermark: '水印文字' }
   choiceImg: function (pictureOption, callback) {
     Tools.app.choiceImg(JSON.stringify(pictureOption), Tools.getCallBackKey(callback))
@@ -203,14 +207,15 @@ let Tools = {
   checkLogin: function (callback) {
     // 是否登录窗口
     Tools.getKeyVal(Tools.globalKey.userInfo, function (data) {
-      if (data === '') {
+      let isLogin = !(data === '')
+      if (!isLogin) {
         window.vueApp.$router.push({name: 'login'})
       } else {
         // 绑定信鸽推送
         Tools.bindUser(data.userId, function (bind) {})
       }
-      if(callback!=undefined){
-        callback(data !== '')
+      if (callback !== undefined) {
+        callback(isLogin)
       }
     })
   },

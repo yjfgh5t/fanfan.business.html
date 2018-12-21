@@ -4,10 +4,9 @@
       <router-link to="" slot="left">
         <mt-button icon="back" v-on:click="$router.go(-1)">返回</mt-button>
       </router-link>
-      <mt-button  slot="right" v-on:click="save()">保存</mt-button>
     </mt-header>
     <div style="height: 40px;"></div>
-    <mt-cell title="商户头像" class="mint-field" >
+    <mt-cell title="头像" class="mint-field" >
       <img class="img" :src="model.icon" v-on:click="imgActionsVisible=true" id="img_icon" />
       <span class="span-add add-img"  v-on:click="imgActionsVisible=true"> <i class="icon iconfont icon-upload"></i></span>
     </mt-cell>
@@ -16,6 +15,9 @@
     <div class="cell-title">密码设置</div>
     <mt-cell :title="'修改密码'" class="mint-field"><mt-switch v-model="model.modifyPwd"></mt-switch></mt-cell>
     <mt-field label="新密码" placeholder="请输入密码" type="password"  v-show="model.modifyPwd" v-model="model.newPwd"></mt-field>
+    <div style="text-align: center; margin-bottom: 1rem;margin-top: 0.6rem;">
+      <mt-button type="primary" plain="true" size="normal" style="font-size: 0.66rem;padding: 0rem 2rem;" v-on:click="save(undefined)">保 存</mt-button>
+    </div>
     <!-- 选择相册或拍照-->
     <mt-actionsheet :actions="imgActions" v-model="imgActionsVisible"></mt-actionsheet>
   </div>
@@ -39,12 +41,12 @@ export default {
   },
   methods: {
     // 保存
-    save: function () {
+    save: function (that) {
       let errorText = this.validate()
       if (errorText !== '') {
         return Toast(errorText)
       }
-      let _this = this
+      let _this = that || this
       let temModel = {
         userId: _this.model.userId,
         mobile: _this.model.mobile,
@@ -58,14 +60,7 @@ export default {
       Tools.ajax('json', 'user/customer/save', temModel, function (res) {
         if (res.code === 0) {
           Toast('保存成功')
-          let userInfo = {
-            userId: res.data.userId,
-            name: res.data.name,
-            mobile: res.data.mobile,
-            picPath: res.data.picPath
-          }
-          // 保存至本地
-          Tools.setKeyVal(Tools.globalKey.userInfo, JSON.stringify(userInfo), function (success) {})
+          _this.saveLocal(_this.model)
         }
       })
     },
@@ -94,22 +89,7 @@ export default {
         if (res.code === 0) {
           _this.model.icon = res.data
           document.getElementById('img_icon').setAttribute('src', res.data)
-          _this.modifyImg(_this)
-          _this.save()
-        }
-      })
-    },
-    // 修改图片
-    modifyImg: function (_this) {
-      if (_this.itemModel.id === 0) {
-        return
-      }
-      Tools.ajax('json', 'commodity/', {
-        id: _this.itemModel.id,
-        icon: _this.itemModel.icon
-      }, function (res) {
-        if (res.code !== 0) {
-          Toast('保存图片失败')
+          _this.save(_this)
         }
       })
     },
@@ -125,6 +105,17 @@ export default {
         }
         document.getElementById('img_icon').setAttribute('src', _this.model.icon)
       })
+    },
+    // 将数据保存至本地
+    saveLocal: function (model) {
+      let userInfo = {
+        userId: model.userId,
+        name: model.name,
+        mobile: model.mobile,
+        picPath: model.icon
+      }
+      // 保存至本地
+      Tools.setKeyVal(Tools.globalKey.userInfo, JSON.stringify(userInfo))
     }
   }
 }
