@@ -1,7 +1,7 @@
 <template>
-  <div class="body">
+  <div class="body" :style="{height:bodyHeight+'px',overflowY: 'scroll'}">
     <mt-header slot="left" title="设置"></mt-header>
-    <div style="display: block;overflow-y: scroll;">
+    <div>
       <div class="div-user">
         <div style="overflow: hidden;float:left;" v-on:click="$router.push({path: '/userSetting'});">
           <img :src="userInfo.icon" class="img-user"/>
@@ -59,6 +59,7 @@ import userIcon from '../../assets/imgs/icon_user.png'
 export default {
   data() {
     return {
+      bodyHeight: window.document.body.clientHeight - 50,
       userInfo: {}
     }
   },
@@ -111,6 +112,7 @@ export default {
     margin-right: auto;
     margin-left: auto;
     margin-top: 1rem;
+    margin-bottom: 1rem;
   }
 
   .div-user {

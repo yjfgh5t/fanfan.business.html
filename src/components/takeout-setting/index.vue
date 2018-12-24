@@ -263,12 +263,18 @@ export default {
         script.type = 'text/javascript'
         script.src = 'https://webapi.amap.com/maps?v=1.4.11&key=c21e6eea975fae7d63fb6f43969ccee1&plugin=AMap.ToolBar'
         script.id = 'script-map'
+        script.ansy = true
         document.head.appendChild(script)
-        var scriptUI = document.createElement('script')
-        scriptUI.type = 'text/javascript'
-        scriptUI.src = 'https://webapi.amap.com/ui/1.0/main.js?v=1.0.11'
-        document.head.appendChild(scriptUI)
       }
+      window.setTimeout(function () {
+        if (document.getElementById('script-map-ui') === null) {
+          var scriptUI = document.createElement('script')
+          scriptUI.type = 'text/javascript'
+          scriptUI.src = 'https://webapi.amap.com/ui/1.0/main.js?v=1.0.11'
+          script.id = 'script-map-ui'
+          document.head.appendChild(scriptUI)
+        }
+      }, 2000)
     },
     // 设置地址
     setAddress: function () {

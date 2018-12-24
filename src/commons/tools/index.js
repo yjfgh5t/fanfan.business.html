@@ -15,7 +15,9 @@ let Tools = {
     // 打开小程序
     openAliPayProgram: 'alipays://platformapi/startapp?appId=2018033102482725',
     // 记录分类id
-    categoryId: 0
+    categoryId: 0,
+    // 是否已经链接过蓝牙
+    isConnectedBlueTooth: false
   },
   callKeyIndex: 1,
   method: {post: 'post', get: 'get', json: 'json'},
@@ -92,8 +94,27 @@ let Tools = {
     Tools.app.blueToothConnect(address, Tools.getCallBackKey(callback))
   },
   // 打印
-  print: function (orderString, callback) {
-    Tools.app.print(orderString, Tools.getCallBackKey(callback))
+  print: function (orderString, type, callback) {
+    // 包一层统一处理回调函数
+    let packageCallback = function (success) {
+      if (success === 'false') {
+        MessageBox({
+          title: '系统提示',
+          message: '无法打印 需链接打印机',
+          cancelButtonText: '取消',
+          confirmButtonText: '去链接',
+          showCancelButton: true,
+          closeOnClickModal: false
+        }).then(action => {
+          if (action === 'confirm') {
+            window.vueApp.$router.push({name: 'printSetting'})
+          }
+        })
+      }
+      // 执行回调
+      callback(success)
+    }
+    Tools.app.print(orderString, type, Tools.getCallBackKey(packageCallback))
   },
   // 保存图片至相册
   saveImg: function (imgData, imgName, callback) {
@@ -238,7 +259,7 @@ let Tools = {
   },
   // 本地通知注册
   localNotify: function (callKey, callback) {
-    Tools.callMap[callKey] = callback
+    Tools.callMap[callKey] = {call: callback}
   },
   // App回调
   callback: function (jsonString, callKey) {

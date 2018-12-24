@@ -77,7 +77,7 @@ export default {
         title: '扫码点单',
         numTitle: 'A65',
         shopName: '饭饭点餐',
-        src: '', //http://192.168.4.47:8081/api/info/qrCodeImg?context=lsiejwoeflsiejwoeflsiejwoeflsiejwoeflsiejwoeflsiejwoef&width=78'
+        src: '' // http://192.168.1.10:8081/api/info/qrCodeImg?context=lsiejwoeflsiejwoeflsiejwoeflsiejwoeflsiejwoeflsiejwoef&width=78'
       }
     }
   },
@@ -158,8 +158,10 @@ export default {
         if (type === 1) {
           that.template.printShow = false
           // 执行打印
-          Tools.print(imgData.split(',')[1], 'img', function (save) {
-            Toast('打印成功')
+          Tools.print(imgData.split(',')[1], 'img', function (complate) {
+            if (complate === 'true') {
+              Toast('打印成功')
+            }
           })
         } else {
           that.template.codeImgShow = false
@@ -245,16 +247,19 @@ export default {
     width:100%;
   }
   .div-print{
-    width: 58mm;
-    margin: 2mm;
+    width: 360px;
+    margin: 10px;
     text-align: center;
+    padding-bottom: 50px;
   }
   .print-title{
     text-align: center;
+    font-size: 36px;
   }
   .print-name{
     text-align: right;
-    padding-right: 4mm;
+    padding-right: 40px;
+    font-size: 32px;
   }
   .print-img{
     width: 100%;
@@ -331,7 +336,7 @@ export default {
   }
   .div-temp-empty {
     position: absolute;
-    width: 18rem;
+    width: 24rem;
     height: 20rem;
     z-index: 5;
     background-color: white;

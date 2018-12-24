@@ -9,7 +9,7 @@
       </mt-button>
     </mt-header>
 
-    <div class="div-content">
+    <div>
       <!--商品栏 -->
       <div class="div-commonditys">
         <div v-if="recommends.length>0" v-for="items in recommends" class="div-item">

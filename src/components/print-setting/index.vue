@@ -67,7 +67,7 @@ export default {
       let _this = this
       // 显示蓝牙列表
       _this.showBlueTooths = true
-      _this.setBluthState(1)
+      _this.setBlueToothState(1)
       // 开始搜索
       Tools.blueTooth('start', function (res) {})
     },
@@ -80,7 +80,7 @@ export default {
       if (_this.optionState === 2) {
         Toast(this.titleText + '请稍后')
       } else {
-        _this.setBluthState(2)
+        _this.setBlueToothState(2)
         Tools.blueConnect(_this.radioModel.address)
       }
     },
@@ -94,7 +94,7 @@ export default {
       this.isSearch = false
     },
     // 设置蓝牙状态
-    setBluthState (state) {
+    setBlueToothState (state) {
       this.optionState = state
       switch (this.optionState) {
         case 0:
@@ -125,7 +125,7 @@ export default {
       Tools.localNotify(Tools.globalKey.blueNotifyKey, function (res) {
         switch (res.data.event) {
           // 停止搜索
-          case 'stop': _this.setBluthState(0); break
+          case 'stop': _this.setBlueToothState(0); break
           // 搜索到设备
           case 'device':
             let blueToothModel = {
@@ -150,7 +150,7 @@ export default {
             _this.cancelBlueTooth()
             break
           // 设备断开链接
-          case 'disConnected': _this.connectBlue.stateText = '未连接'; _this.setBluthState(3); break
+          case 'disConnected': _this.connectBlue.stateText = '未连接'; _this.setBlueToothState(3); break
           case 'onOpen':
             // 链接蓝牙
             Client.blueToothConnect()
