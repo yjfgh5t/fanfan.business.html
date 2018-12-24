@@ -5,17 +5,17 @@
         <mt-button icon="back" v-on:click="$router.go(-1)">返回</mt-button>
       </router-link>
     </mt-header>
-    <div style="height: 40px;"></div>
+    <div style="height: 50px;"></div>
 
     <!--授权弹框-->
-    <layer :title="authorizeLayerType===1?'请使用支付宝扫码授权':'请使用支付宝扫码认证'" :show="showAuthorizeLayer" :complete="bindAuthorizeLayer" tempStyle="width:16rem;margin-left:-8rem;" :confirmText="authorizeLayerType===1?'打卡支付宝授权':'打卡支付宝认证确认'">
+    <layer :title="authorizeLayerType===1?'请使用支付宝扫码授权':'请使用支付宝扫码认证'" :showCancel="false" :show="showAuthorizeLayer" :complete="bindAuthorizeLayer" tempStyle="width:16rem;margin-left:-8rem;" :confirmText="authorizeLayerType===1?'打卡支付宝授权':'打卡支付宝认证确认'">
       <div slot="content">
         <img :src="authorizeImgUrl" class="lay-img" />
       </div>
     </layer>
 
     <mt-cell title="授权状态">
-      <span v-on:click="bindShowAuthorize"  v-bind:class="model.authorizeState == 1?  'span-authorize':''">
+      <span v-bind:class="model.authorizeState == 1?  'span-authorize':''">
         <span v-if="model.authorizeState==0">未授权</span>
         <span v-if="model.authorizeState==1">已授权</span>
         <i v-bind:class="model.authorizeState == 1 ?  'icon iconfont icon-chenggong':'icon iconfont icon-weirenzheng'"></i> </span>
@@ -33,7 +33,7 @@
     <div v-if="!(model.identificationState==4 && model.payeeId=='')">
       <mt-field label="收款账号"  placeholder="请输入支付宝账号"  :attr="{ maxLength: 36, minLength: 2 }" type="text" v-model="model.payeeId"></mt-field>
       <mt-field label="收款人姓名"  placeholder="请输入支付宝姓名"  :attr="{ maxLength: 16, minLength: 2 }" type="text" v-model="model.payeeName"></mt-field>
-      <mt-field label="营业执照有效期" placeholder="请输入到期时间" readonly type="text" @click.native.capture="showDatePicker" v-model="model.businessLicenseDate"></mt-field>
+      <mt-field label="营业执照有效期" placeholder="请输入营业执照到期时间" readonly type="text" @click.native.capture="showDatePicker" v-model="model.businessLicenseDate"></mt-field>
       <div class="cell-title">营业执照</div>
       <div class="div-img" v-on:click="bindClickImg(1)">
         <div class="div-icon"  v-if="model.businessLicensePhoto.length===0">
@@ -157,18 +157,8 @@ export default {
     }
   },
   methods: {
-    // 显示授权
-    bindShowAuthorize: function () {
-      if (this.canEdit) {
-        this.authorizeLayerType = 1
-        this.showAuthorizeLayer = true
-      }
-    },
     // 验证
     validate: function () {
-      if (this.model.authorizeState === 0) {
-        return '请先通过支付宝授权'
-      }
       if (this.model.payeeId === '') {
         return '请输入支付宝收款账号'
       }
@@ -214,6 +204,8 @@ export default {
           // 重置状态
           _that.model.identificationState = model.identificationState
           Toast('已提交认证，请等待审核')
+          // 加载数据
+          _that.loadItem()
         }
       })
     },
@@ -235,7 +227,7 @@ export default {
     // 图片操作
     choiceImg: function (type) {
       let _this = this
-      Tools.choiceImg({openType: type, hasCutImage: 2, hasWatermark: 1, watermark: '仅限于支付宝签约'}, function (res) {
+      Tools.choiceImg({openType: type, hasCutImage: 2, hasWatermark: 0, watermark: '仅限于支付宝签约'}, function (res) {
         if (res.code === 0) {
           let key = ''
           switch (_this.optionImgType) {
@@ -280,7 +272,7 @@ export default {
             // 营业执照
             businessLicensePhoto: res.data.businessLicensePhoto,
             // 营业执照有效期
-            businessLicenseDate: res.data.businessLicenseDate === null ? '' : moment(res.data.businessLicenseDate).format('YYYY-MM-DD'),
+            businessLicenseDate: res.data.businessLicenseDate === undefined ? '' : moment(res.data.businessLicenseDate).format('YYYY-MM-DD'),
             // 身份证照
             idCardPhoto: res.data.idCardPhoto,
             // 店铺照
@@ -295,7 +287,7 @@ export default {
           _this.model = model
           _this.showAuthorizeLayer = false
           // 显示授权二维码
-          if (model.authorizeState === 0) {
+          if (model.identificationState > 0 && model.authorizeState === 0) {
             _this.authorizeImgUrl = Tools.global.httpPath + 'info/qrCodeImg?width=287&context=' + encodeURIComponent(model.authorizeUrl) + '&v=' + Math.random()
             _this.showAuthorizeLayer = true
             _this.authorizeLayerType = 1

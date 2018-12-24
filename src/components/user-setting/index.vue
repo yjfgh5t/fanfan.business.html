@@ -5,7 +5,7 @@
         <mt-button icon="back" v-on:click="$router.go(-1)">返回</mt-button>
       </router-link>
     </mt-header>
-    <div style="height: 40px;"></div>
+    <div style="height: 50px;"></div>
     <mt-cell title="头像" class="mint-field" >
       <img class="img" :src="model.icon" v-on:click="imgActionsVisible=true" id="img_icon" />
       <span class="span-add add-img"  v-on:click="imgActionsVisible=true"> <i class="icon iconfont icon-upload"></i></span>

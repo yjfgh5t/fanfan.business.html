@@ -4,6 +4,9 @@
       <router-link to="" slot="left">
         <mt-button icon="back" v-on:click="$router.go(-1)">返回</mt-button>
       </router-link>
+      <mt-button  slot="right"  v-if="itemModel.id>0" v-on:click="remove">
+        <i class="icon iconfont icon-shanchu"></i>
+      </mt-button>
     </mt-header>
     <!--分类弹出层-->
     <layer title="新增分类" :show="category.showLayer" :complete="bindCategoryComplete" tempStyle="width:16rem;margin-left:-8rem;">
@@ -21,7 +24,7 @@
       </div>
     </layer>
 
-    <div style="height: 40px;"></div>
+    <div style="height: 50px;"></div>
     <div class="cell-title">商品设置</div>
     <mt-field label="商品名称" placeholder="请输入商品名称"  :attr="{ maxLength: 16 }" v-model="itemModel.title" length="32"></mt-field>
     <mt-cell title="商品分类" class="mint-field" >
@@ -139,7 +142,7 @@ export default {
             window.setTimeout(() => {
               Tools.global.categoryId = _this.itemModel.categoryId
               window.vueApp.$router.go(-1)
-            }, 2000)
+            }, 1500)
           } else {
             this.loadItem()
           }
@@ -180,7 +183,7 @@ export default {
       // 删除数组元素
       for (let i = 0; i < this.itemModel.norms.length; i++) {
         if (item.id === this.itemModel.norms[i].id) {
-          MessageBox.confirm('确认删除改规则吗', '系统提示', {
+          MessageBox.confirm('确认删除该规则吗', '系统提示', {
             confirmButtonText: '确定'
           }).then(action => {
             if (action === 'confirm') {
@@ -342,6 +345,22 @@ export default {
       } else {
         _this.category.showLayer = false
       }
+    },
+    // 刪除商品
+    remove: function () {
+      let that = this
+      MessageBox.confirm('确认删除该商品吗', '系统提示', {
+        confirmButtonText: '确定'
+      }).then(action => {
+        if (action === 'confirm') {
+          Tools.ajax(Tools.method.post, 'commodity/remove', {id: that.itemModel.id}, function (res) {
+            if (res.code === 0 && res.data) {
+              Tools.global.categoryId = that.itemModel.categoryId
+              window.vueApp.$router.go(-1)
+            }
+          })
+        }
+      })
     }
   }
 }

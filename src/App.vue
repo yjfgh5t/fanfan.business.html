@@ -82,4 +82,11 @@ html, body{ margin:0; height:100%; }
   padding: 0 0.4rem;
   height: 1.4rem;
 }
+.mint-header{
+  height: 50px;
+}
+.mint-header i.icon{
+  font-size: 18px;
+  padding: 0.2rem;
+}
 </style>

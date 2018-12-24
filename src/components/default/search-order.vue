@@ -39,7 +39,7 @@
     </mt-datetime-picker>
     <div style="clear: both;"></div>
     <!-- 订单列表-->
-    <order-list height="250" :queryDate="dateVal | moment('YYYY-MM-DD')" :orderState="orderState" style="z-index: 0" ref="order"></order-list>
+    <order-list height="240" :queryDate="dateVal | moment('YYYY-MM-DD')" :orderState="orderState" style="z-index: 0" ref="order"></order-list>
   </div>
 </template>
 

@@ -10,7 +10,7 @@
         <slot name="content"></slot>
       </div>
       <div class="foot-layer">
-          <mt-button size="small" type="danger" v-on:click="cancel" v-text="cancelText">取消</mt-button> &nbsp;
+          <mt-button size="small" type="danger" v-on:click="cancel" v-if="showCancel" v-text="cancelText">取消</mt-button> &nbsp;
           <mt-button size="small" type="primary" v-on:click="confirm" v-text="confirmText">确定</mt-button>
       </div>
     </div>
@@ -41,6 +41,7 @@ export default {
     title: {default: '标题'},
     show: {default: true},
     tempStyle: {default: ''},
+    showCancel: {default: true},
     complete: {default: undefined}
   }
 }

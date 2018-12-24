@@ -13,7 +13,9 @@
       </div>
     </layer>
     <div class="login">
-      <mt-field label="商户姓名" v-if="visitType===1" placeholder="请输入商户姓名"  :attr="{ maxLength: 16, minLength: 2 }" type="text" v-model="model.name"></mt-field>
+      <mt-field label="店铺名称" v-if="visitType===1" placeholder="请输入店铺名称"  :attr="{ maxLength: 20, minLength: 2 }" type="text" v-model="model.shopName"></mt-field>
+      <br/>
+      <mt-field label="姓名" v-if="visitType===1" placeholder="请输入姓名"  :attr="{ maxLength: 16, minLength: 2 }" type="text" v-model="model.name"></mt-field>
       <br/>
       <mt-field label="手机号" placeholder="请输入手机号"  :attr="{ maxLength: 11, minLength: 11 }" type="tel" v-model="model.mobile"></mt-field>
       <br/>
@@ -50,7 +52,7 @@ export default {
       logo: logo,
       codeModel: {text: '发送验证码', disabled: false, showImgCode: false, code: '', imgCodeSrc: ''},
       showImgCodeLayer: false,
-      model: {mobile: '', pwd: '', confirmPwd: '', name: '', mobileCode: ''}
+      model: {mobile: '', pwd: '', confirmPwd: '', name: '', mobileCode: '', shopName: ''}
     }
   },
   mounted () {
@@ -128,8 +130,11 @@ export default {
     },
     register: function () {
       let _this = this
+      if (_this.model.shopName === '') {
+        return Toast('请输入店铺名称')
+      }
       if (_this.model.name === '') {
-        return Toast('请输入商户姓名')
+        return Toast('请输入姓名')
       }
       if (_this.model.mobile === '') {
         return Toast('请输入手机号')
@@ -157,11 +162,12 @@ export default {
       }
 
       let subData = {
-        code: _this.model.mobileCode,
+        imgCode: _this.model.mobileCode,
         userId: 0,
         name: _this.model.name,
         mobile: _this.model.mobile,
-        password: _this.model.pwd
+        code: _this.model.pwd,
+        shopName: _this.model.shopName
       }
       // 执行注册
       Tools.ajax(Tools.method.json, 'user/customer/register', subData, function (res) {

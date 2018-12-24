@@ -34,7 +34,7 @@ let Tools = {
   // 调用Ajax
   ajax: function (method, url, params, callback) {
     // 加载条
-    Indicator.open({spinnerType: 'fading-circle'})
+    Tools.loading(true)
 
     // 回调放入临时callMap并存放用于执行失败是的参数
     let callKey = Tools.getCallBackKey(callback, {method: method, url: url, params: params, callback: callback})
@@ -53,6 +53,15 @@ let Tools = {
       Tools.app.ajaxPost(url, JSON.stringify(paramsMap), callKey)
     }
   },
+  // 加载条
+  loading: function (show, text) {
+    // 加载条
+    if (show) {
+      Indicator.open({spinnerType: 'fading-circle', text: text})
+    } else {
+      Indicator.close()
+    }
+  },
   // 获取参数
   getKeyVal: function (key, callback) {
     Tools.app.getKeyVal(key, Tools.getCallBackKey(callback))
@@ -65,7 +74,7 @@ let Tools = {
   // 绑定用户至信鸽推送
   bindUser: function (userId, callback) {
     // 加载条
-    Indicator.open({spinnerType: 'fading-circle'})
+    Tools.loading(true)
     Tools.app.bindUser(userId, Tools.getCallBackKey(callback))
   },
   // 退出登录
@@ -79,7 +88,7 @@ let Tools = {
   // 链接蓝牙
   blueConnect: function (address, callback) {
     // 加载条
-    Indicator.open({spinnerType: 'fading-circle'})
+    Tools.loading(true)
     Tools.app.blueToothConnect(address, Tools.getCallBackKey(callback))
   },
   // 打印
@@ -129,10 +138,7 @@ let Tools = {
         }).then(action => {
           if (action === 'confirm') {
             Tools.checkOrInstallAPK(2, function (res) {
-              Indicator.open({
-                text: '正在安装...',
-                spinnerType: 'fading-circle'
-              })
+              Tools.loading(true, '正在安装...')
             })
           } else {
             Tools.exitApp()
@@ -238,11 +244,11 @@ let Tools = {
   callback: function (jsonString, callKey) {
     if (callKey === 'loading') {
       // 加载条
-      Indicator.open({spinnerType: 'double-bounce'})
+      Tools.loading(true)
       return
     }
     // 关闭加载条
-    Indicator.close()
+    Tools.loading(false)
 
     // 本地JS通知消息
     if (callKey.indexOf('local_notify') === 0) {

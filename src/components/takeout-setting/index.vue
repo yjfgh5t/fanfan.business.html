@@ -5,7 +5,7 @@
         <mt-button icon="back" v-on:click="$router.go(-1)">返回</mt-button>
       </router-link>
     </mt-header>
-    <div style="height: 40px;"></div>
+    <div style="height: 50px;"></div>
 
     <!--外卖设置-->
     <mt-cell title="开启外卖" class="mint-field" >
@@ -26,13 +26,13 @@
     </mt-field>
 
     <!--配送人员设置-->
-    <div class="cell-title">配送人设置</div>
+    <div class="cell-title">配送员设置</div>
     <div class="div-guige">
       <ul class="ul-table">
         <li>
           <ul class="ul-tr ul-th">
             <li>默认</li>
-            <li>配送人</li>
+            <li>配送员</li>
             <li>联系电话</li>
             <li>操作</li>
           </ul>
@@ -45,14 +45,14 @@
             <li class="li-del"> <span v-on:click="deleteDelivery(item, $index)">删除</span> <span v-on:click="editDelivery(item)">修改</span></li>
           </ul>
         </li>
-        <li class="li-bottom" v-on:click="editDelivery"> 点击添加配送人 </li>
+        <li class="li-bottom" v-on:click="editDelivery"> 点击添加配送员 </li>
       </ul>
     </div>
     <br />
     <div style="text-align: center; margin-bottom: 1rem;margin-top: 0.6rem;">
       <mt-button type="primary" plain="true" size="normal" style="font-size: 0.66rem;padding: 0rem 2rem;" v-on:click="save">保 存</mt-button>
     </div>
-    <!--配送人员弹出层-->
+    <!--配送员员弹出层-->
     <layer title="添加配送员" :show="showDelivery" :complete="sureAddDelivery" tempStyle="width:16rem;margin-left:-8rem;">
       <div slot="content">
         <mt-field label="姓名" placeholder="请输入配送员姓名" v-model="deliveryModel.name" length="16"></mt-field>

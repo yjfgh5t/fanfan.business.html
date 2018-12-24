@@ -5,7 +5,7 @@
         <mt-button icon="back" v-on:click="$router.go(-1)">返回</mt-button>
       </router-link>
     </mt-header>
-    <div style="height: 40px;"></div>
+    <div style="height: 50px;"></div>
     <mt-cell title="线下收款" is-link>
       <span slot="icon"><i class="icon iconfont icon-inline" /></span>
       <mt-switch v-model="model.offline"  @change="changeState(1)">{{model.offline?'开启':'关闭'}}</mt-switch>
@@ -104,7 +104,7 @@ export default {
           break
         case 3:
           this.model.wechat = false
-          Toast('微信收款真正开发中,敬请期待!')
+          Toast('微信收款暂未开通,敬请期待!')
           break
       }
     }
@@ -133,5 +133,8 @@ export default {
   .mint-cell-title .icon{
     position: relative;
     top: 0.16rem;
+  }
+  .icon{
+    color: rgb(38, 162, 255);
   }
 </style>

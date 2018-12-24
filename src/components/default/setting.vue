@@ -22,13 +22,13 @@
         <i slot="icon" class="icon iconfont icon-shoukuan"/>
       </mt-cell>
       <br/>
-      <mt-cell title="商品设置" is-link :to="{ path: '/commoditySetting'}">
+      <mt-cell title="商品管理" is-link :to="{ path: '/commoditySetting'}">
         <i slot="icon" class="icon iconfont icon-shangpin"/>
       </mt-cell>
-      <mt-cell title="推荐商品设置" is-link :to="{ path: '/recommendSetting'}">
+      <mt-cell title="推荐商品管理" is-link :to="{ path: '/recommendSetting'}">
         <i slot="icon" class="icon iconfont icon-shangping-tj"/>
       </mt-cell>
-      <mt-cell title="商品分类设置" is-link :to="{ path: '/commodityTypeSetting'}">
+      <mt-cell title="商品分类管理" is-link :to="{ path: '/commodityTypeSetting'}">
         <i slot="icon" class="icon iconfont icon-commodity-type"/>
       </mt-cell>
       <br/>
@@ -38,7 +38,7 @@
       <mt-cell title="打印设置" is-link :to="{ path: '/printSetting' }">
         <i slot="icon" class="icon iconfont icon-print"/>
       </mt-cell>
-      <mt-cell title="点单码设置" is-link :to="{ path: '/qrCodeSetting'}">
+      <mt-cell title="点单码管理" is-link :to="{ path: '/qrCodeSetting'}">
         <i slot="icon" class="icon iconfont icon-erweima"/>
       </mt-cell>
 
@@ -147,6 +147,9 @@ export default {
     padding: 0.3rem;
     border-radius: 0.3rem;
     margin-top: 0.78rem;
+  }
+  .div-program .icon{
+    color: white;
   }
 
   .mint-cell-title .icon {

@@ -6,7 +6,7 @@
       </router-link>
     </mt-header>
 
-    <div style="height: 40px;"></div>
+    <div style="height: 50px;"></div>
     <mt-field label="店铺名称" placeholder="请输入店铺名称" v-model="itemModel.name" length="32"></mt-field>
     <mt-cell title="营业时间" class="mint-field" >
      <mt-field type="text" v-model="itemModel.businessStart" placeholder="开始时间" @click.native.capture="openPicker(true)" readonly="readonly" ></mt-field> -
@@ -166,10 +166,6 @@ export default {
     validate: function () {
       if (this.itemModel.name === '') {
         return '请输入店铺名称'
-      }
-
-      if (isNaN(this.itemModel.minOrderPrice)) {
-        return '起订价格输入有误'
       }
       return ''
     }

@@ -9,7 +9,7 @@
       </mt-button>
     </mt-header>
 
-    <div class="div-content" v-bind:style="divBodyStyle">
+    <div v-bind:style="divBodyStyle">
       <!--类别栏 -->
       <ul class="ul-type">
         <li v-for="items in commodityTypes"  v-bind:class="{active: items.id==activeTypeId}" v-on:click="commodityTypeClick(items.id)" v-text=" items.name "></li>
@@ -46,13 +46,13 @@ export default {
       activeTypeId: 0,
       commodityTypes: [],
       commodities: [
-        //{title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 1, commodityTypeId: 0, icon: 'https://fuss10.elemecdn.com/4/7d/412c58ad49fed41f849989dc66270jpeg.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/'}
+        // {title: '麻辣香鲜黄焖排骨饭 + 狮子头一个 + 卤蛋一个', sales: 232, inventory: 2000, price: 32, id: 1, order: 1, commodityTypeId: 0, icon: ''},
       ],
       defCommodityIcon: defCommodityIcon
     }
   },
   mounted () {
-    this.divBodyStyle = {height: ((window.document.body.clientHeight - 40) + 'px')}
+    this.divBodyStyle = {height: ((window.document.body.clientHeight - 50) + 'px')}
     this.loadItems()
   },
   methods: {
@@ -140,7 +140,7 @@ export default {
     overflow-y: scroll;
     overflow-x: hidden;
     float: left;
-    width: 14rem;
+    width: 14.2rem;
     padding: 0rem 0.4rem;
   }
 
