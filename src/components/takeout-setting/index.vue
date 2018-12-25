@@ -179,6 +179,9 @@ export default {
       if (this.model.telephone === '') {
         return '请输入商家联系电话'
       }
+      if (this.model.address === '') {
+        return '请选择店铺地理位置'
+      }
       if (isNaN(this.model.deliveryRange)) {
         return '请输入配送范围'
       }
@@ -186,7 +189,7 @@ export default {
         return '请输入配送费'
       }
       if (isNaN(this.model.minOrderPrice)) {
-        return '起订价格输入有误'
+        return '请输入起订价格'
       }
       if (this.deliveryArray.length === 0) {
         return '请添加一个配送员'
