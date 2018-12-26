@@ -110,6 +110,8 @@ export default {
     this.loadItem()
     this.loadDelivery()
     this.initMapDocument()
+    // 获取位置权限
+    Tools.permission('LOCATION')
   },
   methods: {
     // 保存
@@ -289,7 +291,6 @@ export default {
       this.mapModel.address = this.model.address
       window.setTimeout(function () {
         window.AMapUI.loadUI(['misc/PositionPicker'], function (PositionPicker) {
-          let position = {lng: _that.mapModel.lng, lat: _that.mapModel.lat}
           var map = new window.AMap.Map('div-map', {
             resizeEnable: true,
             zoom: 12

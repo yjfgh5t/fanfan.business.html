@@ -132,6 +132,14 @@ let Tools = {
   exitApp: function () {
     Tools.app.exitApp()
   },
+  // 获取系统权限
+  permission: function (name) {
+    let permission = ''
+    switch (name) {
+      case 'LOCATION': permission = 'android.permission.ACCESS_FINE_LOCATION'
+    }
+    Tools.app.permission(permission, '')
+  },
   // 打开第三方app
   openApp: function (url, callback) {
     Tools.app.openApp(url, Tools.getCallBackKey(callback))

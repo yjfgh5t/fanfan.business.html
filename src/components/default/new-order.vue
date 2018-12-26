@@ -1,6 +1,6 @@
 <template>
   <div class="body">
-    <mt-header title="新订单1"></mt-header>
+    <mt-header title="新订单"></mt-header>
     <order-list height="79" newOrder="true" ref="order"></order-list>
   </div>
 </template>
