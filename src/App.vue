@@ -62,7 +62,6 @@ html,body,div, h1, h2, h3, h4, h5, h6, hr, p, blockquote,dl, dt, dd, ul, ol, li,
   padding: 0;
   font-size: 0.625rem;
 }
-
 html, body{ margin:0; height:100%; }
 
 /** 加载条 **/

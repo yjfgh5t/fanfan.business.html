@@ -189,7 +189,7 @@ export default {
         receiver = {
           name: item.receiver.name,
           tel: item.receiver.tel,
-          address: item.receiver.addr + item.receiver.addrDetail,
+          address: item.receiver.addrDetail,
           deliveryName: item.receiver.deliveryName,
           deliveryTel: item.receiver.deliveryTel,
           deliveryRange: item.receiver.deliveryRange

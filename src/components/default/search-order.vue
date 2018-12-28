@@ -163,9 +163,9 @@ export default {
     text-align: center;
     line-height: 1.8rem;
     position: absolute;
-    top:6.17rem;
+    top:6.6rem;
     left: 50%;
-    margin-left: -7rem;
+    margin-left: -6.8rem;
   }
   .div-date .iconfont{
     font-size: 0.6rem;
